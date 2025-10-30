@@ -76,7 +76,6 @@ public class JPanelCatalogo extends JFrame {
 		panelDerecha.setBackground(COLOR_FONDO_OSCURO);
 		panelDerecha.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 10)); 
 
-        // Panel Superior - Características
 		
         JPanel panelSuperior = new JPanel(new BorderLayout()); 
 		
@@ -90,7 +89,7 @@ public class JPanelCatalogo extends JFrame {
 		lblInfo.setFont(new Font("SansSerif", Font.ITALIC, 14));
 		panelSuperior.add(lblInfo, BorderLayout.CENTER); 
 
-        // Panel Inferior - Explicación/Información Adicional
+        
 		JPanel panelInferior = new JPanel(new BorderLayout());
 		TitledBorder bordeExplicacion = BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.GRAY, 1), "📊 INFORMACIÓN ADICIONAL");
 		bordeExplicacion.setTitleFont(new Font("SansSerif", Font.BOLD, 14));
@@ -181,7 +180,9 @@ public class JPanelCatalogo extends JFrame {
 	}
 	
 	private void cargarDatosDeEjemplo() {
-		// La columna de IMAGEN se deja como String simple por ahora
+		
+		// La columna de IMAGEN se deja como String simple por ahora, pero meter imagen mas adelante. 
+		
 		Object[][] data = {
 				{"Pantalón Denim \"Explorer\"", "vaquero.png", 59.99},
 				{"Chino Algodón \"Urban\"", "chino.png", 45.50},
@@ -253,10 +254,10 @@ public class JPanelCatalogo extends JFrame {
 	
 	private void initTables() { 
 		
-		Vector<String> cabeceraProductos = new Vector<String>(Arrays.asList( "ARTICULO", "IMAGEN", "PRECIO (€)")); // 📌 CAMBIO: Espacio en (€)
+		Vector<String> cabeceraProductos = new Vector<String>(Arrays.asList( "ARTICULO", "IMAGEN", "PRECIO (€)")); 
 		
 		this.modeloDatosProductos = new DefaultTableModel(new Vector<Vector<Object>>(), cabeceraProductos);
-		this.tablaProductos.setModel(this.modeloDatosProductos); // 📌 CAMBIO: Asignar el modelo a la tabla
+		this.tablaProductos.setModel(this.modeloDatosProductos); 
 		
 		cargarDatosDeEjemplo();
 		
