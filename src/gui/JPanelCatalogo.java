@@ -3,8 +3,10 @@ package gui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Dimension; 
+import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.GridLayout;
+import java.awt.LayoutManager;
 import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -12,7 +14,8 @@ import java.awt.event.MouseMotionAdapter;
 import java.util.Arrays;
 import java.util.Vector;
 
-import javax.swing.BorderFactory; 
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -39,6 +42,8 @@ public class JPanelCatalogo extends JFrame {
 	private JTextField txtFiltro;
 	private JTable tablaExplicacion;
 	private DefaultTableModel modeloDatosExplicacion;
+	
+	private JButton btnAnadirCarrito;
 	
 	private static final Color COLOR_PRIMARIO = new Color(30, 144, 255); 
 	private static final Color COLOR_FONDO_CLARO = Color.WHITE;
@@ -89,6 +94,22 @@ public class JPanelCatalogo extends JFrame {
 		lblInfo.setFont(new Font("SansSerif", Font.ITALIC, 14));
 		panelSuperior.add(lblInfo, BorderLayout.CENTER); 
 
+		
+		btnAnadirCarrito = new JButton("🛒 Añadir al Carrito");
+        btnAnadirCarrito.setFont(new Font("SansSerif", Font.BOLD, 16));
+        btnAnadirCarrito.setBackground(new Color(250, 179, 113));
+        btnAnadirCarrito.setForeground(Color.BLACK);
+        btnAnadirCarrito.setFocusPainted(false);
+        btnAnadirCarrito.setBorder(BorderFactory.createEmptyBorder(10, 25, 10, 25));
+        btnAnadirCarrito.setEnabled(true);
+        
+        JPanel panelBoton = new JPanel((LayoutManager) new FlowLayout(FlowLayout.RIGHT)); 
+        panelBoton.setBackground(COLOR_FONDO_CLARO);
+        panelBoton.setBorder(BorderFactory.createEmptyBorder(60, 10, 10, 10));
+        panelBoton.add(btnAnadirCarrito);
+        
+        panelSuperior.add(panelBoton, BorderLayout.SOUTH);
+        
         
 		JPanel panelInferior = new JPanel(new BorderLayout());
 		TitledBorder bordeExplicacion = BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.GRAY, 1), "📊 INFORMACIÓN ADICIONAL");
