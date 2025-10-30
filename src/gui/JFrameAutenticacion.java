@@ -3,17 +3,19 @@ package gui;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.GridLayout;
+import java.awt.Image;
+import java.awt.Insets;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.GridLayout;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Vector;
 
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -29,76 +31,92 @@ public class JFrameAutenticacion extends JFrame {
 
     private static final long serialVersionUID = 1L;
 
-   
-    private static final Color COLOR_PRIMARIO = new Color(30, 144, 255); 
-    private static final Color COLOR_ERROR = new Color(220, 20, 60); 
-    private static final Color COLOR_FONDO = new Color(240, 248, 255); 
+    
+    private static final Color COLOR_PRIMARIO = new Color(30, 144, 255);  
+    private static final Color COLOR_FONDO = new Color(240, 248, 255);
 
     
     private Vector<String> usuarios;
 
-    
+   
     private JTextField txtUsuarioLogin;
     private JPasswordField txtContrasenaLogin;
-    private JButton btnLogin;
-
-    
     private JTextField txtUsuarioNuevo;
     private JPasswordField txtContrasenaNueva1;
     private JPasswordField txtContrasenaNueva2;
+    private JButton btnLogin;
     private JButton btnCrearCuenta;
-
+    
+    
+    private Image backgroundImage; 
+    
     public JFrameAutenticacion() {
        
         usuarios = new Vector<>();
-        usuarios.add("admin:1234");
+        usuarios.add("admin:1234"); 
 
         setTitle("🔑 Acceso y Registro de Usuario");
-        setSize(1200, 550); 
+        setSize(1000, 550); 
         setResizable(true); 
-        
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         
         
-        setLayout(new BorderLayout()); 
-        getContentPane().setBackground(COLOR_FONDO);
+        try {
+            backgroundImage = new ImageIcon(getClass().getResource("/images/escaparate.jpg")).getImage();
+        } catch (Exception e) {
+            System.err.println("Error al cargar la imagen de fondo: /images/escaparate.jpg");
+            e.printStackTrace();
+            backgroundImage = null;
+        }
+
         
+        JPanel contentPaneWithBackground = new JPanel(new GridBagLayout()) {
+            private static final long serialVersionUID = 1L;
+            
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                if (backgroundImage != null) {
+                    g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
+                }
+            }
+        };
+        
+        contentPaneWithBackground.setOpaque(true);
+        setContentPane(contentPaneWithBackground);
+
         
         JPanel panelRegistro = crearPanelRegistro();
         JPanel panelLogin = crearPanelLogin();
 
         
-        Dimension panelDim = new Dimension(485, 500); 
-        
-        panelRegistro.setPreferredSize(panelDim);
-        panelLogin.setPreferredSize(panelDim);
-        
-      
-        JPanel panelCentral = new JPanel(new GridBagLayout()); 
-        panelCentral.setBackground(COLOR_FONDO);
+        panelRegistro.setBackground(COLOR_FONDO); 
+        panelLogin.setBackground(COLOR_FONDO);   
+        panelRegistro.setOpaque(true); 
+        panelLogin.setOpaque(true); 
         
         
+        panelRegistro.setPreferredSize(new Dimension(550, 500));
+        panelLogin.setPreferredSize(new Dimension(400, 400));  
+        
+       
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0; 
         gbc.gridy = 0; 
-        gbc.insets = new Insets(0, 0, 0, 15);
+        gbc.insets = new Insets(0, 0, 0, 15); 
         
-        
-        panelCentral.add(panelRegistro, gbc);
+        contentPaneWithBackground.add(panelLogin, gbc);
         
         gbc.gridx = 1; 
         gbc.insets = new Insets(0, 15, 0, 0); 
         
-        
-        panelCentral.add(panelLogin, gbc);
-        
-        
-        add(panelCentral, BorderLayout.CENTER);
+        contentPaneWithBackground.add(panelRegistro, gbc);
         
         agregarListeners();
     }
 
+    
     private JPanel crearPanelRegistro() {
         JPanel panel = new JPanel(new BorderLayout(10, 10));
         panel.setBackground(COLOR_FONDO);
@@ -126,12 +144,11 @@ public class JFrameAutenticacion extends JFrame {
         btnCrearCuenta.setBackground(new Color(60, 179, 113)); 
         btnCrearCuenta.setForeground(Color.WHITE);
 
-        
         formPanel.add(crearEtiqueta("👤 Nuevo Usuario:"));
         formPanel.add(txtUsuarioNuevo);
-        formPanel.add(crearEtiqueta("🔑 Contraseña:"));
+        formPanel.add(crearEtiqueta("🔑 Contraseña (1/2):"));
         formPanel.add(txtContrasenaNueva1);
-        formPanel.add(crearEtiqueta("🔑 Repetir Contraseña:"));
+        formPanel.add(crearEtiqueta("🔑 Repetir Contraseña (2/2):"));
         formPanel.add(txtContrasenaNueva2);
         formPanel.add(new JLabel()); 
         formPanel.add(btnCrearCuenta);
@@ -183,7 +200,6 @@ public class JFrameAutenticacion extends JFrame {
         return lbl;
     }
 
-
     
     private void agregarListeners() {
         btnLogin.addActionListener(new ActionListener() {
@@ -201,7 +217,6 @@ public class JFrameAutenticacion extends JFrame {
         });
     }
     
- 
     private void iniciarSesion() {
         String usuario = txtUsuarioLogin.getText().trim();
         String contrasena = new String(txtContrasenaLogin.getPassword()).trim();
@@ -213,10 +228,10 @@ public class JFrameAutenticacion extends JFrame {
         }
         
         if (usuarios.contains(credenciales)) {
-            JOptionPane.showMessageDialog(this, "✅ ¡Inicio de sesión exitoso! Bienvenido, " + usuario + ".", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+        	mostrarExito("✅ ¡Inicio de sesión exitoso! Bienvenido, " + usuario + ".", "Éxito");
+
             
         } else {
-            
             boolean usuarioExiste = false;
             for (String userPass : usuarios) {
                 if (userPass.startsWith(usuario + ":")) {
@@ -233,7 +248,6 @@ public class JFrameAutenticacion extends JFrame {
         }
     }
     
-  
     private void crearCuenta() {
         String usuario = txtUsuarioNuevo.getText().trim();
         String contrasena1 = new String(txtContrasenaNueva1.getPassword()).trim();
@@ -244,7 +258,7 @@ public class JFrameAutenticacion extends JFrame {
             return;
         }
 
-      
+        
         for (String userPass : usuarios) {
             if (userPass.startsWith(usuario + ":")) {
                 mostrarError("❌ El nombre de usuario '" + usuario + "' ya está registrado. Por favor, elija otro.", "Error de Registro");
@@ -260,7 +274,7 @@ public class JFrameAutenticacion extends JFrame {
             return;
         }
         
-       
+        
         usuarios.add(usuario + ":" + contrasena1);
         JOptionPane.showMessageDialog(this, "🎉 ¡Cuenta creada con éxito!\nAhora puede iniciar sesión.", "Registro Exitoso", JOptionPane.INFORMATION_MESSAGE);
         
@@ -268,15 +282,20 @@ public class JFrameAutenticacion extends JFrame {
         txtUsuarioNuevo.setText("");
         txtContrasenaNueva1.setText("");
         txtContrasenaNueva2.setText("");
-        txtUsuarioLogin.setText(usuario);
+        txtUsuarioLogin.setText(usuario); 
     }
     
-    
     private void mostrarError(String mensaje, String titulo) {
-        
+       
         String mensajeHTML = "<html><font color='red'><b>¡ERROR!</b></font><br>" + mensaje + "</html>";
         JOptionPane.showMessageDialog(this, mensajeHTML, titulo, JOptionPane.ERROR_MESSAGE);
     }
+    
+    private void mostrarExito(String mensaje, String titulo) {
+        String mensajeHTML = "<html><font color='green'><b>✔ ÉXITO</b></font><br>" + mensaje + "</html>";
+        JOptionPane.showMessageDialog(this, mensajeHTML, titulo, JOptionPane.INFORMATION_MESSAGE);
+    }
+
 
 
     public static void main(String[] args) {
