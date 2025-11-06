@@ -43,7 +43,7 @@ public class JFrameAutenticacion extends JFrame {
     private JPasswordField txtContrasenaLogin;
     private JTextField txtUsuarioNuevo;
     private JPasswordField txtContrasenaNueva1;
-    private JPasswordField txtContrasenaNueva2;
+    private JPasswordField txtContrasenaNueva2; 
     private JButton btnLogin;
     private JButton btnCrearCuenta;
     
