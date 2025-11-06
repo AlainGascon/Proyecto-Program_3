@@ -1,11 +1,14 @@
 package domain;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
-public class Usuario {
+public class Usuario implements Serializable{
 	
 
+
+	private static final long serialVersionUID = 1L;
 	private String nombre;
 	private String apellidos;
 	private String dni;
