@@ -202,7 +202,7 @@ public class JPanelCatalogo extends JFrame {
 	
 	private void cargarDatosDeEjemplo() {
 		
-		// La columna de IMAGEN se deja como String simple por ahora, pero meter imagen mas adelante. 
+		// IAG. 
 		
 		Object[][] data = {
 				{"Pantalón Denim \"Explorer\"", "vaquero.png", 59.99},

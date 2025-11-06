@@ -48,7 +48,7 @@ public class JFrameAutenticacion extends JFrame {
     private JButton btnCrearCuenta;
     
     
-    private Image backgroundImage; 
+    private Image backgroundImage;
     
     public JFrameAutenticacion() {
        
@@ -60,19 +60,20 @@ public class JFrameAutenticacion extends JFrame {
         setResizable(true); 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
         
+        // IAG
         
         try {
-            backgroundImage = new ImageIcon(getClass().getResource("/images/escaparate.jpg")).getImage();
+            backgroundImage = new ImageIcon(getClass().getResource("/images/escaparate.png")).getImage();
         } catch (Exception e) {
-            System.err.println("Error al cargar la imagen de fondo: /images/escaparate.jpg");
+            System.err.println("Error al cargar la imagen de fondo: /images/escaparate.png"); 
             e.printStackTrace();
             backgroundImage = null;
         }
-
+	
         
-        JPanel contentPaneWithBackground = new JPanel(new GridBagLayout()) {
-            private static final long serialVersionUID = 1L;
+        JPanel contentPane = new JPanel(new GridBagLayout()) {
             
             @Override
             protected void paintComponent(Graphics g) {
@@ -83,8 +84,8 @@ public class JFrameAutenticacion extends JFrame {
             }
         };
         
-        contentPaneWithBackground.setOpaque(true);
-        setContentPane(contentPaneWithBackground);
+        contentPane.setOpaque(true);
+        setContentPane(contentPane);
 
         
         JPanel panelRegistro = crearPanelRegistro();
@@ -97,21 +98,23 @@ public class JFrameAutenticacion extends JFrame {
         panelLogin.setOpaque(true); 
         
         
-        panelRegistro.setPreferredSize(new Dimension(550, 500));
-        panelLogin.setPreferredSize(new Dimension(400, 400));  
+        panelRegistro.setPreferredSize(new Dimension(600, 300)); 
+        panelLogin.setPreferredSize(new Dimension(480, 300));  
         
        
+        // IAG
+        
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0; 
         gbc.gridy = 0; 
         gbc.insets = new Insets(0, 0, 0, 15); 
         
-        contentPaneWithBackground.add(panelLogin, gbc);
+        contentPane.add(panelLogin, gbc);
         
         gbc.gridx = 1; 
         gbc.insets = new Insets(0, 15, 0, 0); 
         
-        contentPaneWithBackground.add(panelRegistro, gbc);
+        contentPane.add(panelRegistro, gbc);
         
         agregarListeners();
     }
@@ -262,7 +265,7 @@ public class JFrameAutenticacion extends JFrame {
         for (String userPass : usuarios) {
             if (userPass.startsWith(usuario + ":")) {
                 mostrarError("❌ El nombre de usuario '" + usuario + "' ya está registrado. Por favor, elija otro.", "Error de Registro");
-                return;
+                return; 
             }
         }
 
@@ -274,6 +277,25 @@ public class JFrameAutenticacion extends JFrame {
             return;
         }
         
+        if (contrasena1.length() < 6) {
+        	mostrarError("❌ La contraseña debe tener al menos 6 caracteres.", "Contraseña Débil");
+            return;
+        }
+        
+        
+        boolean tieneNumero = false;
+        
+        for (char c: contrasena1.toCharArray()) {
+        	if (Character.isDigit(c)) {
+        		tieneNumero = true;
+        		break;
+        	}
+        }
+        
+        if (!tieneNumero) {
+            mostrarError("❌ La contraseña debe contener al menos un número.", "Contraseña Débil");
+            return;
+        }
         
         usuarios.add(usuario + ":" + contrasena1);
         JOptionPane.showMessageDialog(this, "🎉 ¡Cuenta creada con éxito!\nAhora puede iniciar sesión.", "Registro Exitoso", JOptionPane.INFORMATION_MESSAGE);
@@ -286,14 +308,11 @@ public class JFrameAutenticacion extends JFrame {
     }
     
     private void mostrarError(String mensaje, String titulo) {
-       
-        String mensajeHTML = "<html><font color='red'><b>¡ERROR!</b></font><br>" + mensaje + "</html>";
-        JOptionPane.showMessageDialog(this, mensajeHTML, titulo, JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(this, mensaje, titulo, JOptionPane.ERROR_MESSAGE);
     }
-    
+
     private void mostrarExito(String mensaje, String titulo) {
-        String mensajeHTML = "<html><font color='green'><b>✔ ÉXITO</b></font><br>" + mensaje + "</html>";
-        JOptionPane.showMessageDialog(this, mensajeHTML, titulo, JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(this, "✅ " + mensaje, titulo, JOptionPane.INFORMATION_MESSAGE);
     }
 
 
