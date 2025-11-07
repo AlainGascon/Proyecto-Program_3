@@ -41,7 +41,7 @@ public class VentanaCarrito extends JFrame {
         getContentPane().add(pNorte, BorderLayout.NORTH);
         getContentPane().add(pSur, BorderLayout.SOUTH);
 
-        ImageIcon im2= new ImageIcon("img/carrito.png");
+        ImageIcon im2= new ImageIcon("imagenes/carrito.png");
         JLabel lblTitulo = new JLabel("Carrito",im2, SwingConstants.LEFT);
         lblTitulo.setFont(new Font("Arial", Font.BOLD, 22));
         pNorte.add(lblTitulo, BorderLayout.WEST);
@@ -65,7 +65,7 @@ public class VentanaCarrito extends JFrame {
         btnPagar.setFont(new Font("Arial",Font.BOLD,14));
         btnPagar.setForeground(Color.WHITE);
         btnPagar.setBackground(new Color(46, 204, 113)	);
-        ImageIcon im= new ImageIcon("img/salir.png");
+        ImageIcon im= new ImageIcon("imagenes/salir.png");
         btnSalir = new JButton(im);
 
         pIzqAbajo.add(btnEliminar);

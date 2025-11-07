@@ -3,15 +3,20 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
+import java.util.Date;
+import java.util.Random;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+
+import domain.Pago;
 
 public class VentanaPago extends JFrame{
 	private JLabel lblTitulo, lblTotal, lblDireccion, lblTitular,lblTarjeta, lblMetodo;
@@ -33,7 +38,7 @@ public class VentanaPago extends JFrame{
 		pCentro= new JPanel(new GridLayout(4,2,10,15));
 		pSur= new JPanel(new FlowLayout(FlowLayout.RIGHT,15,10));
 
-		ImageIcon im= new ImageIcon("img/pago.png");
+		ImageIcon im= new ImageIcon("imagenes/pago.png");
 		lblTitulo= new JLabel("Pago del Pedido",im, SwingConstants.LEFT);
 		lblTotal= new JLabel("Total: "+total);	
 		lblDireccion= new JLabel("Dirección de envío");
@@ -70,6 +75,29 @@ public class VentanaPago extends JFrame{
 		add(pNorte, BorderLayout.NORTH);
 		add(pSur,BorderLayout.SOUTH);
 		add(pCentro, BorderLayout.CENTER);
+		
+		//listeners
+		btnCancelar.addActionListener((e)->{
+			dispose();
+		});
+		
+		btnConfirmar.addActionListener((e)->{
+			String dirrecion= txtDireccion.getText();
+			String titular= txtTitular.getText();
+			String tarjeta= txtTarjeta.getText();
+			String metodo= cbMetodoPago.getSelectedItem().toString();
+			
+			if(dirrecion.isEmpty() || titular.isEmpty() || tarjeta.isEmpty() ) {
+				JOptionPane.showMessageDialog(this, "Completa todos los campos.");
+				return;
+			}
+			int idPago= new Random().nextInt(100000);
+			String transaccion= "TXN"+ System.currentTimeMillis();
+			
+			Pago pago= new Pago(idPago, total, metodo, "Pago Completado", new Date(), transaccion, tarjeta, titular);
+			
+			JOptionPane.showMessageDialog(this, "✅Pago realizado con éxito.\n\n"+"Transacción: "+pago.getNumTransaccion()+"\n");
+		});
 		
 		setVisible(true);
 	}
