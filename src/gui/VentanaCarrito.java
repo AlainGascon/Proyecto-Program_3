@@ -151,6 +151,8 @@ public class VentanaCarrito extends JFrame {
         lista.add(new ItemCarrito(p2, 1)); 
         lista.add(new ItemCarrito(p3, 1));  
         lista.add(new ItemCarrito(p4, 1)); 
+        
+       
 
         new VentanaCarrito(lista);
     }

@@ -6,7 +6,7 @@ import javax.swing.table.DefaultTableModel;
 import domain.ItemCarrito;
 
 public class ModeloTablaCompras extends DefaultTableModel {
-    private List<String> titulos = Arrays.asList("Producto", "Cantidad", "Precio Unitario", "Total");
+    private List<String> titulos = Arrays.asList("Producto", "Cantidad", "Precio Unitario", "Total","Acciones");
     private List<ItemCarrito> listaItems;
 
     public ModeloTablaCompras(List<ItemCarrito> lista) {
@@ -42,6 +42,7 @@ public class ModeloTablaCompras extends DefaultTableModel {
             case 1: return item.getCantidad();
             case 2: return item.getProducto().getPrecio();
             case 3: return item.getCantidad() * item.getProducto().getPrecio();
+            case 4: return "Modificar";
             default: return null;
         }
     }
