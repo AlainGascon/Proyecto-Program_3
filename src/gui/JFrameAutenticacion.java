@@ -27,6 +27,8 @@ import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.border.TitledBorder;
 
+import gui.JFramePrincipal;
+
 public class JFrameAutenticacion extends JFrame {
 
     private static final long serialVersionUID = 1L;
@@ -102,6 +104,8 @@ public class JFrameAutenticacion extends JFrame {
         panelLogin.setPreferredSize(new Dimension(480, 300));  
         
        
+        
+        
         // IAG
         
         GridBagConstraints gbc = new GridBagConstraints();

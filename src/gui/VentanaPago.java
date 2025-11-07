@@ -16,6 +16,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
+import gui.JFramePrincipal;
 import domain.Pago;
 
 public class VentanaPago extends JFrame{

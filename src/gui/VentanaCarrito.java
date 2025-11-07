@@ -23,7 +23,11 @@ public class VentanaCarrito extends JFrame {
     private ModeloTablaCompras modeloTabla;
     private List<ItemCarrito> listaItems;
     private JLabel lblTotal;
-    private JButton btnEliminar, btnVaciar, btnPagar, btnSalir;
+    private JButton btnEliminar; 
+    private JButton btnVaciar;
+    private JButton btnPagar;
+    private JButton btnSalir;
+    
 
     public VentanaCarrito(List<ItemCarrito> lista) {
         super();
