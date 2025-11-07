@@ -7,31 +7,24 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.Image;
-import java.awt.LayoutManager;
 import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.MouseEvent; 
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JFrame; 
 import javax.swing.JLabel;
-import javax.swing.JPanel; // CAMBIO CLAVE: Ahora extiende JPanel
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
-import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.border.TitledBorder;
 
-// Importar clases de dominio necesarias (asumiendo que existen)
 import domain.Producto; 
-// Importar la clase principal para acceder al método del carrito
-import gui.JFramePrincipal;
 
-// ----------------------------------------------------------------------------------
-// CAMBIO CLAVE: EXTENDER JPanel
-// ----------------------------------------------------------------------------------
-public class JPanelCatalogo extends JPanel {
+public class JPanelCatalogo extends JPanel { 
 
 	private static final long serialVersionUID = 1L;
 	
@@ -43,172 +36,361 @@ public class JPanelCatalogo extends JPanel {
 	private JButton btnAnadirCarrito;
 	
 	private ProductCardPanel productoSeleccionado = null; 
+    private int cantidad = 1; 
 
 	private static final Color COLOR_PRIMARIO = new Color(30, 144, 255);
 	private static final Color COLOR_FONDO_CLARO = Color.WHITE;
-	private static final Color COLOR_FONDO_OSCURO = new Color(240, 248, 255);
-	
-	// Datos de prueba (simplificados de tu snippet original)
-	private Object[][] datosProductos = {
-		{"Pantalón Vaquero Clásico", "pantalon_vaquero.png", 49.99},
-		{"Camiseta Racing Team", "camiseta_racing.png", 13.95},
-		{"Jersey Trenzado \"Nordic\"", "jersey_n.png", 55.00},
-		{"Chaqueta Bomber \"Pilot\"", "bomber.png", 69.95},
-		// ... (Añadir el resto de tus productos aquí)
-	};
-	
+	private static final Color COLOR_FONDO_OSCURO = new Color(245, 245, 245);
+	private static final Color COLOR_HOVER = new Color(173, 216, 230); 
+
 	public JPanelCatalogo() {
-		// Ya no se llama super(); y no se establecen propiedades de JFrame
 		
-		this.setLayout(new BorderLayout(10,10));
-		this.setBackground(COLOR_FONDO_OSCURO);
+		this.setLayout(new BorderLayout()); 
 		
-		// 1. Panel Norte (Filtros y Búsqueda)
-		JPanel pNorteFiltros = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
-		pNorteFiltros.setBackground(COLOR_FONDO_CLARO);
-		pNorteFiltros.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(COLOR_PRIMARIO, 1), 
-				"Filtros de Búsqueda", TitledBorder.LEFT, TitledBorder.TOP, new Font("SansSerif", Font.BOLD, 12), COLOR_PRIMARIO));
+		btnAnadirCarrito = new JButton("🛒 Añadir al Carrito");
+		btnAnadirCarrito.setFont(new Font("SansSerif", Font.BOLD, 16));
+		btnAnadirCarrito.setBackground(new Color(250, 179, 113));
+		btnAnadirCarrito.setForeground(Color.BLACK);
+		btnAnadirCarrito.setFocusPainted(false);
+		btnAnadirCarrito.setBorder(BorderFactory.createEmptyBorder(10, 25, 10, 25));
+		btnAnadirCarrito.setEnabled(false);
 		
-		txtFiltro = new JTextField(20);
-		JButton btnBuscar = new JButton("Buscar");
 		
-		pNorteFiltros.add(new JLabel("Buscar Producto:"));
-		pNorteFiltros.add(txtFiltro);
-		pNorteFiltros.add(btnBuscar);
 		
-		this.add(pNorteFiltros, BorderLayout.NORTH);
+		JPanel pNorte = new JPanel(new BorderLayout(10, 0));
+		pNorte.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
+		JLabel lblTitulo = new JLabel("Catálogo de Productos", JLabel.LEFT);
+		lblTitulo.setBackground(new Color(250, 179, 113)); 
+		lblTitulo.setFont(new Font("SansSerif", Font.BOLD, 20));
+		
+		pNorte.add(lblTitulo, BorderLayout.WEST);
+		
+		
+		this.add(pNorte, BorderLayout.NORTH); 
+		
+		JPanel panelIzquierda = new JPanel(new BorderLayout(0, 15));
+		panelIzquierda.setBackground(COLOR_FONDO_OSCURO);
+		panelIzquierda.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 0));
+		
+		panelIzquierda.add(panelProductos(), BorderLayout.CENTER);
+		
+		
+		panelDetallesProducto = panelDetallesProducto();
+		panelDetallesProducto.setPreferredSize(new Dimension(0, 250));
+		panelIzquierda.add(panelDetallesProducto, BorderLayout.SOUTH);
 
-		// 2. Panel Central (Listado de Productos)
-		panelTarjetasProductos = new JPanel(new GridLayout(0, 4, 15, 15)); 
-		panelTarjetasProductos.setBackground(COLOR_FONDO_OSCURO);
-		
-		JScrollPane scroll = new JScrollPane(panelTarjetasProductos);
-		scroll.setBorder(BorderFactory.createEmptyBorder());
-		scroll.getVerticalScrollBar().setUnitIncrement(16);
+		add(panelIzquierda, BorderLayout.CENTER); 
 
-		this.add(scroll, BorderLayout.CENTER);
+		JPanel panelDerechaVacio = new JPanel(new BorderLayout());
+		panelDerechaVacio.setBackground(COLOR_FONDO_CLARO);
+		TitledBorder bordeInfo = BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.GRAY, 1), "🛒 Cesta / Filtros Avanzados");
+		bordeInfo.setTitleFont(new Font("SansSerif", Font.BOLD, 14));
+		bordeInfo.setTitleColor(Color.DARK_GRAY);
+		panelDerechaVacio.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(10, 0, 10, 10), bordeInfo));
+		panelDerechaVacio.setPreferredSize(new Dimension(350, 0)); 
 
-		// 3. Panel Este (Detalles del Producto)
-		panelDetallesProducto = new JPanel(new BorderLayout());
-		panelDetallesProducto.setPreferredSize(new Dimension(300, 0));
-		panelDetallesProducto.setBackground(COLOR_FONDO_CLARO);
-		panelDetallesProducto.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.GRAY), 
-				"Detalle del Producto", TitledBorder.CENTER, TitledBorder.TOP, new Font("SansSerif", Font.BOLD, 14)));
-
-		// Contenido que se actualiza al seleccionar una tarjeta
-		panelContenidoDetalle = new JPanel(new GridLayout(6, 1, 5, 5));
-		panelContenidoDetalle.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-		panelDetallesProducto.add(panelContenidoDetalle, BorderLayout.CENTER);
 		
-		// Botón de Añadir al Carrito (Parte inferior del panel de detalles)
-		btnAnadirCarrito = new JButton("➕ Añadir al Carrito");
-		btnAnadirCarrito.setBackground(COLOR_PRIMARIO);
-		btnAnadirCarrito.setForeground(Color.WHITE);
-		btnAnadirCarrito.setEnabled(false); // Deshabilitado hasta seleccionar un producto
+		JLabel lblInfoAd = new JLabel("<html><div style='text-align: center; color: gray;'>Aquí irían los filtros de talla, color o el resumen de la cesta de compra.</div></html>", JLabel.CENTER);
+		lblInfoAd.setFont(new Font("SansSerif", Font.ITALIC, 14));
+		panelDerechaVacio.add(lblInfoAd, BorderLayout.CENTER);
 		
-		JPanel pSurDetalles = new JPanel(new FlowLayout(FlowLayout.CENTER));
-		pSurDetalles.add(btnAnadirCarrito);
-		panelDetallesProducto.add(pSurDetalles, BorderLayout.SOUTH);
-
-		this.add(panelDetallesProducto, BorderLayout.EAST);
+		add(panelDerechaVacio, BorderLayout.EAST);
 		
-		// Inicializar Productos
-		cargarProductos(datosProductos);
-		
-		// 4. Listener del botón Añadir al Carrito
-		btnAnadirCarrito.addActionListener(e -> {
+        
+        btnAnadirCarrito.addActionListener(e -> {
 			if (productoSeleccionado != null) {
-				// ----------------------------------------------------------------------------------
-				// LLAMADA CLAVE: Usar el método estático de JFramePrincipal
-				// NOTA: Se asume que el objeto Producto real está en 'productoSeleccionado.producto'
-				// Y que la cantidad es 1 para este ejemplo simple.
-				// ----------------------------------------------------------------------------------
-				// Si necesitas la cantidad, deberías obtenerla de un JSpinner o JTextField.
-				Producto productoDummy = new Producto(1, productoSeleccionado.getNombre(), productoSeleccionado.getPrecio());
-				JFramePrincipal.agregarItemAlCarrito(productoDummy, 1);
-				
-				System.out.println("Producto añadido: " + productoSeleccionado.getNombre());
+				Producto p = new Producto(
+                    productoSeleccionado.hashCode(), 
+                    productoSeleccionado.nombreProducto, 
+                    "Descripción por defecto", 
+                    productoSeleccionado.precio, 
+                    "M", "Negro", 1, "Ropa", "Marca", true
+                );
+				JFramePrincipal.agregarItemAlCarrito(p, cantidad); 
+				System.out.println("Producto añadido: " + productoSeleccionado.nombreProducto);
 			}
 		});
 	}
+	
+	public JPanel panelProductos() {
 
-	private void cargarProductos(Object[][] datos) {
-		panelTarjetasProductos.removeAll();
-		for (Object[] data : datos) {
-			String nombre = (String) data[0];
-			String imagen = (String) data[1];
-			double precio = (double) data[2];
-			
-			// Nota: La clase ProductoCardPanel está definida a continuación
-			ProductCardPanel card = new ProductCardPanel(nombre, imagen, precio);
-			
-			card.addMouseListener(new MouseAdapter() {
-				@Override
-				public void mouseClicked(MouseEvent e) {
-					mostrarDetalle(card);
-				}
-			});
-			panelTarjetasProductos.add(card);
-		}
-		panelTarjetasProductos.revalidate();
-		panelTarjetasProductos.repaint();
+	    panelTarjetasProductos = new JPanel(new GridLayout(0, 4, 15, 15)); 
+	    panelTarjetasProductos.setBackground(COLOR_FONDO_CLARO);
+	    panelTarjetasProductos.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+	    cargarDatosDeEjemplo(); 
+
+	    JScrollPane scrollPaneProductos = new JScrollPane(panelTarjetasProductos);
+	    scrollPaneProductos.setBorder(BorderFactory.createEmptyBorder());
+	    
+	    this.txtFiltro = new JTextField(15); 
+	    this.txtFiltro.setFont(new Font("SansSerif", Font.PLAIN, 14));
+	    this.txtFiltro.setBorder(BorderFactory.createLineBorder(COLOR_PRIMARIO, 1));
+
+	    
+	    JPanel panelFiltro = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 10));
+	    panelFiltro.setBackground(COLOR_FONDO_CLARO);
+	    
+	    
+	    JLabel lblFiltro = new JLabel("🔍 Buscar: ");
+	    lblFiltro.setFont(new Font("SansSerif", Font.BOLD, 14));
+	    panelFiltro.add(lblFiltro);
+	    panelFiltro.add(txtFiltro);
+	    
+	    
+	    JLabel lblTalla = new JLabel("Talla:");
+	    lblTalla.setFont(new Font("SansSerif", Font.BOLD, 14));
+	    String[] tallas = {"-", "XS", "S", "M", "L", "XL", "XXL"};
+	    JComboBox<String> comboTalla = new JComboBox<>(tallas);
+	    comboTalla.setFont(new Font("SansSerif", Font.PLAIN, 14));
+	    
+	    panelFiltro.add(lblTalla);
+	    panelFiltro.add(comboTalla);
+
+	    
+	    JLabel lblTipo = new JLabel("Tipo:");
+	    lblTipo.setFont(new Font("SansSerif", Font.BOLD, 14));
+	    String[] tipos = {"-", "Pantalones", "Camisetas", "Abrigos", "Calzado", "Accesorios"};
+	    JComboBox<String> comboTipo = new JComboBox<>(tipos);
+	    comboTipo.setFont(new Font("SansSerif", Font.PLAIN, 14));
+
+	    panelFiltro.add(lblTipo);
+	    panelFiltro.add(comboTipo);
+
+	    
+	    JPanel panelProductosContenedor = new JPanel(new BorderLayout(5, 5));
+	    
+	    TitledBorder bordeProductos = BorderFactory.createTitledBorder(BorderFactory.createLineBorder(COLOR_PRIMARIO, 2), "🛒 PRODUCTOS EN CATÁLOGO");
+	    bordeProductos.setTitleFont(new Font("SansSerif", Font.BOLD, 16));
+	    bordeProductos.setTitleColor(COLOR_PRIMARIO); 
+	    
+	    panelProductosContenedor.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(10, 10, 0, 10), bordeProductos));
+	    panelProductosContenedor.setBackground(COLOR_FONDO_CLARO);
+	    
+	    panelProductosContenedor.add(scrollPaneProductos, BorderLayout.CENTER);
+	    panelProductosContenedor.add(panelFiltro, BorderLayout.NORTH); 
+	    
+	    return panelProductosContenedor;
+	}
+
+
+	
+	public JPanel panelDetallesProducto() {
+		
+		JPanel panelDetalle = new JPanel(new BorderLayout(10, 10));
+		TitledBorder bordeCaracteristicas = BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.GRAY, 1), "📝 DETALLES Y COMPRA DEL ARTÍCULO");
+		bordeCaracteristicas.setTitleFont(new Font("SansSerif", Font.BOLD, 14));
+		bordeCaracteristicas.setTitleColor(Color.DARK_GRAY);
+		panelDetalle.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10), bordeCaracteristicas));
+		panelDetalle.setBackground(COLOR_FONDO_CLARO);
+		
+		panelContenidoDetalle = new JPanel(new BorderLayout());
+		panelContenidoDetalle.setBackground(COLOR_FONDO_CLARO);
+		
+		JLabel lblInfo = new JLabel("<html><div style='text-align: center; color: #555; padding-top:20px;'>Haga clic en un producto para ver la **Descripción**, las **Tallas disponibles** y la **Galería de fotos**.</div></html>", JLabel.CENTER);
+		lblInfo.setFont(new Font("SansSerif", Font.ITALIC, 14));
+		panelContenidoDetalle.add(lblInfo, BorderLayout.CENTER);
+		
+		// 💡 CORRECCIÓN: Se elimina el casting innecesario
+		JPanel panelBoton = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+		panelBoton.setBackground(COLOR_FONDO_CLARO);
+		panelBoton.setBorder(BorderFactory.createEmptyBorder(5, 10, 10, 10));
+		panelBoton.add(btnAnadirCarrito);
+		
+		panelDetalle.add(panelContenidoDetalle, BorderLayout.CENTER);
+		panelDetalle.add(panelBoton, BorderLayout.SOUTH);
+		
+		return panelDetalle;
 	}
 	
-	private void mostrarDetalle(ProductCardPanel card) {
-		// Lógica para resaltar la tarjeta y mostrar detalles
-		if (productoSeleccionado != null) {
-			productoSeleccionado.setBorder(null);
-		}
-		productoSeleccionado = card;
-		productoSeleccionado.setBorder(BorderFactory.createLineBorder(COLOR_PRIMARIO, 3));
-		
-		// Actualizar panel de detalles
-		panelContenidoDetalle.removeAll();
-		panelContenidoDetalle.add(new JLabel("<html><h2>" + card.getNombre() + "</h2></html>"));
-		panelContenidoDetalle.add(new JLabel("Precio: " + String.format("%.2f€", card.getPrecio())));
-		panelContenidoDetalle.add(new JLabel("Descripción: ..."));
-		panelContenidoDetalle.add(new JLabel("Tallas Disponibles: S, M, L"));
-		
-		// Se asume que tienes un JLabel para la imagen aquí
-		panelContenidoDetalle.add(new JLabel("[Imagen de " + card.getNombre() + "]")); 
-		
-		btnAnadirCarrito.setEnabled(true);
-		panelContenidoDetalle.revalidate();
-		panelContenidoDetalle.repaint();
-	}
-	
-	// Clase Interna simplificada (se asume que existe en tu código)
 	private class ProductCardPanel extends JPanel {
 		private static final long serialVersionUID = 1L;
-		private String nombre;
+		private String nombreProducto;
+		private String archivoImagen;
 		private double precio;
-
-		public ProductCardPanel(String nombre, String imagenPath, double precio) {
-			this.nombre = nombre;
+		private String descripcion;
+		
+		@SuppressWarnings("unused")
+		public ProductCardPanel(String nombre, String imagen, double precio, String descripcion) {
+			this.nombreProducto = nombre;
+			this.archivoImagen = imagen;
 			this.precio = precio;
-			this.setLayout(new BorderLayout());
-			this.setBackground(Color.WHITE);
-			this.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
+			this.descripcion = descripcion;
+			
+			setLayout(new BorderLayout());
+			setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY, 1));
+			setBackground(COLOR_FONDO_CLARO);
+			
+			JLabel lblImagen = new JLabel();
+			try {
+				ImageIcon iconOriginal = new ImageIcon(getClass().getResource("/images/" + archivoImagen));
+				
+				
+				Image img = iconOriginal.getImage().getScaledInstance(300, 300, Image.SCALE_SMOOTH); 
+				lblImagen.setIcon(new ImageIcon(img));
+			} catch (Exception e) {
+				lblImagen.setText("[IMG] " + imagen);
+				lblImagen.setHorizontalAlignment(JLabel.CENTER);
+				lblImagen.setPreferredSize(new Dimension(150, 150));
+			}
+			lblImagen.setHorizontalAlignment(JLabel.CENTER);
+			lblImagen.setVerticalAlignment(JLabel.CENTER);
+			add(lblImagen, BorderLayout.CENTER);
+			
+			JPanel panelInfo = new JPanel(new GridLayout(2, 1));
+			panelInfo.setBackground(COLOR_FONDO_OSCURO);
+			panelInfo.setBorder(BorderFactory.createEmptyBorder(5, 10, 10, 10));
+			
+			JLabel lblNombre = new JLabel("<html><b>" + nombre + "</b></html>");
+			lblNombre.setFont(new Font("SansSerif", Font.PLAIN, 14));
+			lblNombre.setHorizontalAlignment(JLabel.CENTER);
+			
+			JLabel lblPrecio = new JLabel(String.format("%.2f €", precio));
+			lblPrecio.setFont(new Font("SansSerif", Font.BOLD, 16));
+			lblPrecio.setForeground(COLOR_PRIMARIO.darker());
+			lblPrecio.setHorizontalAlignment(JLabel.CENTER);
+			
+			panelInfo.add(lblNombre);
+			panelInfo.add(lblPrecio);
+			
+			add(panelInfo, BorderLayout.SOUTH);
+			
+			addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseClicked(MouseEvent e) {
+					if (productoSeleccionado != null) {
+						productoSeleccionado.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY, 1));
+						productoSeleccionado.setBackground(COLOR_FONDO_CLARO);
+					}
+					productoSeleccionado = ProductCardPanel.this;
+					
+					setBorder(BorderFactory.createLineBorder(COLOR_PRIMARIO, 2));
+					setBackground(COLOR_HOVER);
+					
+					mostrarDetallesProducto();
+				}
+				
+				@Override
+				public void mouseEntered(MouseEvent e) {
+					if (productoSeleccionado != ProductCardPanel.this) {
+						setBorder(BorderFactory.createLineBorder(COLOR_PRIMARIO.brighter(), 1));
+					}
+				}
+				
+				@Override
+				public void mouseExited(MouseEvent e) {
+					if (productoSeleccionado != ProductCardPanel.this) {
+						setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY, 1));
+					}
+				}
+			});
+		}
+		
+		private void mostrarDetallesProducto() {
+			panelContenidoDetalle.removeAll();
+			panelContenidoDetalle.setLayout(new BorderLayout(10, 10));
+			
+			
+			
+			JLabel lblDetalleImagen = new JLabel();
+			try {
+				ImageIcon iconOriginal = new ImageIcon(getClass().getResource("/images/" + archivoImagen));
+				
+				
+				Image img = iconOriginal.getImage().getScaledInstance(300, 300, Image.SCALE_SMOOTH); 
+				
+				lblDetalleImagen.setIcon(new ImageIcon(img));
+			} catch (Exception e) {
+				lblDetalleImagen.setText("[IMG]");
+			}
+		
+			
+			lblDetalleImagen.setHorizontalAlignment(JLabel.CENTER);
+			lblDetalleImagen.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY, 1));
+			
+			
+			// IAG
+			lblDetalleImagen.setPreferredSize(new Dimension(280, 250)); 
+			
+			
 
-			JLabel lblNombre = new JLabel(nombre, SwingConstants.CENTER);
-			lblNombre.setFont(new Font("SansSerif", Font.BOLD, 14));
+			    String descripcionDetallada = String.format(
+			        "<html><div style='padding: 10px; font-family: SansSerif;'>"
+			        + "<h3>%s</h3>"
+			        + "<p><b>Precio:</b> <span style='color: %s; font-weight: bold;'>%.2f €</span></p>"
+			        + "<p><b>Descripción:</b> %s</p>" 
+			        + "</div></html>", 
+			        nombreProducto,
+			        String.format("#%06x", COLOR_PRIMARIO.darker().getRGB() & 0xFFFFFF),
+			        precio,
+			        descripcion 
+			    );
+
 			
-			JLabel lblPrecio = new JLabel(String.format("%.2f€", precio), SwingConstants.CENTER);
-			lblPrecio.setForeground(new Color(231, 76, 60)); // Rojo
 			
-			// Placeholder para imagen (asumiendo que las imágenes no están disponibles aquí)
-			JLabel lblImagen = new JLabel("[IMG]");
-			lblImagen.setPreferredSize(new Dimension(150, 150));
-			lblImagen.setHorizontalAlignment(SwingConstants.CENTER);
+			JLabel lblDetalleInfo = new JLabel(descripcionDetallada);
+			lblDetalleInfo.setVerticalAlignment(JLabel.TOP);
 			
-			this.add(lblImagen, BorderLayout.CENTER);
-			JPanel pSur = new JPanel(new GridLayout(2, 1));
-			pSur.add(lblNombre);
-			pSur.add(lblPrecio);
-			this.add(pSur, BorderLayout.SOUTH);
+			JPanel panelDetalleContenido = new JPanel(new BorderLayout(10, 10));
+			panelDetalleContenido.setBackground(COLOR_FONDO_CLARO);
+			
+			
+			panelDetalleContenido.add(lblDetalleImagen, BorderLayout.WEST); 
+			panelDetalleContenido.add(lblDetalleInfo, BorderLayout.CENTER);
+			
+			panelContenidoDetalle.add(panelDetalleContenido, BorderLayout.CENTER);
+			
+			btnAnadirCarrito.setEnabled(true);
+			
+			panelDetallesProducto.revalidate();
+			panelDetallesProducto.repaint();
+			
+			TitledBorder borde = (TitledBorder) panelDetallesProducto.getBorder();
+			borde.setTitle("📝 DETALLES Y COMPRA: " + nombreProducto.toUpperCase());
 		}
 
-		public String getNombre() { return nombre; }
-		public double getPrecio() { return precio; }
+		
+	}
+	
+	private void cargarDatosDeEjemplo() {
+	    
+	    Object[][] data = {
+	        
+	        {"Camiset Basica Blanca", "camiseta_blanca.png", 15.95, "Algodón 100% orgánico, corte clásico y duradero. Ideal para el día a día."},
+	        {"Camiseta Honda NSX-R", "camiseta_honda.png", 19.95, "Diseño exclusivo de edición limitada, cuello reforzado y estampado de alta calidad."},
+	        {"Camiseta Mickey Mouse", "camiseta_mickey.png", 17.95, "Estampado retro del famoso ratón. Tacto suave y ajuste regular."},
+	        {"Camiseta Tom & Jerry", "camiseta_tom-jerry.png", 17.99, "Divertida camiseta con los personajes clásicos."},
+	        {"Camieta KTM", "camiseta_ktm.png", 19.95, "Estilo de competición. Tejido transpirable y ligero, perfecto para fans del motor."},
+	        {"Camiseta Racing Team", "camiseta_racing.png", 13.95, "Inspirada en las carreras. Ajuste cómodo y tejido de fácil cuidado."},
+	        {"Camiseta Friday Gaming Club", "camiseta_friday.png", 21.95, "Para tus noches de juego. Diseño moderno y tejido fresco."},
+	        {"Pantalon Cargo Baggy", "pantalon_cargo.png", 55.00, "Estilo 'Baggy' con múltiples bolsillos. Máxima comodidad y tendencia."},
+	        {"Pantalon Tailoring Wide Leg", "pantalon_tailoring.png", 69.95, "Elegancia y corte ancho. Ideal para ocasiones formales e informales."},
+	        {"Pantalon Jogger Relaxed Fit", "pantalon_jogger.png", 54.99, "Cintura elástica y bajos ajustados. Perfecto para deporte o relax."},
+	        {"Pantalon Chino Skinny Fit", "pantalon_chino.png", 39.90, "Corte ajustado y tejido elástico que se adapta a tu cuerpo."},
+	        {"Sudadera Capucha Clasica", "sudadera_clasica.png", 79.99, "Suela de amortiguación avanzada y malla transpirable. Ligereza en cada pisada."},
+	        {"Abrigo Lana \"Classic Fit\"", "abrigo_lana.png", 129.99, "Composición de lana virgen, corte clásico y botones ocultos. Muy cálido."},
+	        {"Botines Cuero \"Chelsea\"", "botines_c.png", 89.90, "Piel auténtica, suela antideslizante y elástico lateral. Durabilidad y estilo."},
+	        {"Gorra Béisbol Logo", "gorra_logo.png", 17.50, "Ajustable, con visera curva y logo bordado. 100% algodón."},
+	    };
+
+	    for (Object[] row : data) {
+	        String nombre = (String) row[0];
+	        String imagen = (String) row[1];
+	        double precio = (double) row[2];
+	        String descripcion = (String) row[3]; // **NUEVA LÍNEA**
+	        
+	        
+	        panelTarjetasProductos.add(new ProductCardPanel(nombre, imagen, precio, descripcion)); 
+	    }
+	}
+	
+	public static void main(String[] args) {
+		SwingUtilities.invokeLater(() -> {
+			JFrame tempFrame = new JFrame("Catálogo de Prueba");
+            tempFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            tempFrame.add(new JPanelCatalogo());
+            tempFrame.setSize(1200, 800);
+            tempFrame.setLocationRelativeTo(null);
+			tempFrame.setVisible(true);
+		});
 	}
 }

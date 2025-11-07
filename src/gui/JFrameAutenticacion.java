@@ -29,7 +29,7 @@ import javax.swing.border.TitledBorder;
 
 import gui.JFramePrincipal;
 
-public class JFrameAutenticacion extends JFrame {
+public class JFrameAutenticacion extends JPanel {
 
     private static final long serialVersionUID = 1L;
 
@@ -57,12 +57,6 @@ public class JFrameAutenticacion extends JFrame {
         usuarios = new Vector<>();
         usuarios.add("admin:1234"); 
 
-        setTitle("🔑 Acceso y Registro de Usuario");
-        setSize(1000, 550); 
-        setResizable(true); 
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLocationRelativeTo(null);
-        setExtendedState(JFrame.MAXIMIZED_BOTH);
         
         // IAG
         
@@ -86,9 +80,6 @@ public class JFrameAutenticacion extends JFrame {
             }
         };
         
-        contentPane.setOpaque(true);
-        setContentPane(contentPane);
-
         
         JPanel panelRegistro = crearPanelRegistro();
         JPanel panelLogin = crearPanelLogin();
@@ -102,9 +93,7 @@ public class JFrameAutenticacion extends JFrame {
         
         panelRegistro.setPreferredSize(new Dimension(600, 300)); 
         panelLogin.setPreferredSize(new Dimension(480, 300));  
-        
-       
-        
+ 
         
         // IAG
         
