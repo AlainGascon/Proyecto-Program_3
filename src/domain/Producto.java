@@ -36,6 +36,23 @@ public class Producto {
 		this.activo = activo;
 		this.opiniones = opiniones;
 	}
+	
+	public Producto(int id, String nombre, String descripcion, double precio, String talla, String color, int stock,
+			String categoria, String marca, boolean activo) {
+		super();
+		this.id = id;
+		this.nombre = nombre;
+		this.descripcion = descripcion;
+		this.precio = precio;
+		this.talla = talla;
+		this.color = color;
+		this.stock = stock;
+		this.categoria = categoria;
+		this.marca = marca;
+		this.activo = activo;
+		//this.opiniones = opiniones;
+	}
+
 
 
 
