@@ -16,9 +16,10 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
+import gui.JFramePrincipal;
 import domain.Pago;
 
-public class VentanaPago extends JFrame{
+public class VentanaPago extends JFrame{ 
 	private JLabel lblTitulo, lblTotal, lblDireccion, lblTitular,lblTarjeta, lblMetodo;
 	private JPanel pNorte, pCentro, pSur;
 	private JButton btnConfirmar, btnCancelar;

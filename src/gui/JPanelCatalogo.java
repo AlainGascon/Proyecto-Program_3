@@ -1,336 +1,396 @@
 package gui;
 
-
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.GridLayout;
-import java.awt.LayoutManager;
-import java.awt.Point;
+import java.awt.Image;
 import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionAdapter;
-import java.util.Arrays;
-import java.util.Vector;
+import java.awt.event.MouseEvent; 
 
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JFrame;
+import javax.swing.JComboBox;
+import javax.swing.JFrame; 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
-import javax.swing.border.Border; 
 import javax.swing.border.TitledBorder;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableCellRenderer; 
-import java.awt.Font; 
 
-import javax.swing.JTable;
+import domain.Producto; 
 
-public class JPanelCatalogo extends JFrame {
-	
+public class JPanelCatalogo extends JPanel { 
+
 	private static final long serialVersionUID = 1L;
-	private int filaTablaProductos = -1;
-	public JTextField display;
 	
+	private JPanel panelTarjetasProductos;
+	private JPanel panelDetallesProducto;
+	private JPanel panelContenidoDetalle; 
 	
-	private JTable tablaProductos;
-	private DefaultTableModel modeloDatosProductos;
 	private JTextField txtFiltro;
-	private JTable tablaExplicacion;
-	private DefaultTableModel modeloDatosExplicacion;
-	
 	private JButton btnAnadirCarrito;
 	
-	private static final Color COLOR_PRIMARIO = new Color(30, 144, 255); 
+	private ProductCardPanel productoSeleccionado = null; 
+    private int cantidad = 1; 
+
+	private static final Color COLOR_PRIMARIO = new Color(30, 144, 255);
 	private static final Color COLOR_FONDO_CLARO = Color.WHITE;
-	private static final Color COLOR_FONDO_OSCURO = new Color(245, 245, 245); 
+	private static final Color COLOR_FONDO_OSCURO = new Color(245, 245, 245);
 	private static final Color COLOR_HOVER = new Color(173, 216, 230); 
 
-	
 	public JPanelCatalogo() {
-        setTitle("📦 Catálogo de Productos"); 
-        setSize(1200, 750); 
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLocationRelativeTo(null);
-        setLayout(new BorderLayout(15, 15)); 
-        getContentPane().setBackground(COLOR_FONDO_OSCURO); 
-        
-        tablaProductos = new JTable();
-        tablaExplicacion = new JTable();
-        initTables();
-
-        
-        JPanel panelIzquierda = panelProductos();
-        add(panelIzquierda, BorderLayout.WEST);
-
-        
-        JPanel panelDerecha = panelDetalles();
-        add(panelDerecha, BorderLayout.CENTER);
-        
-        panelIzquierda.setPreferredSize(new Dimension(450, getHeight())); 
-    }
-	
-    
-	public JPanel panelDetalles() {
 		
-		JPanel panelDerecha = new JPanel(new GridLayout(2, 1, 15, 15)); 
-		panelDerecha.setBackground(COLOR_FONDO_OSCURO);
-		panelDerecha.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 10)); 
-
-		
-        JPanel panelSuperior = new JPanel(new BorderLayout()); 
-		
-		TitledBorder bordeCaracteristicas = BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.GRAY, 1), "📝 CARACTERÍSTICAS DEL ARTÍCULO SELECCIONADO");
-		bordeCaracteristicas.setTitleFont(new Font("SansSerif", Font.BOLD, 14));
-		bordeCaracteristicas.setTitleColor(Color.DARK_GRAY);
-		panelSuperior.setBorder(bordeCaracteristicas);
-		panelSuperior.setBackground(COLOR_FONDO_CLARO);
-		
-		JLabel lblInfo = new JLabel("<html><div style='text-align: center; color: gray;'>TALLA, STOCK, DESCRIPCIÓN... <br>(Panel de detalles)</div></html>", JLabel.CENTER);
-		lblInfo.setFont(new Font("SansSerif", Font.ITALIC, 14));
-		panelSuperior.add(lblInfo, BorderLayout.CENTER); 
-
+		this.setLayout(new BorderLayout()); 
 		
 		btnAnadirCarrito = new JButton("🛒 Añadir al Carrito");
-        btnAnadirCarrito.setFont(new Font("SansSerif", Font.BOLD, 16));
-        btnAnadirCarrito.setBackground(new Color(250, 179, 113));
-        btnAnadirCarrito.setForeground(Color.BLACK);
-        btnAnadirCarrito.setFocusPainted(false);
-        btnAnadirCarrito.setBorder(BorderFactory.createEmptyBorder(10, 25, 10, 25));
-        btnAnadirCarrito.setEnabled(true);
-        
-        JPanel panelBoton = new JPanel((LayoutManager) new FlowLayout(FlowLayout.RIGHT)); 
-        panelBoton.setBackground(COLOR_FONDO_CLARO);
-        panelBoton.setBorder(BorderFactory.createEmptyBorder(60, 10, 10, 10));
-        panelBoton.add(btnAnadirCarrito);
-        
-        panelSuperior.add(panelBoton, BorderLayout.SOUTH);
-        
-        
-		JPanel panelInferior = new JPanel(new BorderLayout());
-		TitledBorder bordeExplicacion = BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.GRAY, 1), "📊 INFORMACIÓN ADICIONAL");
-		bordeExplicacion.setTitleFont(new Font("SansSerif", Font.BOLD, 14));
-		bordeExplicacion.setTitleColor(Color.DARK_GRAY);
-		panelInferior.setBorder(bordeExplicacion);
-		panelInferior.setBackground(COLOR_FONDO_CLARO);
+		btnAnadirCarrito.setFont(new Font("SansSerif", Font.BOLD, 16));
+		btnAnadirCarrito.setBackground(new Color(250, 179, 113));
+		btnAnadirCarrito.setForeground(Color.BLACK);
+		btnAnadirCarrito.setFocusPainted(false);
+		btnAnadirCarrito.setBorder(BorderFactory.createEmptyBorder(10, 25, 10, 25));
+		btnAnadirCarrito.setEnabled(false);
 		
-		JLabel lblExplicacion = new JLabel("<html><div style='text-align: center; color: gray;'>Aquí iría la tablaExplicacion <br>o gráficos de datos.</div></html>", JLabel.CENTER);
-		lblExplicacion.setFont(new Font("SansSerif", Font.ITALIC, 14));
-		panelInferior.add(lblExplicacion, BorderLayout.CENTER); 
+		
+		
+		JPanel pNorte = new JPanel(new BorderLayout(10, 0));
+		pNorte.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
+		JLabel lblTitulo = new JLabel("Catálogo de Productos", JLabel.LEFT);
+		lblTitulo.setBackground(new Color(250, 179, 113)); 
+		lblTitulo.setFont(new Font("SansSerif", Font.BOLD, 20));
+		
+		pNorte.add(lblTitulo, BorderLayout.WEST);
+		
+		
+		this.add(pNorte, BorderLayout.NORTH); 
+		
+		JPanel panelIzquierda = new JPanel(new BorderLayout(0, 15));
+		panelIzquierda.setBackground(COLOR_FONDO_OSCURO);
+		panelIzquierda.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 0));
+		
+		panelIzquierda.add(panelProductos(), BorderLayout.CENTER);
+		
+		
+		panelDetallesProducto = panelDetallesProducto();
+		panelDetallesProducto.setPreferredSize(new Dimension(0, 250));
+		panelIzquierda.add(panelDetallesProducto, BorderLayout.SOUTH);
 
-        panelDerecha.add(panelSuperior);
-        panelDerecha.add(panelInferior);
+		add(panelIzquierda, BorderLayout.CENTER); 
+
+		JPanel panelDerechaVacio = new JPanel(new BorderLayout());
+		panelDerechaVacio.setBackground(COLOR_FONDO_CLARO);
+		TitledBorder bordeInfo = BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.GRAY, 1), "🛒 Cesta / Filtros Avanzados");
+		bordeInfo.setTitleFont(new Font("SansSerif", Font.BOLD, 14));
+		bordeInfo.setTitleColor(Color.DARK_GRAY);
+		panelDerechaVacio.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(10, 0, 10, 10), bordeInfo));
+		panelDerechaVacio.setPreferredSize(new Dimension(350, 0)); 
+
 		
-		return panelDerecha;
+		JLabel lblInfoAd = new JLabel("<html><div style='text-align: center; color: gray;'>Aquí irían los filtros de talla, color o el resumen de la cesta de compra.</div></html>", JLabel.CENTER);
+		lblInfoAd.setFont(new Font("SansSerif", Font.ITALIC, 14));
+		panelDerechaVacio.add(lblInfoAd, BorderLayout.CENTER);
+		
+		add(panelDerechaVacio, BorderLayout.EAST);
+		
+        
+        btnAnadirCarrito.addActionListener(e -> {
+			if (productoSeleccionado != null) {
+				Producto p = new Producto(
+                    productoSeleccionado.hashCode(), 
+                    productoSeleccionado.nombreProducto, 
+                    "Descripción por defecto", 
+                    productoSeleccionado.precio, 
+                    "M", "Negro", 1, "Ropa", "Marca", true
+                );
+				JFramePrincipal.agregarItemAlCarrito(p, cantidad); 
+				System.out.println("Producto añadido: " + productoSeleccionado.nombreProducto);
+			}
+		});
 	}
-
-	JPanel panelCatalogo = new JPanel(new BorderLayout());
-	
 	
 	public JPanel panelProductos() {
-		
-		
-		JScrollPane scrollPaneProductos = new JScrollPane(this.tablaProductos); 
-		
-		scrollPaneProductos.setBorder(BorderFactory.createEmptyBorder()); 
-		this.tablaProductos.setFillsViewportHeight(true);
-		
-		this.txtFiltro = new JTextField(30); 
-		this.txtFiltro.setFont(new Font("SansSerif", Font.PLAIN, 14)); 
-		this.txtFiltro.setBorder(BorderFactory.createLineBorder(COLOR_PRIMARIO, 1)); 
-		
-		JPanel panelFiltro = new JPanel();
-		panelFiltro.setBackground(COLOR_FONDO_CLARO); 
-		panelFiltro.setBorder(BorderFactory.createEmptyBorder(15, 10, 15, 10)); 
-	    JLabel lblFiltro = new JLabel("🔍 Filtrar Artículo: ");
+
+	    panelTarjetasProductos = new JPanel(new GridLayout(0, 4, 15, 15)); 
+	    panelTarjetasProductos.setBackground(COLOR_FONDO_CLARO);
+	    panelTarjetasProductos.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+	    cargarDatosDeEjemplo(); 
+
+	    JScrollPane scrollPaneProductos = new JScrollPane(panelTarjetasProductos);
+	    scrollPaneProductos.setBorder(BorderFactory.createEmptyBorder());
+	    
+	    this.txtFiltro = new JTextField(15); 
+	    this.txtFiltro.setFont(new Font("SansSerif", Font.PLAIN, 14));
+	    this.txtFiltro.setBorder(BorderFactory.createLineBorder(COLOR_PRIMARIO, 1));
+
+	    
+	    JPanel panelFiltro = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 10));
+	    panelFiltro.setBackground(COLOR_FONDO_CLARO);
+	    
+	    
+	    JLabel lblFiltro = new JLabel("🔍 Buscar: ");
 	    lblFiltro.setFont(new Font("SansSerif", Font.BOLD, 14));
 	    panelFiltro.add(lblFiltro);
 	    panelFiltro.add(txtFiltro);
-	
-	    JPanel panelNorteContenedor = new JPanel(new BorderLayout(0, 0));
-	    panelNorteContenedor.add(panelFiltro, BorderLayout.CENTER);
 	    
-		JPanel panelProductos = new JPanel(new BorderLayout(5, 5));
+	    
+	    JLabel lblTalla = new JLabel("Talla:");
+	    lblTalla.setFont(new Font("SansSerif", Font.BOLD, 14));
+	    String[] tallas = {"-", "XS", "S", "M", "L", "XL", "XXL"};
+	    JComboBox<String> comboTalla = new JComboBox<>(tallas);
+	    comboTalla.setFont(new Font("SansSerif", Font.PLAIN, 14));
+	    
+	    panelFiltro.add(lblTalla);
+	    panelFiltro.add(comboTalla);
+
+	    
+	    JLabel lblTipo = new JLabel("Tipo:");
+	    lblTipo.setFont(new Font("SansSerif", Font.BOLD, 14));
+	    String[] tipos = {"-", "Pantalones", "Camisetas", "Abrigos", "Calzado", "Accesorios"};
+	    JComboBox<String> comboTipo = new JComboBox<>(tipos);
+	    comboTipo.setFont(new Font("SansSerif", Font.PLAIN, 14));
+
+	    panelFiltro.add(lblTipo);
+	    panelFiltro.add(comboTipo);
+
+	    
+	    JPanel panelProductosContenedor = new JPanel(new BorderLayout(5, 5));
+	    
+	    TitledBorder bordeProductos = BorderFactory.createTitledBorder(BorderFactory.createLineBorder(COLOR_PRIMARIO, 2), "🛒 PRODUCTOS EN CATÁLOGO");
+	    bordeProductos.setTitleFont(new Font("SansSerif", Font.BOLD, 16));
+	    bordeProductos.setTitleColor(COLOR_PRIMARIO); 
+	    
+	    panelProductosContenedor.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(10, 10, 0, 10), bordeProductos));
+	    panelProductosContenedor.setBackground(COLOR_FONDO_CLARO);
+	    
+	    panelProductosContenedor.add(scrollPaneProductos, BorderLayout.CENTER);
+	    panelProductosContenedor.add(panelFiltro, BorderLayout.NORTH); 
+	    
+	    return panelProductosContenedor;
+	}
+
+
+	
+	public JPanel panelDetallesProducto() {
 		
-		TitledBorder bordeProductos = BorderFactory.createTitledBorder(BorderFactory.createLineBorder(COLOR_PRIMARIO, 2), "🛒 Productos de la Tienda");
-		bordeProductos.setTitleFont(new Font("SansSerif", Font.BOLD, 16));
-		bordeProductos.setTitleColor(COLOR_PRIMARIO);
-		panelProductos.setBorder(BorderFactory.createCompoundBorder(
-		BorderFactory.createEmptyBorder(10, 10, 10, 10), bordeProductos));
-        panelProductos.setBackground(COLOR_FONDO_CLARO);
-        panelProductos.add(BorderLayout.CENTER, scrollPaneProductos);
-        panelProductos.add(BorderLayout.NORTH, panelFiltro);
+		JPanel panelDetalle = new JPanel(new BorderLayout(10, 10));
+		TitledBorder bordeCaracteristicas = BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.GRAY, 1), "📝 DETALLES Y COMPRA DEL ARTÍCULO");
+		bordeCaracteristicas.setTitleFont(new Font("SansSerif", Font.BOLD, 14));
+		bordeCaracteristicas.setTitleColor(Color.DARK_GRAY);
+		panelDetalle.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10), bordeCaracteristicas));
+		panelDetalle.setBackground(COLOR_FONDO_CLARO);
 		
+		panelContenidoDetalle = new JPanel(new BorderLayout());
+		panelContenidoDetalle.setBackground(COLOR_FONDO_CLARO);
 		
-		MouseMotionAdapter miMouseMotionListener = new MouseMotionAdapter() {
+		JLabel lblInfo = new JLabel("<html><div style='text-align: center; color: #555; padding-top:20px;'>Haga clic en un producto para ver la **Descripción**, las **Tallas disponibles** y la **Galería de fotos**.</div></html>", JLabel.CENTER);
+		lblInfo.setFont(new Font("SansSerif", Font.ITALIC, 14));
+		panelContenidoDetalle.add(lblInfo, BorderLayout.CENTER);
+		
+		// 💡 CORRECCIÓN: Se elimina el casting innecesario
+		JPanel panelBoton = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+		panelBoton.setBackground(COLOR_FONDO_CLARO);
+		panelBoton.setBorder(BorderFactory.createEmptyBorder(5, 10, 10, 10));
+		panelBoton.add(btnAnadirCarrito);
+		
+		panelDetalle.add(panelContenidoDetalle, BorderLayout.CENTER);
+		panelDetalle.add(panelBoton, BorderLayout.SOUTH);
+		
+		return panelDetalle;
+	}
+	
+	private class ProductCardPanel extends JPanel {
+		private static final long serialVersionUID = 1L;
+		private String nombreProducto;
+		private String archivoImagen;
+		private double precio;
+		private String descripcion;
+		
+		@SuppressWarnings("unused")
+		public ProductCardPanel(String nombre, String imagen, double precio, String descripcion) {
+			this.nombreProducto = nombre;
+			this.archivoImagen = imagen;
+			this.precio = precio;
+			this.descripcion = descripcion;
 			
-				public void mouseMoved(MouseEvent e) {
+			setLayout(new BorderLayout());
+			setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY, 1));
+			setBackground(COLOR_FONDO_CLARO);
+			
+			JLabel lblImagen = new JLabel();
+			try {
+				ImageIcon iconOriginal = new ImageIcon(getClass().getResource("/images/" + archivoImagen));
 				
-				Point puntoRaton = new Point(e.getX(), e.getY());
-				int nuevaFila = tablaProductos.rowAtPoint(puntoRaton); 
-				if (filaTablaProductos != nuevaFila) {
-					filaTablaProductos = nuevaFila;
-					tablaProductos.repaint();
-				}				
+				
+				Image img = iconOriginal.getImage().getScaledInstance(300, 300, Image.SCALE_SMOOTH); 
+				lblImagen.setIcon(new ImageIcon(img));
+			} catch (Exception e) {
+				lblImagen.setText("[IMG] " + imagen);
+				lblImagen.setHorizontalAlignment(JLabel.CENTER);
+				lblImagen.setPreferredSize(new Dimension(150, 150));
+			}
+			lblImagen.setHorizontalAlignment(JLabel.CENTER);
+			lblImagen.setVerticalAlignment(JLabel.CENTER);
+			add(lblImagen, BorderLayout.CENTER);
 			
+			JPanel panelInfo = new JPanel(new GridLayout(2, 1));
+			panelInfo.setBackground(COLOR_FONDO_OSCURO);
+			panelInfo.setBorder(BorderFactory.createEmptyBorder(5, 10, 10, 10));
+			
+			JLabel lblNombre = new JLabel("<html><b>" + nombre + "</b></html>");
+			lblNombre.setFont(new Font("SansSerif", Font.PLAIN, 14));
+			lblNombre.setHorizontalAlignment(JLabel.CENTER);
+			
+			JLabel lblPrecio = new JLabel(String.format("%.2f €", precio));
+			lblPrecio.setFont(new Font("SansSerif", Font.BOLD, 16));
+			lblPrecio.setForeground(COLOR_PRIMARIO.darker());
+			lblPrecio.setHorizontalAlignment(JLabel.CENTER);
+			
+			panelInfo.add(lblNombre);
+			panelInfo.add(lblPrecio);
+			
+			add(panelInfo, BorderLayout.SOUTH);
+			
+			addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseClicked(MouseEvent e) {
+					if (productoSeleccionado != null) {
+						productoSeleccionado.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY, 1));
+						productoSeleccionado.setBackground(COLOR_FONDO_CLARO);
+					}
+					productoSeleccionado = ProductCardPanel.this;
+					
+					setBorder(BorderFactory.createLineBorder(COLOR_PRIMARIO, 2));
+					setBackground(COLOR_HOVER);
+					
+					mostrarDetallesProducto();
 				}
-			};
 				
-			MouseAdapter miMouseAdapter = new MouseAdapter() {
+				@Override
+				public void mouseEntered(MouseEvent e) {
+					if (productoSeleccionado != ProductCardPanel.this) {
+						setBorder(BorderFactory.createLineBorder(COLOR_PRIMARIO.brighter(), 1));
+					}
+				}
 				
 				@Override
 				public void mouseExited(MouseEvent e) {
-					if (filaTablaProductos != -1) { 
-						filaTablaProductos = -1;
-						tablaProductos.repaint();
+					if (productoSeleccionado != ProductCardPanel.this) {
+						setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY, 1));
 					}
 				}
-			};
+			});
+		}
 		
+		private void mostrarDetallesProducto() {
+			panelContenidoDetalle.removeAll();
+			panelContenidoDetalle.setLayout(new BorderLayout(10, 10));
+			
+			
+			
+			JLabel lblDetalleImagen = new JLabel();
+			try {
+				ImageIcon iconOriginal = new ImageIcon(getClass().getResource("/images/" + archivoImagen));
+				
+				
+				Image img = iconOriginal.getImage().getScaledInstance(300, 300, Image.SCALE_SMOOTH); 
+				
+				lblDetalleImagen.setIcon(new ImageIcon(img));
+			} catch (Exception e) {
+				lblDetalleImagen.setText("[IMG]");
+			}
 		
-		this.tablaProductos.addMouseMotionListener(miMouseMotionListener);
-		this.tablaProductos.addMouseListener(miMouseAdapter);
-		
-		
-		return panelProductos; 
+			
+			lblDetalleImagen.setHorizontalAlignment(JLabel.CENTER);
+			lblDetalleImagen.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY, 1));
+			
+			
+			// IAG
+			lblDetalleImagen.setPreferredSize(new Dimension(280, 250)); 
+			
+			
+
+			    String descripcionDetallada = String.format(
+			        "<html><div style='padding: 10px; font-family: SansSerif;'>"
+			        + "<h3>%s</h3>"
+			        + "<p><b>Precio:</b> <span style='color: %s; font-weight: bold;'>%.2f €</span></p>"
+			        + "<p><b>Descripción:</b> %s</p>" 
+			        + "</div></html>", 
+			        nombreProducto,
+			        String.format("#%06x", COLOR_PRIMARIO.darker().getRGB() & 0xFFFFFF),
+			        precio,
+			        descripcion 
+			    );
+
+			
+			
+			JLabel lblDetalleInfo = new JLabel(descripcionDetallada);
+			lblDetalleInfo.setVerticalAlignment(JLabel.TOP);
+			
+			JPanel panelDetalleContenido = new JPanel(new BorderLayout(10, 10));
+			panelDetalleContenido.setBackground(COLOR_FONDO_CLARO);
+			
+			
+			panelDetalleContenido.add(lblDetalleImagen, BorderLayout.WEST); 
+			panelDetalleContenido.add(lblDetalleInfo, BorderLayout.CENTER);
+			
+			panelContenidoDetalle.add(panelDetalleContenido, BorderLayout.CENTER);
+			
+			btnAnadirCarrito.setEnabled(true);
+			
+			panelDetallesProducto.revalidate();
+			panelDetallesProducto.repaint();
+			
+			TitledBorder borde = (TitledBorder) panelDetallesProducto.getBorder();
+			borde.setTitle("📝 DETALLES Y COMPRA: " + nombreProducto.toUpperCase());
+		}
+
 		
 	}
 	
 	private void cargarDatosDeEjemplo() {
-		
-		// IAG. 
-		
-		Object[][] data = {
-				{"Pantalón Denim \"Explorer\"", "vaquero.png", 59.99},
-				{"Chino Algodón \"Urban\"", "chino.png", 45.50},
-				{"Jogger Técnico \"Velocity\"", "jogger.png", 39.95},
-				{"Leggings Térmicos \"Comfy\"", "legging.png", 24.99},
-				{"Short de Baño \"Maui\"", "short.png", 29.90},
-				{"Bermuda Cargo \"Outback\"", "bermuda.png", 34.95},
-				{"Pantalón Sastre \"Elegance\"", "sastre.png", 79.90},
-				{"Camiseta Estampada \"Galaxy\"", "cam_gala.png", 19.99},
-				{"Polo Piqué \"Classic\"", "polo_clas.png", 29.50},
-				{"Top Básico \"Luxe\"", "top_luxe.png", 14.95},
-				{"Camiseta Oversize \"Retro\"", "cam_retro.png", 22.99},
-				{"Tank Top \"Gym Beast\"", "tank_gym.png", 17.50},
-				{"Blusa Seda \"Aurora\"", "blusa_aur.png", 49.90},
-				{"Crop Top Asimétrico", "crop_as.png", 16.99},
-				{"Sudadera Capucha \"Chill\"", "hoodie.png", 49.99},
-				{"Jersey Trenzado \"Nordic\"", "jersey_n.png", 55.00},
-				{"Sudadera Cremallera \"Track\"", "sud_track.png", 42.95},
-				{"Cárdigan Fino \"Layer\"", "cardigan.png", 38.50},
-				{"Sudadera Cuello Redondo \"Minimal\"", "sud_min.png", 36.99},
-				{"Jersey Cashmere \"Luxury\"", "jersey_lux.png", 99.90},
-				{"Chaqueta Bomber \"Pilot\"", "bomber.png", 69.95},
-				{"Trench Coat \"Detective\"", "trench.png", 119.99},
-				{"Cazadora Denim \"Vintage\"", "caz_den.png", 59.90},
-				{"Parka Acolchada \"Arctic\"", "parka.png", 139.50},
-				{"Blazer Lino \"Mediterranean\"", "blazer.png", 85.00},
-				{"Abrigo Lana \"Chesterfield\"", "abrig_lan.png", 159.99},
-				{"Chubasquero \"Raindrop\"", "chubas.png", 49.95},
-				{"Vestido Midi Floral", "vest_flo.png", 54.99},
-				{"Falda Plisada \"School\"", "falda_pli.png", 39.90},
-				{"Vestido Cóctel \"Gala\"", "vest_cock.png", 89.95},
-				{"Falda Tubo \"Business\"", "falda_tub.png", 44.50},
-				{"Vestido Lencero \"Night\"", "vest_len.png", 65.00},
-				{"Zapatillas Running \"Sprint\"", "zapa_run.png", 79.99},
-				{"Botines Piel \"Rocker\"", "botines.png", 95.00},
-				{"Sandalias Tiras \"Summer\"", "sanda_sum.png", 35.95},
-				{"Mocasines Serraje \"Gentry\"", "moca_gen.png", 69.90},
-				{"Zapatos Oxford \"Formal\"", "oxford.png", 89.99},
-				{"Gorra Béisbol \"Sport\"", "gorra_sp.png", 15.99},
-				{"Gorro Lana \"Beanie\"", "gorro_lan.png", 19.50},
-				{"Sombrero Fedora \"Jazz\"", "fedora.png", 39.90},
-				{"Visera \"Tennis Pro\"", "visera.png", 12.95},
-				{"Guantes Piel \"Driver\"", "guan_dri.png", 49.99},
-				{"Manoplas Nieve \"Powder\"", "manoplas.png", 25.50},
-				{"Bufanda Punto \"Infinity\"", "bufa_inf.png", 29.90},
-				{"Pañuelo Seda \"Art\"", "panuelo.png", 18.99},
-				{"Cinturón Cuero \"Tough\"", "cint_tou.png", 35.00},
-				{"Mochila Lona \"Hiker\"", "mochila.png", 59.95},
-				{"Gafas Sol Polarizadas \"Neo\"", "gafas.png", 29.99},
-				{"Calcetines Dibujos \"Fun\"", "calcetin.png", 8.95},
-				{"Pijama Algodón \"Sweet\"", "pijama.png", 39.90},
-				{"Corbata Seda \"Regal\"", "corbata.png", 34.50},
-				{"Reloj Deportivo \"Pulse\"", "reloj.png", 69.99},
-				{"Tirantes \"Vintage\"", "tirantes.png", 24.95},
-				{"Funda Móvil \"Clear\"", "funda.png", 10.00},
-				{"Cartera Billetera \"Slim\"", "cartera.png", 29.99},
-				{"Llavero \"Leather\"", "llavero.png", 12.50},
-				{"Set de 3 Mascarillas \"Safe\"", "mascaras.png", 19.99},
-				{"Bolsa de Tela \"Eco\"", "bolsa_eco.png", 9.90},
-				{"Botella Reutilizable \"Hydrate\"", "botella.png", 14.99},
-				{"Paraguas Plegable \"Storm\"", "paraguas.png", 22.95}
-		};
+	    
+	    Object[][] data = {
+	        
+	        {"Camiset Basica Blanca", "camiseta_blanca.png", 15.95, "Algodón 100% orgánico, corte clásico y duradero. Ideal para el día a día."},
+	        {"Camiseta Honda NSX-R", "camiseta_honda.png", 19.95, "Diseño exclusivo de edición limitada, cuello reforzado y estampado de alta calidad."},
+	        {"Camiseta Mickey Mouse", "camiseta_mickey.png", 17.95, "Estampado retro del famoso ratón. Tacto suave y ajuste regular."},
+	        {"Camiseta Tom & Jerry", "camiseta_tom-jerry.png", 17.99, "Divertida camiseta con los personajes clásicos."},
+	        {"Camieta KTM", "camiseta_ktm.png", 19.95, "Estilo de competición. Tejido transpirable y ligero, perfecto para fans del motor."},
+	        {"Camiseta Racing Team", "camiseta_racing.png", 13.95, "Inspirada en las carreras. Ajuste cómodo y tejido de fácil cuidado."},
+	        {"Camiseta Friday Gaming Club", "camiseta_friday.png", 21.95, "Para tus noches de juego. Diseño moderno y tejido fresco."},
+	        {"Pantalon Cargo Baggy", "pantalon_cargo.png", 55.00, "Estilo 'Baggy' con múltiples bolsillos. Máxima comodidad y tendencia."},
+	        {"Pantalon Tailoring Wide Leg", "pantalon_tailoring.png", 69.95, "Elegancia y corte ancho. Ideal para ocasiones formales e informales."},
+	        {"Pantalon Jogger Relaxed Fit", "pantalon_jogger.png", 54.99, "Cintura elástica y bajos ajustados. Perfecto para deporte o relax."},
+	        {"Pantalon Chino Skinny Fit", "pantalon_chino.png", 39.90, "Corte ajustado y tejido elástico que se adapta a tu cuerpo."},
+	        {"Sudadera Capucha Clasica", "sudadera_clasica.png", 79.99, "Suela de amortiguación avanzada y malla transpirable. Ligereza en cada pisada."},
+	        {"Abrigo Lana \"Classic Fit\"", "abrigo_lana.png", 129.99, "Composición de lana virgen, corte clásico y botones ocultos. Muy cálido."},
+	        {"Botines Cuero \"Chelsea\"", "botines_c.png", 89.90, "Piel auténtica, suela antideslizante y elástico lateral. Durabilidad y estilo."},
+	        {"Gorra Béisbol Logo", "gorra_logo.png", 17.50, "Ajustable, con visera curva y logo bordado. 100% algodón."},
+	    };
 
-		for (Object[] row : data) { 
-			this.modeloDatosProductos.addRow(row);
-		}
+	    for (Object[] row : data) {
+	        String nombre = (String) row[0];
+	        String imagen = (String) row[1];
+	        double precio = (double) row[2];
+	        String descripcion = (String) row[3]; // **NUEVA LÍNEA**
+	        
+	        
+	        panelTarjetasProductos.add(new ProductCardPanel(nombre, imagen, precio, descripcion)); 
+	    }
 	}
 	
-	
-	private void initTables() { 
-		
-		Vector<String> cabeceraProductos = new Vector<String>(Arrays.asList( "ARTICULO", "IMAGEN", "PRECIO (€)")); 
-		
-		this.modeloDatosProductos = new DefaultTableModel(new Vector<Vector<Object>>(), cabeceraProductos);
-		this.tablaProductos.setModel(this.modeloDatosProductos); 
-		
-		cargarDatosDeEjemplo();
-		
-		TableCellRenderer cellRenderer = (table, value, isSelected, hasFocus, row, column) -> {
-			
-		
-			
-			JLabel result = new JLabel(value.toString());
-			result.setFont(new Font("SansSerif", Font.PLAIN, 12)); 
-			result.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5)); 
-			
-			
-			if (isSelected || (table.equals(tablaProductos) && filaTablaProductos == row)) {
-				result.setBackground(COLOR_HOVER); 
-				result.setForeground(Color.BLACK);
-			} else {
-				
-				if (row % 2 == 0) {
-					result.setBackground(COLOR_FONDO_CLARO);
-				} else {
-					result.setBackground(COLOR_FONDO_OSCURO);
-				}
-				result.setForeground(Color.BLACK);
-			}
-			
-			result.setOpaque(true);
-			return result;
-		};
-		
-		
-		tablaProductos.setDefaultRenderer(Object.class, cellRenderer);
-		
-		this.tablaProductos.setRowHeight(30); 
-		this.tablaExplicacion.setRowHeight(30); 
-		
-		
-		this.tablaProductos.getTableHeader().setFont(new Font("SansSerif", Font.BOLD, 13));
-		this.tablaProductos.getTableHeader().setBackground(COLOR_PRIMARIO);
-		this.tablaProductos.getTableHeader().setForeground(Color.WHITE);
-		this.tablaProductos.setGridColor(new Color(220, 220, 220)); 
-		
-		this.tablaProductos.getTableHeader().setReorderingAllowed(false);
-		this.tablaProductos.setAutoCreateRowSorter(true);
-		
-		
-		
-	
-	}
 	public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            JPanelCatalogo frame = new JPanelCatalogo();
-            frame.setVisible(true);
-        });
-    }
+		SwingUtilities.invokeLater(() -> {
+			JFrame tempFrame = new JFrame("Catálogo de Prueba");
+            tempFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            tempFrame.add(new JPanelCatalogo());
+            tempFrame.setSize(1200, 800);
+            tempFrame.setLocationRelativeTo(null);
+			tempFrame.setVisible(true);
+		});
+	}
 }
