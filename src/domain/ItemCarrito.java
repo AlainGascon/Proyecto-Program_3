@@ -5,10 +5,14 @@ public class ItemCarrito {
 
     private Producto producto;
     private int cantidad;
+    private String talla;
     
-    public ItemCarrito(Producto producto, int cantidad) {
+    
+    public ItemCarrito(Producto producto, int cantidad, String talla) {
         this.producto = producto;
         this.cantidad = cantidad;
+        this.talla = talla;
+        
     }
     
     
@@ -28,18 +32,22 @@ public class ItemCarrito {
 		this.cantidad = cantidad;
 	}
 
+	public void getTalla(String talla) {
+		this.talla = talla;
+	}
+	
+	public void setTalla(String talla) {
+		this.talla = talla;
+	}
 	
 	
     @Override
-    public String toString() {
-        return "ItemCarrito{" +
-                "producto=" + producto.getNombre() +
-                ", cantidad=" + cantidad +
-                ", subtotal=" + getSubtotal() +
-                '}';
-    }
-	
-    public double getSubtotal() {
+	public String toString() {
+		return "ItemCarrito [producto=" + producto + ", cantidad=" + cantidad + ", talla=" + talla + "]";
+	}
+
+
+	public double getSubtotal() {
         return producto.getPrecio() * cantidad;
     }
 

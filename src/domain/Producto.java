@@ -1,6 +1,7 @@
 package domain;
 
 import java.util.List;
+import java.util.Map;
 
 public class Producto {
 
@@ -9,52 +10,28 @@ public class Producto {
     private String descripcion;
     private double precio;
     private String talla;
-    private String color;
     private int stock;
-    private String categoria;
-    private String marca;
-    private boolean activo;
     private List<Opinion> opiniones;
+    private Map<String, Integer> inventarioPorTalla;
     
 	public Producto() {
 		super();
 	}
 
 
-	public Producto(int id, String nombre, String descripcion, double precio, String talla, String color, int stock,
-			String categoria, String marca, boolean activo, List<Opinion> opiniones) {
+	public Producto(int id, String nombre, String descripcion, double precio, String talla, int stock,
+			List<Opinion> opiniones, Map<String, Integer> inventarioPorTalla) {
 		super();
 		this.id = id;
 		this.nombre = nombre;
 		this.descripcion = descripcion;
 		this.precio = precio;
 		this.talla = talla;
-		this.color = color;
 		this.stock = stock;
-		this.categoria = categoria;
-		this.marca = marca;
-		this.activo = activo;
 		this.opiniones = opiniones;
+		this.inventarioPorTalla = inventarioPorTalla;
 	}
 	
-	public Producto(int id, String nombre, String descripcion, double precio, String talla, String color, int stock,
-			String categoria, String marca, boolean activo) {
-		super();
-		this.id = id;
-		this.nombre = nombre;
-		this.descripcion = descripcion;
-		this.precio = precio;
-		this.talla = talla;
-		this.color = color;
-		this.stock = stock;
-		this.categoria = categoria;
-		this.marca = marca;
-		this.activo = activo;
-		//this.opiniones = opiniones;
-	}
-
-
-
 
 	public int getId() {
 		return id;
@@ -96,13 +73,6 @@ public class Producto {
 		this.talla = talla;
 	}
 
-	public String getColor() {
-		return color;
-	}
-
-	public void setColor(String color) {
-		this.color = color;
-	}
 
 	public int getStock() {
 		return stock;
@@ -110,30 +80,6 @@ public class Producto {
 
 	public void setStock(int stock) {
 		this.stock = stock;
-	}
-
-	public String getCategoria() {
-		return categoria;
-	}
-
-	public void setCategoria(String categoria) {
-		this.categoria = categoria;
-	}
-
-	public String getMarca() {
-		return marca;
-	}
-
-	public void setMarca(String marca) {
-		this.marca = marca;
-	}
-
-	public boolean isActivo() {
-		return activo;
-	}
-
-	public void setActivo(boolean activo) {
-		this.activo = activo;
 	}
 
 
@@ -144,22 +90,40 @@ public class Producto {
 	public void setOpiniones(List<Opinion> opiniones) {
 		this.opiniones = opiniones;
 	}
+	
+	public int getStock(String talla) {
+        return inventarioPorTalla.getOrDefault(talla, 0); 
+    }
+    
+    public void setStock(String talla, int cantidad) {
+        inventarioPorTalla.put(talla, cantidad);
+    }
     	
 	@Override
 	public String toString() {
 		return "Producto [id=" + id + ", nombre=" + nombre + ", descripcion=" + descripcion + ", precio=" + precio
-				+ ", talla=" + talla + ", color=" + color + ", stock=" + stock + ", categoria=" + categoria + ", marca="
-				+ marca + ", activo=" + activo + ", opiniones=" + opiniones + "]";
+				+ ", talla=" + talla + ", stock=" + stock + ", opiniones=" + opiniones + "]";
 	}
 
 
+	public int getStockTotal() {
+        if (inventarioPorTalla == null || inventarioPorTalla.isEmpty()) {
+            return 0;
+        }
+        
+        return inventarioPorTalla.values().stream().mapToInt(Integer::intValue).sum();
+    }
+	
 	public boolean hayStock(int cantidad) {
-		if (this.stock >= cantidad) {
+        
+		if (getStockTotal() >= cantidad) { 
 			return true;
 		} else {
 			return false;
 		}
 	}
+	
+	
     
 	public void agregarOpinion(Opinion opinion) {
 		this.opiniones.add(opinion);
@@ -179,4 +143,17 @@ public class Producto {
 		}
 		
 	}
+
+	public Map<String, Integer> getInventarioPorTalla() {
+        return inventarioPorTalla;
+    }
+	
+
 }
+
+
+
+
+
+
+

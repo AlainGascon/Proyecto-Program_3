@@ -144,20 +144,7 @@ public class VentanaCarrito extends JFrame {
 
    
    
-    public static void main(String[] args) {
-        Producto p1 = new Producto(1, "Camiseta básica", "Camiseta de algodón 100%", 15.99, "M", "Blanco", 50, "Ropa", "H&M", true);
-        Producto p2 = new Producto(2, "Pantalón vaquero", "Jeans azul oscuro ajustado", 39.99, "L", "Azul", 30, "Ropa", "Levi’s", true);
-        Producto p3 = new Producto(3, "Zapatillas deportivas", "Zapatillas ligeras para correr", 59.90, "42", "Negro", 20, "Calzado", "Nike", true);
-        Producto p4 = new Producto(4, "Sudadera con capucha", "Sudadera cómoda para invierno", 45.50, "M", "Gris", 15, "Ropa", "Adidas", true);
-
-        List<ItemCarrito> lista = new ArrayList<>();
-        lista.add(new ItemCarrito(p1, 2)); 
-        lista.add(new ItemCarrito(p2, 1)); 
-        lista.add(new ItemCarrito(p3, 1));  
-        lista.add(new ItemCarrito(p4, 1)); 
-
-        new VentanaCarrito(lista);
-    }
+    
 
    
 }
