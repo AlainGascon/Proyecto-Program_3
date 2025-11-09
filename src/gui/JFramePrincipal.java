@@ -18,6 +18,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
@@ -30,7 +31,8 @@ public class JFramePrincipal extends JFrame implements ActionListener {
 
 	private static final long serialVersionUID = 1L;
 	
-	
+	private static boolean isLoggedIn = false;
+    
 	private static List<ItemCarrito> carritoActual = new ArrayList<>();
 	private static JButton btnCarritoGlobalEstatico;
 	
@@ -39,14 +41,15 @@ public class JFramePrincipal extends JFrame implements ActionListener {
 	private CardLayout cardLayout;
 	private JPanel panelContenidoDinamico;
 
-
 	private static final String CARD_CATALOGO = "CATALOGO";
 	private static final String CARD_EVENTOS = "EVENTOS";
-
+    
+    private static final String COMMAND_LOGIN = "LOGIN"; 
+    private static final String COMMAND_PAGAR = "PAGAR"; 
  
+
 	public JFramePrincipal(List<Producto> listaProductos, List<ItemCarrito> carritoInicial) {
         
-        // Asignar los datos
         this.listaProductos = listaProductos;
         JFramePrincipal.carritoActual = carritoInicial;
 		
@@ -73,7 +76,7 @@ public class JFramePrincipal extends JFrame implements ActionListener {
 		
 		JButton btnCatalogo = crearBotonNavegacion("🛍️ Catálogo", CARD_CATALOGO);
 		JButton btnEventos = crearBotonNavegacion("🗓️ Eventos", CARD_EVENTOS);
-		JButton btnLogin = crearBotonNavegacion("🔑 Iniciar Sesión", "LOGIN");
+		JButton btnLogin = crearBotonNavegacion("🔑 Iniciar Sesión", COMMAND_LOGIN);
 
 		panelNavegacion.add(btnCatalogo);
 		panelNavegacion.add(btnEventos);
@@ -101,6 +104,14 @@ public class JFramePrincipal extends JFrame implements ActionListener {
 	}
 
 
+    public static boolean isLoggedIn() {
+        return isLoggedIn;
+    }
+
+    public static void setLoggedIn(boolean status) {
+        isLoggedIn = status;
+    }
+
 
 	private JButton crearBotonNavegacion(String texto, String comando) {
 		JButton btn = new JButton(texto);
@@ -115,8 +126,6 @@ public class JFramePrincipal extends JFrame implements ActionListener {
 		return btn;
 	}
 
-	
-	//IAG
 	
 	private JPanel crearPlaceholderPanel(String titulo) {
 	    JPanel panel = new JPanel(new GridBagLayout());
@@ -138,7 +147,7 @@ public class JFramePrincipal extends JFrame implements ActionListener {
 	}
 
 	public JButton crearBotonCarrito() {
-		int cantidadItems = carritoActual.size();
+		int cantidadItems = calcularTotalArticulos();
 		JButton btnCarrito = new JButton("🛒 Carrito (" + cantidadItems + ")");
 		btnCarrito.setToolTipText("Ver Carrito de Compras");
 		btnCarrito.setPreferredSize(new Dimension(150, 30));
@@ -147,9 +156,8 @@ public class JFramePrincipal extends JFrame implements ActionListener {
 		btnCarrito.setForeground(Color.BLACK);
 
 		btnCarrito.addActionListener(e -> {
-
-
-				new VentanaCarrito(carritoActual).setVisible(true); 
+			VentanaCarrito ventana = new VentanaCarrito(carritoActual);
+	        ventana.setVisible(true);
 			});
 		return btnCarrito;
 	}
@@ -184,11 +192,25 @@ public class JFramePrincipal extends JFrame implements ActionListener {
 		
 		if (command.equals(CARD_CATALOGO) || command.equals(CARD_EVENTOS)) {
 			cardLayout.show(panelContenidoDinamico, command);
+			panelContenidoDinamico.revalidate(); 
+	        panelContenidoDinamico.repaint();
 		}
-		else if (command.equals("LOGIN")) {
-		
+		else if (command.equals(COMMAND_LOGIN)) {
 			new JFrameAutenticacion().setVisible(true);
 		}
+        else if (command.equals(COMMAND_PAGAR)) { 
+            if (JFramePrincipal.isLoggedIn()) {
+                JOptionPane.showMessageDialog(this, 
+                    "✅ Usuario autenticado: Procediendo a la pasarela de pago...", 
+                    "Pago Permitido", 
+                    JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(this, 
+                    "🔒 Debe iniciar sesión para proceder con el pago. Abra la ventana de inicio de sesión.", 
+                    "Autenticación Requerida", 
+                    JOptionPane.WARNING_MESSAGE);
+                
+            }
+        }
 	}
-
 }

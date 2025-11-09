@@ -156,7 +156,7 @@ public class JPanelCatalogo extends JPanel {
             panelTarjetasProductos.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 50));
             panelTarjetasProductos.add(lblSinResultados);
         } else {
-            panelTarjetasProductos.setLayout(new GridLayout(0, 4, 15, 15));
+            panelTarjetasProductos.setLayout(new GridLayout(0, 3, 15, 15));
             
             for (Producto p : listaParaMostrar) {
                 String archivoImagen = obtenerNombreImagen(p.getNombre());
@@ -169,21 +169,23 @@ public class JPanelCatalogo extends JPanel {
     }
     
     private String obtenerNombreImagen(String nombreProducto) {
-        if (nombreProducto.contains("Basica Blanca")) return "camiseta_blanca.png";
-        if (nombreProducto.contains("Honda NSX-R")) return "camiseta_honda.png"; 
-        if (nombreProducto.contains("Mickey Mouse")) return "camiseta_mickey.png";
-        if (nombreProducto.contains("Tom & Jerry")) return "camiseta_tom-jerry.png";
+        if (nombreProducto.contains("BASICA BLANCA")) return "camiseta_blanca.png";
+        if (nombreProducto.contains("HONDA NSX-R")) return "camiseta_honda.png"; 
+        if (nombreProducto.contains("MICKEY MOUSE")) return "camiseta_mickey.png";
+        if (nombreProducto.contains("TOM & JERRY")) return "camiseta_tom-jerry.png";
         if (nombreProducto.contains("KTM")) return "camiseta_ktm.png";
-        if (nombreProducto.contains("Racing Team")) return "camiseta_racing.png";
-        if (nombreProducto.contains("Friday Gaming Club")) return "camiseta_friday.png";
-        if (nombreProducto.contains("Cargo Baggy")) return "pantalon_cargo.png";
-        if (nombreProducto.contains("Tailoring Wide Leg")) return "pantalon_tailoring.png";
-        if (nombreProducto.contains("Jogger Relaxed Fit")) return "pantalon_jogger.png";
-        if (nombreProducto.contains("Chino Skinny Fit")) return "pantalon_chino.png";
-        if (nombreProducto.contains("Sudadera Capucha Clasica")) return "sudadera_clasica.png";
-        if (nombreProducto.contains("Abrigo Lana")) return "abrigo_lana.png";
-        if (nombreProducto.contains("Botines Cuero")) return "botines_c.png";
-        if (nombreProducto.contains("Gorra Béisbol")) return "gorra_logo.png";
+        if (nombreProducto.contains("RACING TEAM")) return "camiseta_racing.png";
+        if (nombreProducto.contains("FRIDAY GAMING CLUB")) return "camiseta_friday.png";
+        if (nombreProducto.contains("CARGO BAGGY")) return "pantalon_cargo.png";
+        if (nombreProducto.contains("TAILORING WIDE LEG")) return "pantalon_tailoring.png";
+        if (nombreProducto.contains("JOGGER RELAXED FIT")) return "pantalon_jogger.png";
+        if (nombreProducto.contains("CHINO SKINNY FIT")) return "pantalon_chino.png";
+        if (nombreProducto.contains("SUDADERA CAPUCHA CLASICA")) return "sudadera_clasica.png";
+        if (nombreProducto.contains("POLO CUELLO CONTRASTE")) return "sudadera_contraste.png";
+        if (nombreProducto.contains("PARCHES BANDAS")) return "sudadera_parches.png"; 
+        if (nombreProducto.contains("CAZADORA ACOLCHADA")) return "cazadora_acolchada.png";
+        if (nombreProducto.contains("CHAQUETÓN REGULAR")) return "chaqueta_regularfit.png";
+
         
         return "default.png";
     }

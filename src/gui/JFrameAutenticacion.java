@@ -17,7 +17,7 @@ import java.util.Vector;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JFrame;
+import javax.swing.JFrame; // Hereda de JFrame
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -27,9 +27,10 @@ import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.border.TitledBorder;
 
-import gui.JFramePrincipal;
+// Importar JFramePrincipal (se asume que existe)
+// import gui.JFramePrincipal; 
 
-public class JFrameAutenticacion extends JPanel {
+public class JFrameAutenticacion extends JFrame { // <<-- CORRECCIÓN: Ahora extiende JFrame
 
     private static final long serialVersionUID = 1L;
 
@@ -40,7 +41,7 @@ public class JFrameAutenticacion extends JPanel {
     
     private Vector<String> usuarios;
 
-   
+    
     private JTextField txtUsuarioLogin;
     private JPasswordField txtContrasenaLogin;
     private JTextField txtUsuarioNuevo;
@@ -53,13 +54,18 @@ public class JFrameAutenticacion extends JPanel {
     private Image backgroundImage;
     
     public JFrameAutenticacion() {
-       
+        
+        // --- CONFIGURACIÓN DEL JFrame (VENTANA) ---
+        this.setTitle("Tienda DEUSTO - Autenticación de Usuario");
+        this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        
+        
+        // Inicializar datosE
         usuarios = new Vector<>();
         usuarios.add("admin:1234"); 
 
         
-        // IAG
-        
+        // Cargar imagen de fondo
         try {
             backgroundImage = new ImageIcon(getClass().getResource("/images/escaparate.png")).getImage();
         } catch (Exception e) {
@@ -67,8 +73,9 @@ public class JFrameAutenticacion extends JPanel {
             e.printStackTrace();
             backgroundImage = null;
         }
-	
+    
         
+        // Crear el panel de contenido principal (con el fondo)
         JPanel contentPane = new JPanel(new GridBagLayout()) {
             
             @Override
@@ -80,36 +87,39 @@ public class JFrameAutenticacion extends JPanel {
             }
         };
         
+        // Establecer el contentPane como el contenido del JFrame
+        this.setContentPane(contentPane); 
+        
         
         JPanel panelRegistro = crearPanelRegistro();
         JPanel panelLogin = crearPanelLogin();
 
         
         panelRegistro.setBackground(COLOR_FONDO); 
-        panelLogin.setBackground(COLOR_FONDO);   
+        panelLogin.setBackground(COLOR_FONDO);    
         panelRegistro.setOpaque(true); 
         panelLogin.setOpaque(true); 
         
-        
-        panelRegistro.setPreferredSize(new Dimension(600, 300)); 
-        panelLogin.setPreferredSize(new Dimension(480, 300));  
- 
-        
-        // IAG
+        // Diseño de GridBagLayout
         
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0; 
         gbc.gridy = 0; 
-        gbc.insets = new Insets(0, 0, 0, 15); 
+        gbc.insets = new Insets(30, 30, 30, 15);
         
         contentPane.add(panelLogin, gbc);
         
         gbc.gridx = 1; 
-        gbc.insets = new Insets(0, 15, 0, 0); 
+        gbc.insets = new Insets(30, 15, 30, 30);
         
         contentPane.add(panelRegistro, gbc);
         
         agregarListeners();
+        
+        
+        this.pack();
+        this.setLocationRelativeTo(null);
+        this.setExtendedState(JFrame.MAXIMIZED_BOTH);
     }
 
     
@@ -202,6 +212,7 @@ public class JFrameAutenticacion extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 iniciarSesion();
+                JFrameAutenticacion.this.dispose(); 
             }
         });
 
@@ -219,14 +230,16 @@ public class JFrameAutenticacion extends JPanel {
         String credenciales = usuario + ":" + contrasena;
 
         if (usuario.isEmpty() || contrasena.isEmpty()) {
-             mostrarError("Debe rellenar ambos campos para iniciar sesión.", "Campos Vacíos");
-             return;
+              mostrarError("Debe rellenar ambos campos para iniciar sesión.", "Campos Vacíos");
+              return;
         }
         
         if (usuarios.contains(credenciales)) {
-        	mostrarExito("✅ ¡Inicio de sesión exitoso! Bienvenido, " + usuario + ".", "Éxito");
-
+            mostrarExito("¡Inicio de sesión exitoso! Bienvenido, " + usuario + ".", "Éxito");
             
+            
+            dispose(); 
+
         } else {
             boolean usuarioExiste = false;
             for (String userPass : usuarios) {
@@ -237,9 +250,9 @@ public class JFrameAutenticacion extends JPanel {
             }
             
             if (!usuarioExiste) {
-                 mostrarError("❌ Usuario no encontrado. Por favor, regístrese.", "Error de Usuario");
+                mostrarError("❌ Usuario no encontrado. Por favor, regístrese.", "Error de Usuario");
             } else {
-                 mostrarError("❌ Contraseña incorrecta para el usuario " + usuario + ".", "Error de Contraseña");
+                mostrarError("❌ Contraseña incorrecta para el usuario " + usuario + ".", "Error de Contraseña");
             }
         }
     }
@@ -271,7 +284,7 @@ public class JFrameAutenticacion extends JPanel {
         }
         
         if (contrasena1.length() < 6) {
-        	mostrarError("❌ La contraseña debe tener al menos 6 caracteres.", "Contraseña Débil");
+            mostrarError("❌ La contraseña debe tener al menos 6 caracteres.", "Contraseña Débil");
             return;
         }
         
@@ -279,10 +292,10 @@ public class JFrameAutenticacion extends JPanel {
         boolean tieneNumero = false;
         
         for (char c: contrasena1.toCharArray()) {
-        	if (Character.isDigit(c)) {
-        		tieneNumero = true;
-        		break;
-        	}
+            if (Character.isDigit(c)) {
+                tieneNumero = true;
+                break;
+            }
         }
         
         if (!tieneNumero) {
@@ -293,7 +306,7 @@ public class JFrameAutenticacion extends JPanel {
         usuarios.add(usuario + ":" + contrasena1);
         JOptionPane.showMessageDialog(this, "🎉 ¡Cuenta creada con éxito!\nAhora puede iniciar sesión.", "Registro Exitoso", JOptionPane.INFORMATION_MESSAGE);
         
-       
+        
         txtUsuarioNuevo.setText("");
         txtContrasenaNueva1.setText("");
         txtContrasenaNueva2.setText("");
@@ -309,11 +322,12 @@ public class JFrameAutenticacion extends JPanel {
     }
 
 
-
+    /*
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             JFrameAutenticacion frame = new JFrameAutenticacion();
             frame.setVisible(true);
         });
     }
+    */
 }
