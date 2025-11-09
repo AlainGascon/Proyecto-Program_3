@@ -41,7 +41,8 @@ public class ModeloTablaCompras extends DefaultTableModel {
             case 0: return item.getProducto().getNombre();
             case 1: return item.getCantidad();
             case 2: return item.getProducto().getPrecio();
-            case 3: return item.getCantidad() * item.getProducto().getPrecio();
+            case 3: double subtotal= item.getCantidad() * item.getProducto().getPrecio();
+            		return String.format("%.2f", subtotal)+"€";
             case 4: return "Modificar";
             default: return null;
         }

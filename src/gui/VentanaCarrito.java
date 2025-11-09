@@ -46,7 +46,7 @@ public class VentanaCarrito extends JFrame {
         getContentPane().add(pSur, BorderLayout.SOUTH);
 
         ImageIcon im2= new ImageIcon("imagenes/carrito.png");
-        JLabel lblTitulo = new JLabel("Carrito",im2, SwingConstants.LEFT);
+        JLabel lblTitulo = new JLabel("Carrito🛒",im2, SwingConstants.LEFT);
         lblTitulo.setFont(new Font("Arial", Font.BOLD, 22));
         pNorte.add(lblTitulo, BorderLayout.WEST);
         
@@ -95,8 +95,7 @@ public class VentanaCarrito extends JFrame {
         	 int fila = tabla.getSelectedRow();
              if (fila != -1) {
                  listaItems.remove(fila);
-                 modeloTabla = new ModeloTablaCompras(listaItems);
-                 tabla.setModel(modeloTabla);
+                 modeloTabla.fireTableDataChanged();
                  lblTotal.setText("Total: " + String.format("%.2f", calcularTotal())+"€");
              } else {
                  JOptionPane.showMessageDialog(this, "Selecciona un producto para eliminar");
@@ -158,6 +157,22 @@ public class VentanaCarrito extends JFrame {
 	   lblTotal.setText("Total: "+String.format("%.2f", calcularTotal())+"€");
    }
    
+   public void agregarProducto(Producto producto, int cantidad) {
+	   boolean encontrado= false;
+	   for(ItemCarrito item: listaItems) {
+		   if(item.getProducto().getId()==producto.getId()) {
+			   item.setCantidad(item.getCantidad()+cantidad);
+			   encontrado=true;
+			   break;
+		   }
+	   }
+	   if(!encontrado) {
+		   listaItems.add(new ItemCarrito(producto, cantidad, getName()));
+	   }
+	   modeloTabla.fireTableDataChanged();
+	   lblTotal.setText("Total: "+String.format("%.2f", calcularTotal())+"€");
+	   
+   }
 /*<<<<<<< HEAD
     public static void main(String[] args) {
         Producto p1 = new Producto(1, "Camiseta básica", "Camiseta de algodón 100%", 15.99, "M", "Blanco", 50, "Ropa", "H&M", true);
