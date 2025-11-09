@@ -56,11 +56,15 @@ public class VentanaCarrito extends JFrame {
         // Tabla
         modeloTabla = new ModeloTablaCompras(listaItems);
         tabla = new JTable(modeloTabla);
+        tabla.setRowHeight(30);
         scrollTabla = new JScrollPane(tabla);
         getContentPane().add(scrollTabla, BorderLayout.CENTER);
         tabla.getModel().addTableModelListener(e->{
-        	lblTotal.setText("Total: " + calcularTotal()+"$");
+        	lblTotal.setText("Total: " + calcularTotal()+"€");
         });
+        tabla.getColumn("Acciones").setCellRenderer(new BtnCantidadRenderer(tabla, lista, lblTotal, modeloTabla));
+        tabla.getColumn("Acciones").setCellEditor(new BtnCantidadRenderer(tabla, lista, lblTotal, modeloTabla));
+
 
         //Botones
         btnEliminar = new JButton("Eliminar producto");
@@ -77,7 +81,7 @@ public class VentanaCarrito extends JFrame {
         pDerecha.add(btnPagar);
         pDerechaAbajo.add(btnSalir);
 
-        lblTotal = new JLabel("Total: " + calcularTotal()+"$");
+        lblTotal = new JLabel("Total: " + calcularTotal()+"€");
         lblTotal.setFont(new Font("Arial", Font.BOLD, 16));
         pDerecha.add(lblTotal, BorderLayout.EAST);
 
@@ -91,7 +95,7 @@ public class VentanaCarrito extends JFrame {
                  listaItems.remove(fila);
                  modeloTabla = new ModeloTablaCompras(listaItems);
                  tabla.setModel(modeloTabla);
-                 lblTotal.setText("Total: " + calcularTotal()+"$");
+                 lblTotal.setText("Total: " + calcularTotal()+"€");
              } else {
                  JOptionPane.showMessageDialog(this, "Selecciona un producto para eliminar");
              }
@@ -139,7 +143,7 @@ public class VentanaCarrito extends JFrame {
         listaItems.clear();
         modeloTabla = new ModeloTablaCompras(listaItems);
         tabla.setModel(modeloTabla);
-        lblTotal.setText("Total: 0.00$");
+        lblTotal.setText("Total: 0.00€");
     }
 
    
