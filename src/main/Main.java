@@ -8,14 +8,13 @@ import java.util.Map;
 import java.util.Random;
 
 import domain.ItemCarrito;
-import domain.Opinion; 
-import domain.Producto; 
+import domain.Opinion;
+import domain.Producto;
 import gui.JFramePrincipal;
 import gui.VentanaCarga; 
 
 public class Main {
-    
-    
+
     private static final Object[][] RAW_DATA = {
         {"CAMISETA BASICA BLANCA", "camiseta_blanca.png", 15.95, "Algodón 100% orgánico, corte clásico y duradero. Ideal para el día a día."},
         {"CAMISETA HONDA NSX-R", "camiseta_honda.png", 19.95, "Diseño exclusivo de edición limitada, cuello reforzado y estampado de alta calidad."},
@@ -33,33 +32,33 @@ public class Main {
         {"SUDADERA PARCHES BANDAS CONTRASTE", "sudadera_parches.png", 39.95, "Sudadera hoodie relaxed fit. Cuello con capucha y manga larga. Bolsillo frontal tipo canguro."},
         {"CAZADORA ACOLCHADA LIGERA WATER REPELLENT", "cazadora_acolchada.png", 39.95, "Cazadora acolchada regular fit confeccionada en tejido técnico que repele el agua al contacto."},
         {"CHAQUETÓN REGULAR FIT BOLSILLOS", "chaqueta_regularfit.png", 53.95, "Cazadora acolchada regular fit confeccionada en tejido técnico que repele el agua al contacto."},
-
     };
-    
-   
+
+
     private static List<Producto> listaProductosGlobal = new ArrayList<>();
-    
-    
+
+
     private static void inicializarProductos() {
+        
         Random rand = new Random();
         String[] tallasRopa = {"XS", "S", "M", "L", "XL"};
-        
+
         int id = 1;
-        
+
         for (Object[] item : RAW_DATA) {
             String nombre = (String) item[0];
             double precio = (double) item[2];
             String descripcion = (String) item[3];
-            
-            
+
+
             Map<String, Integer> inventarioPorTalla = new HashMap<>();
 
             String tallaDefecto = "M";
             int totalStock = 0;
 
-            
+
             for (String talla : tallasRopa) {
-            	
+
                 int stock;
                 int numeroAleatorio = rand.nextInt(10);
 
@@ -67,66 +66,51 @@ public class Main {
                     stock = 0;
                 } else {
                     stock = rand.nextInt(10) + 1;
-                }        
-                
+                }
+
                 inventarioPorTalla.put(talla, stock);
                 totalStock = totalStock + stock;
             }
 
-            
+
             Producto p = new Producto(
-                id++, 
-                nombre, 
-                descripcion, 
-                precio, 
-                tallaDefecto,              
-                totalStock,                
-                new ArrayList<Opinion>(),  
-                inventarioPorTalla         
+                id++,
+                nombre,
+                descripcion,
+                precio,
+                tallaDefecto,
+                totalStock,
+                new ArrayList<Opinion>(), 
+                inventarioPorTalla
             );
-            
+
             listaProductosGlobal.add(p);
         }
     }
-    
-    
+
+
     private static List<ItemCarrito> inicializarCarrito() {
-        List<ItemCarrito> carritoInicial = new ArrayList<>();
-        
-       
-        if (listaProductosGlobal.size() >= 2) {
-            Producto p1 = listaProductosGlobal.get(0);
-            Producto p2 = listaProductosGlobal.get(1);
- 
-        }
-        
-        return carritoInicial;
+        return new ArrayList<>();
     }
-    
-    
-    
+
+
     public static void main(String[] args) {
-        
-        
         inicializarProductos();
-        
-        
         List<ItemCarrito> carritoInicial = inicializarCarrito();
-        
-        
+
         SwingUtilities.invokeLater(() -> {
+
             
-           
-            JFramePrincipal principal = new JFramePrincipal(listaProductosGlobal, carritoInicial); 
-            principal.setVisible(false); 
+            JFramePrincipal principal = new JFramePrincipal(listaProductosGlobal, carritoInicial);
+            principal.setVisible(false);
 
             
             VentanaCarga ventanaCarga = new VentanaCarga(principal);
             ventanaCarga.setVisible(true);
 
-            
+           
             ventanaCarga.iniciarCarga(() -> {
-                principal.setVisible(true); 
+                principal.setVisible(true);
             });
         });
     }

@@ -6,7 +6,9 @@ import javax.swing.table.DefaultTableModel;
 import domain.ItemCarrito;
 
 public class ModeloTablaCompras extends DefaultTableModel {
-    private List<String> titulos = Arrays.asList("Producto", "Cantidad", "Precio Unitario", "Total");
+    
+	private static final long serialVersionUID = 1L;
+	private List<String> titulos = Arrays.asList("Producto", "Cantidad", "Precio Unitario", "Total","Acciones");
     private List<ItemCarrito> listaItems;
 
     public ModeloTablaCompras(List<ItemCarrito> lista) {
@@ -31,7 +33,7 @@ public class ModeloTablaCompras extends DefaultTableModel {
 
     @Override
     public boolean isCellEditable(int row, int column) {
-        return column==1;
+        return column==4;
     }
 
     @Override
@@ -41,7 +43,9 @@ public class ModeloTablaCompras extends DefaultTableModel {
             case 0: return item.getProducto().getNombre();
             case 1: return item.getCantidad();
             case 2: return item.getProducto().getPrecio();
-            case 3: return item.getCantidad() * item.getProducto().getPrecio();
+            case 3: double subtotal= item.getCantidad() * item.getProducto().getPrecio();
+            		return String.format("%.2f", subtotal)+"€";
+            case 4: return "Modificar";
             default: return null;
         }
     }

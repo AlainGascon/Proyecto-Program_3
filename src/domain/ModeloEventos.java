@@ -1,10 +1,8 @@
-package gui;
+package domain;
 
 
 
 import javax.swing.table.AbstractTableModel;
-
-import domain.Evento;
 
 import java.util.List;
 

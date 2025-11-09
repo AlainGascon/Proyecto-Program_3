@@ -39,7 +39,7 @@ public class JPanelCatalogo extends JPanel {
 	private JPanel panelContenidoDetalle;
     
 	private JComboBox<String> cbxFiltroTalla;
-	private JTextField txtFiltro; 
+	
     
 	private JButton btnAnadirCarrito;
 	private JComboBox<String> comboTallaDetalle;
