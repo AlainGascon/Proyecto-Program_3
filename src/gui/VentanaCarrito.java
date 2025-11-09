@@ -60,7 +60,7 @@ public class VentanaCarrito extends JFrame {
         scrollTabla = new JScrollPane(tabla);
         getContentPane().add(scrollTabla, BorderLayout.CENTER);
         tabla.getModel().addTableModelListener(e->{
-        	lblTotal.setText("Total: " + calcularTotal()+"€");
+        	lblTotal.setText("Total: " + String.format("%.2f", calcularTotal())+"€");
         });
         tabla.getColumn("Acciones").setCellRenderer(new BtnCantidadRenderer(tabla, lista, lblTotal, modeloTabla));
         tabla.getColumn("Acciones").setCellEditor(new BtnCantidadRenderer(tabla, lista, lblTotal, modeloTabla));
@@ -73,15 +73,17 @@ public class VentanaCarrito extends JFrame {
         btnPagar.setFont(new Font("Arial",Font.BOLD,14));
         btnPagar.setForeground(Color.WHITE);
         btnPagar.setBackground(new Color(46, 204, 113)	);
-        ImageIcon im= new ImageIcon("imagenes/salir.png");
-        btnSalir = new JButton(im);
+        //ImageIcon im= new ImageIcon("imagenes/salir.png");
+        btnSalir = new JButton("Volver al catálogo");
+        btnSalir.setForeground(Color.BLACK);
+        btnSalir.setBackground(Color.LIGHT_GRAY);
 
         pIzqAbajo.add(btnEliminar);
         pIzqAbajo.add(btnVaciar);
         pDerecha.add(btnPagar);
         pDerechaAbajo.add(btnSalir);
 
-        lblTotal = new JLabel("Total: " + calcularTotal()+"€");
+        lblTotal = new JLabel("Total: " + String.format("%.2f", calcularTotal())+"€");
         lblTotal.setFont(new Font("Arial", Font.BOLD, 16));
         pDerecha.add(lblTotal, BorderLayout.EAST);
 
@@ -95,7 +97,7 @@ public class VentanaCarrito extends JFrame {
                  listaItems.remove(fila);
                  modeloTabla = new ModeloTablaCompras(listaItems);
                  tabla.setModel(modeloTabla);
-                 lblTotal.setText("Total: " + calcularTotal()+"€");
+                 lblTotal.setText("Total: " + String.format("%.2f", calcularTotal())+"€");
              } else {
                  JOptionPane.showMessageDialog(this, "Selecciona un producto para eliminar");
              }
@@ -114,14 +116,15 @@ public class VentanaCarrito extends JFrame {
                  JOptionPane.showMessageDialog(this, "El carrito está vacío.");
              } else {
                  JOptionPane.showMessageDialog(this, "Procesando pago... ");
-                 new VentanaPago(calcularTotal());
-                 vaciarCarrito();
+                 new VentanaPago(calcularTotal(),this,listaItems);
+                // vaciarCarrito();
              }
         });
         
         btnSalir.addActionListener((e)->{
-			JOptionPane.showMessageDialog(null, "Se va a cerrar la aplicacion", "Cerrando...", JOptionPane.WARNING_MESSAGE);
-			System.exit(0);
+			//JOptionPane.showMessageDialog(null, "Se va a cerrar la aplicacion", "Cerrando...", JOptionPane.WARNING_MESSAGE);
+			//new JPanelCatalogo(null);
+			dispose();
 		});
 
         btnEliminar.setForeground(Color.RED);
@@ -146,7 +149,14 @@ public class VentanaCarrito extends JFrame {
         lblTotal.setText("Total: 0.00€");
     }
 
+   public void actualizarTabla() {
+	   modeloTabla= new ModeloTablaCompras(listaItems);
+	   tabla.setModel(modeloTabla);
+   }
    
+   public void actualizarTotal() {
+	   lblTotal.setText("Total: "+String.format("%.2f", calcularTotal())+"€");
+   }
    
 /*<<<<<<< HEAD
     public static void main(String[] args) {

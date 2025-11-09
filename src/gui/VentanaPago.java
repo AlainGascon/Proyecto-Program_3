@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.util.Date;
+import java.util.List;
 import java.util.Random;
 
 import javax.swing.ImageIcon;
@@ -17,6 +18,7 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
 import gui.JFramePrincipal;
+import domain.ItemCarrito;
 import domain.Pago;
 
 public class VentanaPago extends JFrame{ 
@@ -25,11 +27,15 @@ public class VentanaPago extends JFrame{
 	private JButton btnConfirmar, btnCancelar;
 	private JTextField txtDireccion, txtTitular, txtTarjeta;
 	private JComboBox<String> cbMetodoPago;
+	private VentanaCarrito ventanaCarrito;;
+	private List<ItemCarrito> listaItems;
 	private double total;
 	
-	public VentanaPago(double total) {
+	public VentanaPago(double total, VentanaCarrito ventanaCarrito, List<ItemCarrito> listaItems) {
 		super();
 		this.total= total;
+		this.ventanaCarrito=ventanaCarrito;
+		this.listaItems=listaItems;
 		
 		
 		setBounds(300, 200, 800, 400);
@@ -41,7 +47,7 @@ public class VentanaPago extends JFrame{
 
 		ImageIcon im= new ImageIcon("imagenes/pago.png");
 		lblTitulo= new JLabel("Pago del Pedido",im, SwingConstants.LEFT);
-		lblTotal= new JLabel("Total: "+total);	
+		lblTotal= new JLabel("Total: "+String.format("%.2f", total)+"€");	
 		lblDireccion= new JLabel("Dirección de envío");
 		lblTitular= new JLabel("Títular de la tarjeta");
 		lblTarjeta= new JLabel("Número de la tarjeta");
@@ -98,13 +104,18 @@ public class VentanaPago extends JFrame{
 			Pago pago= new Pago(idPago, total, metodo, "Pago Completado", new Date(), transaccion, tarjeta, titular);
 			
 			JOptionPane.showMessageDialog(this, "✅Pago realizado con éxito.\n\n"+"Transacción: "+pago.getNumTransaccion()+"\n");
+			
+			listaItems.clear();
+			ventanaCarrito.actualizarTabla();
+			ventanaCarrito.actualizarTotal();
+			dispose();
 		});
 		
 		setVisible(true);
 	}
-	public static void main(String[] args) {
+	/*public static void main(String[] args) {
 		new VentanaPago(177.37);
-	}
+	}*/
 }
 
 
