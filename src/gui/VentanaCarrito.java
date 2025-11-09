@@ -144,6 +144,7 @@ public class VentanaCarrito extends JFrame {
 
    
    
+/*<<<<<<< HEAD
     public static void main(String[] args) {
         Producto p1 = new Producto(1, "Camiseta básica", "Camiseta de algodón 100%", 15.99, "M", "Blanco", 50, "Ropa", "H&M", true);
         Producto p2 = new Producto(2, "Pantalón vaquero", "Jeans azul oscuro ajustado", 39.99, "L", "Azul", 30, "Ropa", "Levi’s", true);
@@ -160,7 +161,10 @@ public class VentanaCarrito extends JFrame {
 
         new VentanaCarrito(lista);
     }
-
+=======
+    
+>>>>>>> branch 'main' of git@github.com:AlainGascon/Proyecto-Program_3.git
+*/
    
 }
 

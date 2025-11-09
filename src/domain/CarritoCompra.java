@@ -50,7 +50,7 @@ public class CarritoCompra {
 		return "CarritoCompra [id=" + id + ", items=" + items + ", descuento=" + descuento + "]";
 	}
     
-	public void agregarProducto(Producto producto, int cantidad) {
+	public void agregarProducto(Producto producto, int cantidad, String talla) {
       
         for (ItemCarrito item : items) {
             if (item.getProducto().getId() == producto.getId()) {
@@ -59,7 +59,7 @@ public class CarritoCompra {
             }
         }
         
-        items.add(new ItemCarrito(producto, cantidad));
+        items.add(new ItemCarrito(producto, cantidad, talla));
     }
 
 	

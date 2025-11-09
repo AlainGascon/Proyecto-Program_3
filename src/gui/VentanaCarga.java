@@ -9,7 +9,7 @@ public class VentanaCarga extends JDialog {
     private JProgressBar progressBar;
 
     public VentanaCarga(JFrame parent) {
-        super(parent, "Cargando...", true);
+        super(parent, "Cargando...", false);
         setSize(400, 120);
         setLocationRelativeTo(parent);
         setLayout(new BorderLayout());
