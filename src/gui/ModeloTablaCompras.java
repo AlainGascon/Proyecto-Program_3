@@ -6,7 +6,9 @@ import javax.swing.table.DefaultTableModel;
 import domain.ItemCarrito;
 
 public class ModeloTablaCompras extends DefaultTableModel {
-    private List<String> titulos = Arrays.asList("Producto", "Cantidad", "Precio Unitario", "Total","Acciones");
+	
+	private static final long serialVersionUID = 1L;
+	private List<String> titulos = Arrays.asList("Producto", "Cantidad", "Precio Unitario", "Total","Acciones");
     private List<ItemCarrito> listaItems;
 
     public ModeloTablaCompras(List<ItemCarrito> lista) {

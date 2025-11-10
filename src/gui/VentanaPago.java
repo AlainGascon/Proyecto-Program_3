@@ -83,7 +83,7 @@ public class VentanaPago extends JFrame{
 		add(pSur,BorderLayout.SOUTH);
 		add(pCentro, BorderLayout.CENTER);
 		
-		//listeners
+	
 		btnCancelar.addActionListener((e)->{
 			dispose();
 		});
@@ -113,11 +113,8 @@ public class VentanaPago extends JFrame{
 		
 		setVisible(true);
 	}
-	/*public static void main(String[] args) {
-		new VentanaPago(177.37);
-	}*/
-}
 
+}
 
 
 

@@ -16,6 +16,8 @@ import javax.swing.table.TableCellRenderer;
 import domain.ItemCarrito;
 
 public class BtnCantidadRenderer extends AbstractCellEditor implements TableCellRenderer, TableCellEditor{
+	
+	private static final long serialVersionUID = 1L;
 	private JPanel panel;
 	private JButton btnMas, btnMenos;
 	private int row;

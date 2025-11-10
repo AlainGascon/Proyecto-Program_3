@@ -28,7 +28,7 @@ public class VentanaCarga extends JDialog {
         new Thread(() -> {
             for (int i = 0; i <= 100; i++) {
                 try {
-                    Thread.sleep(30); // velocidad de carga
+                    Thread.sleep(30); 
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
