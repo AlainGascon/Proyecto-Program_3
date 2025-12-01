@@ -21,10 +21,13 @@ public class VentanaCarrito extends JFrame {
     private JButton btnVaciar;
     private JButton btnPagar;
     private JButton btnSalir;
+    private boolean descuentoAplicado;
 
     public VentanaCarrito(List<ItemCarrito> lista) {
         super();
         this.listaItems = lista;
+        
+        descuentoAplicado=false;
 
         setBounds(300, 200, 800, 400);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE); 
@@ -120,6 +123,9 @@ public class VentanaCarrito extends JFrame {
         for (ItemCarrito item : listaItems) {
             total += item.getCantidad() * item.getProducto().getPrecio();
         }
+        if(descuentoAplicado) {
+        	total=total * 0.80;
+        }
         return total;
     }
 
@@ -160,5 +166,11 @@ public class VentanaCarrito extends JFrame {
         }
         modeloTabla.fireTableDataChanged();
     }
+    
+    public void setDescuento(boolean valor) {
+    	descuentoAplicado = valor;
+    	lblTotal.setText("Total: "+String.format("%.2f", calcularTotal())+"€");
+    }
+    
 
 }
