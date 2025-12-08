@@ -5,19 +5,29 @@ package domain;
 import java.time.LocalDate;
 
 public class Evento {
+	private String nombre;
     private LocalDate fecha;
     private String descripcion;
     private String lugar;
     private int capacidad;
 
-    public Evento(LocalDate fecha, String descripcion, String lugar, int capacidad) {
-        this.fecha = fecha;
+    public Evento(String nombre, LocalDate fecha, String descripcion, String lugar, int capacidad) {
+        this.setNombre(nombre);
+    	this.fecha = fecha;
         this.descripcion = descripcion;
         this.lugar = lugar;
         this.capacidad = capacidad;
     }
 
     // Getters y setters
+    
+    public String getNombre() {
+		return nombre;
+	}
+
+	public void setNombre(String nombre) {
+		this.nombre = nombre;
+	}
     public LocalDate getFecha() {
         return fecha;
     }
@@ -56,6 +66,7 @@ public class Evento {
 				+ capacidad + "]";
 	}
 
+	
 	
     
 }
