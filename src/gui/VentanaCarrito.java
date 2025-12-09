@@ -16,18 +16,17 @@ public class VentanaCarrito extends JFrame {
     private JScrollPane scrollTabla;
     private ModeloTablaCompras modeloTabla;
     private List<ItemCarrito> listaItems;
-    private JLabel lblTotal;
+    private JLabel lblTotal, lblDescuento;
     private JButton btnEliminar; 
     private JButton btnVaciar;
     private JButton btnPagar;
     private JButton btnSalir;
-    private boolean descuentoAplicado;
+    public static boolean descuentoAplicado=false;
 
     public VentanaCarrito(List<ItemCarrito> lista) {
         super();
         this.listaItems = lista;
-        
-        descuentoAplicado=false;
+
 
         setBounds(300, 200, 800, 400);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE); 
@@ -44,6 +43,12 @@ public class VentanaCarrito extends JFrame {
         JLabel lblTitulo = new JLabel("Carrito 🛒", SwingConstants.LEFT);
         lblTitulo.setFont(new Font("Arial", Font.BOLD, 22));
         pNorte.add(lblTitulo, BorderLayout.WEST);
+        
+        lblDescuento = new JLabel("Descuento obtenido: 20% aplicado");
+        lblDescuento.setFont(new Font("Arial",Font.BOLD, 14));
+        lblDescuento.setForeground(new Color(39, 174, 96));
+        lblDescuento.setVisible(false);
+        pNorte.add(lblDescuento,BorderLayout.CENTER);
         
         modeloTabla = new ModeloTablaCompras(listaItems);
         tabla = new JTable(modeloTabla);
@@ -125,6 +130,7 @@ public class VentanaCarrito extends JFrame {
         }
         if(descuentoAplicado) {
         	total=total * 0.80;
+        	lblDescuento.setVisible(true);
         }
         return total;
     }
@@ -150,6 +156,11 @@ public class VentanaCarrito extends JFrame {
 
     public void actualizarTotal() {
         lblTotal.setText("Total: "+String.format("%.2f", calcularTotal())+"€");
+        if(descuentoAplicado) {
+        	lblDescuento.setVisible(true);
+        }else {
+        	lblDescuento.setVisible(false);
+        }
     }
 
     public void agregarProducto(Producto producto, int cantidad) {
@@ -171,6 +182,8 @@ public class VentanaCarrito extends JFrame {
     	descuentoAplicado = valor;
     	lblTotal.setText("Total: "+String.format("%.2f", calcularTotal())+"€");
     }
+    
+    
     
 
 }

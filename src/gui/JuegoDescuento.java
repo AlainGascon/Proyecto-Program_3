@@ -231,6 +231,7 @@ public class JuegoDescuento extends JPanel {
             JOptionPane.showMessageDialog(this, 
                 "✨ ¡JACKPOT! ✨\nHas conseguido un descuento del 20%", 
                 "¡Ganador!", JOptionPane.INFORMATION_MESSAGE);
+            VentanaCarrito.descuentoAplicado=true;
         } else {
             lbl1.setForeground(COLOR_LOSE);
             lbl2.setForeground(COLOR_LOSE);
