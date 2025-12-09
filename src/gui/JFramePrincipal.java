@@ -116,6 +116,8 @@ public class JFramePrincipal extends JFrame implements ActionListener {
 	    List<Evento> eventos = new ArrayList<>();
 	    
 
+	    // IAG
+	    
 	    eventos.add(new Evento(LocalDate.of(2025, 11, 15), "Desfile Colección Invierno", "Gran Vía, Bilbao", 120));
 	    eventos.add(new Evento(LocalDate.of(2025, 11, 18), "Lanzamiento Cápsula 'Urban'", "Passeig de Gràcia, Barcelona", 95));
 	    eventos.add(new Evento(LocalDate.of(2025, 11, 21), "Venta Privada Invierno", "Showroom Exclusivo, Madrid", 70));

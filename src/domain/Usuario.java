@@ -1,8 +1,6 @@
 package domain;
 
 import java.io.Serializable;
-import java.util.Date;
-import java.util.List;
 
 public class Usuario implements Serializable{
 	
@@ -12,14 +10,10 @@ public class Usuario implements Serializable{
 	private String nombre;
 	private String apellidos;
 	private String dni;
-	private int id;
+	private String id;
 	private String email;
 	private String numTelefono;
 	private String password;
-	private CarritoCompra carrito;
-	private Date fechaRegistro;
-	private List<Pedido> historiaPedidos;
-	private boolean activo;
 	
 	
 	public Usuario() {
@@ -28,8 +22,10 @@ public class Usuario implements Serializable{
 	
 	
 
-	public Usuario(String nombre, String apellidos, String dni, int id, String email, String numTelefono,
-			String password, CarritoCompra carrito, Date fechaRegistro, List<Pedido> historiaPedidos, boolean activo) {
+
+
+	public Usuario(String nombre, String apellidos, String dni, String id, String email, String numTelefono,
+			String password) {
 		super();
 		this.nombre = nombre;
 		this.apellidos = apellidos;
@@ -38,10 +34,6 @@ public class Usuario implements Serializable{
 		this.email = email;
 		this.numTelefono = numTelefono;
 		this.password = password;
-		this.carrito = carrito;
-		this.fechaRegistro = fechaRegistro;
-		this.historiaPedidos = historiaPedidos;
-		this.activo = activo;
 	}
 
 
@@ -69,13 +61,6 @@ public class Usuario implements Serializable{
 		this.dni = dni;
 	}
 
-	public int getId() {
-		return id;
-	}
-
-	public void setId(int id) {
-		this.id = id;
-	}
 
 	public String getEmail() {
 		return email;
@@ -101,44 +86,23 @@ public class Usuario implements Serializable{
 		this.password = password;
 	}
 
-	public CarritoCompra getCarrito() {
-		return carrito;
-	}
-
-	public void setCarrito(CarritoCompra carrito) {
-		this.carrito = carrito;
-	}
-
-	public Date getFechaRegistro() {
-		return fechaRegistro;
-	}
-
-	public void setFechaRegistro(Date fechaRegistro) {
-		this.fechaRegistro = fechaRegistro;
-	}
-
-	public List<Pedido> getHistoriaPedidos() {
-		return historiaPedidos;
-	}
-
-	public void setHistoriaPedidos(List<Pedido> historiaPedidos) {
-		this.historiaPedidos = historiaPedidos;
-	}
-
-	public boolean isActivo() {
-		return activo;
-	}
-
-	public void setActivo(boolean activo) {
-		this.activo = activo;
-	}
-
 
 	@Override
 	public String toString() {
-		return "Usuario [nombre=" + nombre + ", apellidos=" + apellidos + ", dni=" + dni + ", id=" + id + ", email="
-				+ email + ", numTelefono=" + numTelefono + ", carrito=" + carrito + ", fechaRegistro=" + fechaRegistro
-				+ ", historiaPedidos=" + historiaPedidos + ", activo=" + activo + "]";
+		return "Usuario [nombre=" + nombre + ", apellidos=" + apellidos + ", dni=" + dni + ", email="
+				+ email + ", numTelefono=" + numTelefono + "]";
+	}
+
+
+
+	public String getId() {
+		return id;
+	}
+
+
+
+	public void setId(String id) {
+		this.id = id;
 	}
 
 

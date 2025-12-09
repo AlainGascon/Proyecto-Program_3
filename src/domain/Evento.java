@@ -11,7 +11,7 @@ public class Evento {
     private String lugar;
     private int capacidad;
 
-    public Evento(String nombre, LocalDate fecha, String descripcion, String lugar, int capacidad) {
+    public Evento(LocalDate fecha, String descripcion, String lugar, int capacidad) {
         this.setNombre(nombre);
     	this.fecha = fecha;
         this.descripcion = descripcion;
@@ -62,12 +62,11 @@ public class Evento {
 
 	@Override
 	public String toString() {
-		return "Evento [fecha=" + fecha + ", descripcion=" + descripcion + ", lugar=" + lugar + ", capacidad="
-				+ capacidad + "]";
+		return "Evento [nombre=" + nombre + ", fecha=" + fecha + ", descripcion=" + descripcion + ", lugar=" + lugar
+				+ ", capacidad=" + capacidad + "]";
 	}
 
-	
-	
+		
     
 }
 

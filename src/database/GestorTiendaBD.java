@@ -7,16 +7,23 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-
-import domain.Opinion;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import domain.Producto;
+import domain.Evento;
+import domain.Usuario;
 import domain.Pago;
-
-
 
 public class GestorTiendaBD {
 	
     private static final String SQLITE_FILE = "resources/db/tienda.db";
     private static final String CONNECTION_STRING = "jdbc:sqlite:" + SQLITE_FILE;
+    
+  
     
     public GestorTiendaBD() {
         File directorio = new File("resources/db");
@@ -31,19 +38,16 @@ public class GestorTiendaBD {
         }
     }
     
-    /**
-     * Crea todas las tablas necesarias para la aplicación de la tienda.
-     */
+
     public void createTables() {
         System.out.println("-> Creando tablas si no existen...");
         
         try (Connection con = DriverManager.getConnection(CONNECTION_STRING);
              Statement stmt = con.createStatement()) {
 
-            // Habilitar la integridad referencial para FKs en SQLite
             stmt.execute("PRAGMA foreign_keys = ON;");
 
-            // 1. TABLA USUARIOS (EXISTENTE)
+            // 1. USUARIOS
             String sqlUsuario = "CREATE TABLE IF NOT EXISTS USUARIOS ("
                             + "ID INTEGER PRIMARY KEY AUTOINCREMENT,"
                             + "NOMBRE TEXT NOT NULL,"
@@ -51,22 +55,21 @@ public class GestorTiendaBD {
                             + "DNI TEXT UNIQUE NOT NULL,"
                             + "EMAIL TEXT UNIQUE NOT NULL,"
                             + "NUM_TELEFONO TEXT,"
-                            + "PASSWORD TEXT NOT NULL,"
-                            + "FECHA_REGISTRO TEXT," 
-                            + "ACTIVO BOOLEAN NOT NULL" 
+                            + "PASSWORD TEXT NOT NULL," 
                             + ");";
             stmt.execute(sqlUsuario);
             
-            // 2. TABLA PRODUCTOS (EXISTENTE)
+            // 2. PRODUCTOS
             String sqlProducto = "CREATE TABLE IF NOT EXISTS PRODUCTOS ("
                             + "ID INTEGER PRIMARY KEY AUTOINCREMENT,"
                             + "NOMBRE TEXT NOT NULL,"
                             + "PRECIO REAL NOT NULL,"
-                            + "DESCRIPCION TEXT"
+                            + "DESCRIPCION TEXT,"
+                            + "STOCK INTEGER NOT NULL,"
                             + ");";
             stmt.execute(sqlProducto);
             
-            // 3. TABLA STOCK_TALLA (EXISTENTE - Relación de Producto)
+            // 3. STOCK_TALLA
             String sqlStock = "CREATE TABLE IF NOT EXISTS STOCK_TALLA ("
                             + "ID_PRODUCTO INTEGER NOT NULL,"
                             + "TALLA TEXT NOT NULL,"
@@ -76,7 +79,7 @@ public class GestorTiendaBD {
                             + ");";
             stmt.execute(sqlStock);
 
-            // 4. TABLA EVENTOS (EXISTENTE)
+            // 4. EVENTOS
             String sqlEvento = "CREATE TABLE IF NOT EXISTS EVENTOS ("
                             + "ID INTEGER PRIMARY KEY AUTOINCREMENT,"
                             + "NOMBRE TEXT NOT NULL,"
@@ -87,7 +90,7 @@ public class GestorTiendaBD {
                             + ");";
             stmt.execute(sqlEvento);
 
-            // 5. TABLA PAGO (NUEVA)
+            // 5. PAGO
             String sqlPago = "CREATE TABLE IF NOT EXISTS PAGO ("
                             + " ID INTEGER PRIMARY KEY AUTOINCREMENT,"
                             + " CANTIDAD_A_PAGAR REAL NOT NULL,"
@@ -100,7 +103,7 @@ public class GestorTiendaBD {
                             + ");";
             stmt.execute(sqlPago);
             
-            // 6. TABLA PEDIDO (NUEVA)
+            // 6. PEDIDO
             String sqlPedido = "CREATE TABLE IF NOT EXISTS PEDIDO ("
                             + " ID INTEGER PRIMARY KEY AUTOINCREMENT,"
                             + " USUARIO_ID INTEGER NOT NULL,"
@@ -117,7 +120,7 @@ public class GestorTiendaBD {
                             + ");";
             stmt.execute(sqlPedido);
             
-            // 7. TABLA PEDIDO_PRODUCTO (NUEVA - Relación Pedido N:M Producto)
+            // 7. PEDIDO_PRODUCTO (Tabla Auxiliar N:M)
             String sqlPedidoProducto = "CREATE TABLE IF NOT EXISTS PEDIDO_PRODUCTO ("
                             + " PEDIDO_ID INTEGER NOT NULL,"
                             + " PRODUCTO_ID INTEGER NOT NULL,"
@@ -129,23 +132,8 @@ public class GestorTiendaBD {
                             + ");";
             stmt.execute(sqlPedidoProducto);
             
-            // 8. TABLA OPINION (NUEVA)
-            String sqlOpinion = "CREATE TABLE IF NOT EXISTS OPINION ("
-                            + " ID INTEGER PRIMARY KEY AUTOINCREMENT,"
-                            + " USUARIO_ID INTEGER NOT NULL,"
-                            + " PRODUCTO_ID INTEGER NOT NULL,"
-                            + " PUNTUACION INTEGER NOT NULL,"
-                            + " TITULO TEXT,"
-                            + " COMENTARIO TEXT,"
-                            + " FECHA_OPINION TEXT NOT NULL,"
-                            + " ME_GUSTA INTEGER,"
-                            + " VISIBLE BOOLEAN NOT NULL,"
-                            + " FOREIGN KEY(USUARIO_ID) REFERENCES USUARIOS(ID) ON DELETE CASCADE,"
-                            + " FOREIGN KEY(PRODUCTO_ID) REFERENCES PRODUCTOS(ID) ON DELETE CASCADE"
-                            + ");";
-            stmt.execute(sqlOpinion);
             
-            // 9. TABLA CARRITO_COMPRA (NUEVA - Asumiendo 1:1 con USUARIO)
+            // 8. CARRITO_COMPRA (Asumiendo 1:1 con USUARIO)
             String sqlCarritoCompra = "CREATE TABLE IF NOT EXISTS CARRITO_COMPRA ("
                             + " ID INTEGER PRIMARY KEY AUTOINCREMENT,"
                             + " USUARIO_ID INTEGER UNIQUE NOT NULL,"
@@ -154,7 +142,7 @@ public class GestorTiendaBD {
                             + ");";
             stmt.execute(sqlCarritoCompra);
 
-            // 10. TABLA ITEM_CARRITO (NUEVA - Relación Carrito N:M Producto)
+            // 9. ITEM_CARRITO (Tabla Auxiliar N:M)
             String sqlItemCarrito = "CREATE TABLE IF NOT EXISTS ITEM_CARRITO ("
                             + " CARRITO_ID INTEGER NOT NULL,"
                             + " PRODUCTO_ID INTEGER NOT NULL,"
@@ -173,17 +161,84 @@ public class GestorTiendaBD {
             e.printStackTrace();
         }
     }
+
+    // --- MÉTODOS DE INSERCIÓN (CREATE) ---
+
+    public void insertUsuario(Usuario usuario) {
+        String sql = "INSERT OR IGNORE INTO USUARIOS "
+                   + "(NOMBRE, APELLIDOS, DNI, EMAIL, NUM_TELEFONO, PASSWORD, FECHA_REGISTRO, ACTIVO) "
+                   + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        
+        try (Connection con = DriverManager.getConnection(CONNECTION_STRING);
+             PreparedStatement pstmt = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            
+            pstmt.setString(1, usuario.getNombre());
+            pstmt.setString(2, usuario.getApellidos());
+            pstmt.setString(3, usuario.getDni());
+            pstmt.setString(4, usuario.getEmail());
+            pstmt.setString(5, usuario.getNumTelefono());
+            pstmt.setString(6, usuario.getPassword());
+
+            pstmt.executeUpdate();
+            
+
+            
+        } catch (SQLException e) {
+            System.err.format("* Error al insertar Usuario '%s': %s\n", usuario.getEmail(), e.getMessage());
+        }
+    }
+
+    public void insertProducto(Producto producto) {
+        String sqlProducto = "INSERT INTO PRODUCTOS (NOMBRE, PRECIO, DESCRIPCION) VALUES (?, ?, ?)";
+        String sqlStock = "INSERT INTO STOCK_TALLA (ID_PRODUCTO, TALLA, CANTIDAD) VALUES (?, ?, ?)";
+
+        try (Connection con = DriverManager.getConnection(CONNECTION_STRING)) {
+            con.setAutoCommit(false); 
+            
+            try (PreparedStatement pstmtProducto = con.prepareStatement(sqlProducto, Statement.RETURN_GENERATED_KEYS)) {
+                
+
+                pstmtProducto.setString(1, producto.getNombre());
+                pstmtProducto.setDouble(2, producto.getPrecio());
+                pstmtProducto.setString(3, producto.getDescripcion());
+                pstmtProducto.executeUpdate();
+
+
+                int idProducto = -1; 
+                try (ResultSet rs = pstmtProducto.getGeneratedKeys()) {
+                    if (rs.next()) { 
+                        idProducto = rs.getInt(1); 
+                        producto.setId(idProducto);
+                    }
+                }
+                
+                con.commit(); 
+            }
+
+        } catch (SQLException e) {
+            System.err.format("* Error al insertar Producto '%s': %s\n", producto.getNombre(), e.getMessage());
+            try (Connection con = DriverManager.getConnection(CONNECTION_STRING)) { con.rollback(); } catch (SQLException ex) {}
+        }
+    }
     
-    // NOTA: Los métodos de inserción (insertUsuario, insertProducto, etc.) 
-    // y los métodos de carga (loadProductos, etc.) deben implementarse ahora para cada una de las 
-    // nuevas tablas, siguiendo la misma lógica usada en los métodos previos.
+    public void insertEvento(Evento evento) {
+        String sql = "INSERT OR IGNORE INTO EVENTOS (NOMBRE, FECHA, DESCRIPCION, LUGAR, CAPACIDAD) VALUES (?, ?, ?, ?, ?)";
+        
+        try (Connection con = DriverManager.getConnection(CONNECTION_STRING);
+             PreparedStatement pstmt = con.prepareStatement(sql)) {
+            
+            pstmt.setString(1, evento.getNombre());
+            pstmt.setString(2, evento.getFecha().toString());
+            pstmt.setString(3, evento.getDescripcion());
+            pstmt.setString(4, evento.getLugar());
+            pstmt.setInt(5, evento.getCapacidad());
+            pstmt.executeUpdate();
+            
+        } catch (SQLException e) {
+            System.err.format("* Error al insertar Evento '%s': %s\n", evento.getNombre(), e.getMessage());
+        }
+    }
     
-    // Métodos para USUARIOS, PRODUCTOS, EVENTOS se mantienen.
-    // ...
-    
-    /**
-     * Inserta un nuevo Pago en la BD.
-     */
     public void insertPago(Pago pago) {
         String sql = "INSERT INTO PAGO (CANTIDAD_A_PAGAR, METODO_PAGO, ESTADO, FECHA_PAGO, NUM_TRANSACCION, NUMERO_TARJETA, TITULAR_TARJETA) "
                    + "VALUES (?, ?, ?, ?, ?, ?, ?)";
@@ -202,7 +257,7 @@ public class GestorTiendaBD {
             
             try (ResultSet rs = pstmt.getGeneratedKeys()) {
                 if (rs.next()) {
-                    pago.setId(rs.getInt(1)); // Asignar el ID generado al objeto Pago
+                    pago.setId(rs.getInt(1));
                 }
             }
             
@@ -210,43 +265,123 @@ public class GestorTiendaBD {
             System.err.format("* Error al insertar Pago '%s': %s\n", pago.getNumTransaccion(), e.getMessage());
         }
     }
-
-    /**
-     * Inserta una nueva Opinión en la BD.
-     */
-    public void insertOpinion(Opinion opinion) {
-        String sql = "INSERT INTO OPINION (USUARIO_ID, PRODUCTO_ID, PUNTUACION, TITULO, COMENTARIO, FECHA_OPINION, ME_GUSTA, VISIBLE) "
-                   + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-        
-        // **NOTA IMPORTANTE**: Se necesitan los IDs de Usuario y Producto.
-        // Asumimos que los objetos Usuario y Producto dentro de Opinion tienen sus IDs cargados.
-        int usuarioId = opinion.getUsuario() != null ? opinion.getUsuario().getId() : -1;
-        int productoId = opinion.getProducto() != null ? opinion.getProducto().getId() : -1;
-
-        if (usuarioId == -1 || productoId == -1) {
-            System.err.println("* Error al insertar Opinión: Falta el ID de Usuario o Producto.");
-            return;
-        }
-
+    
+     public boolean existeUsuario(String email) {
+        String sql = "SELECT COUNT(*) FROM USUARIOS WHERE EMAIL = ?";
         try (Connection con = DriverManager.getConnection(CONNECTION_STRING);
-             PreparedStatement pstmt = con.prepareStatement(sql)) {
+             PreparedStatement stmt = con.prepareStatement(sql)) {
             
-            pstmt.setInt(1, usuarioId);
-            pstmt.setInt(2, productoId);
-            pstmt.setInt(3, opinion.getPuntuacion());
-            pstmt.setString(4, opinion.getTitulo());
-            pstmt.setString(5, opinion.getComentario());
-            pstmt.setString(6, opinion.getFechaOpinion() != null ? opinion.getFechaOpinion().toString() : null);
-            pstmt.setInt(7, opinion.getMeGusta());
-            pstmt.setBoolean(8, opinion.isVisible());
-            pstmt.executeUpdate();
-            
+            stmt.setString(1, email);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
         } catch (SQLException e) {
-            System.err.format("* Error al insertar Opinión: %s\n", e.getMessage());
+            e.printStackTrace();
         }
+        return false;
+     }
+
+    public List<Producto> loadProductos() {
+        List<Producto> productos = new ArrayList<>();
+        String sql = "SELECT ID, NOMBRE, PRECIO, DESCRIPCION FROM PRODUCTOS";
+        
+        try (Connection con = DriverManager.getConnection(CONNECTION_STRING);
+             Statement stmt = con.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+            
+            while (rs.next()) {
+                int id = rs.getInt("ID");
+                Producto p = new Producto( 
+                                        id, rs.getString("NOMBRE"), 
+                                        sql, rs.getDouble("PRECIO"), 
+                                        rs.getString("DESCRIPCION"), id, null);
+                
+                p.setStock(obtenerStockPorProducto(id, con));
+                productos.add(p);
+            }
+            
+        } catch (Exception e) {
+            System.err.format("\n* Error recuperando productos: %s.", e.getMessage());
+        }
+        return productos;
     }
     
-    // (Los demás métodos insert/load para CarritoCompra, ItemCarrito y Pedido deben seguir aquí)
+    // IAG
     
-    // ... Se omite el resto de la clase para no repetir el código que ya conoces
+    private Map<String, Integer> obtenerStockPorProducto(int idProducto, Connection con) throws SQLException {
+		Map<String, Integer> stockMap = new HashMap<>();
+		String sql = "SELECT TALLA, CANTIDAD FROM STOCK_TALLA WHERE ID_PRODUCTO = ?";
+		
+		try (PreparedStatement pstmt = con.prepareStatement(sql)) {
+			pstmt.setInt(1, idProducto);
+			
+			try (ResultSet rs = pstmt.executeQuery()) {
+				while (rs.next()) {
+					stockMap.put(rs.getString("TALLA"), rs.getInt("CANTIDAD"));
+				}
+			}
+		}
+		return stockMap;
+	}
+
+    public List<Evento> loadEventos() {
+        List<Evento> eventos = new ArrayList<>();
+        String sql = "SELECT ID, NOMBRE, FECHA, DESCRIPCION, LUGAR, CAPACIDAD FROM EVENTOS ORDER BY FECHA ASC";
+        
+        try (Connection con = DriverManager.getConnection(CONNECTION_STRING);
+             Statement stmt = con.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+            
+            while (rs.next()) {
+                String fechaStr = rs.getString("FECHA");
+                
+                Evento evento = new Evento(
+                        LocalDate.parse(fechaStr), 
+                        rs.getString("DESCRIPCION"),
+                        rs.getString("LUGAR"),
+                        rs.getInt("CAPACIDAD")
+                    );
+                eventos.add(evento);
+            }
+            
+        } catch (Exception e) {
+            System.err.format("\n* Error recuperando eventos: %s.", e.getMessage());
+        }
+        return eventos;
+    }
+
+
+
+    public void deleteDatabase() {
+        
+        try (Connection con = DriverManager.getConnection(CONNECTION_STRING);
+             Statement stmt = con.createStatement()) {
+            
+            stmt.execute("DROP TABLE IF EXISTS ITEM_CARRITO");
+            stmt.execute("DROP TABLE IF EXISTS CARRITO_COMPRA");
+            stmt.execute("DROP TABLE IF EXISTS PEDIDO_PRODUCTO");
+            stmt.execute("DROP TABLE IF EXISTS PEDIDO");
+            stmt.execute("DROP TABLE IF EXISTS PAGO");
+            stmt.execute("DROP TABLE IF EXISTS EVENTOS");
+            stmt.execute("DROP TABLE IF EXISTS STOCK_TALLA");
+            stmt.execute("DROP TABLE IF EXISTS PRODUCTOS");
+            stmt.execute("DROP TABLE IF EXISTS USUARIOS");
+            System.out.println("\n- Tablas borradas.");
+            
+        } catch (Exception ex) {
+            System.err.format("\n* Error al borrar las tablas: %s", ex.getMessage());
+        }
+
+        try {
+            File dbFile = new File(SQLITE_FILE);
+            if (dbFile.exists()) {
+                dbFile.delete();
+                System.out.println("- Fichero de BBDD borrado.");
+            }
+        } catch (Exception ex) {
+            System.err.format("\n* Error al borrar el archivo de la BBDD: %s", ex.getMessage());
+        }
+    }
 }

@@ -1,6 +1,6 @@
 package domain;
 
-import java.util.List;
+
 import java.util.Map;
 
 public class Producto {
@@ -11,7 +11,6 @@ public class Producto {
     private double precio;
     private String talla;
     private int stock;
-    private List<Opinion> opiniones;
     private Map<String, Integer> inventarioPorTalla;
     
 	public Producto() {
@@ -19,8 +18,7 @@ public class Producto {
 	}
 
 
-	public Producto(int id, String nombre, String descripcion, double precio, String talla, int stock,
-			List<Opinion> opiniones, Map<String, Integer> inventarioPorTalla) {
+	public Producto(int id, String nombre, String descripcion, double precio, String talla, int stock, Map<String, Integer> inventarioPorTalla) {
 		super();
 		this.id = id;
 		this.nombre = nombre;
@@ -28,7 +26,6 @@ public class Producto {
 		this.precio = precio;
 		this.talla = talla;
 		this.stock = stock;
-		this.opiniones = opiniones;
 		this.inventarioPorTalla = inventarioPorTalla;
 	}
 	
@@ -82,14 +79,6 @@ public class Producto {
 		this.stock = stock;
 	}
 
-
-	public List<Opinion> getOpiniones() {
-		return opiniones;
-	}
-
-	public void setOpiniones(List<Opinion> opiniones) {
-		this.opiniones = opiniones;
-	}
 	
 	public int getStock(String talla) {
         return inventarioPorTalla.getOrDefault(talla, 0); 
@@ -102,7 +91,7 @@ public class Producto {
 	@Override
 	public String toString() {
 		return "Producto [id=" + id + ", nombre=" + nombre + ", descripcion=" + descripcion + ", precio=" + precio
-				+ ", talla=" + talla + ", stock=" + stock + ", opiniones=" + opiniones + "]";
+				+ ", talla=" + talla + ", stock=" + stock + "]";
 	}
 
 
@@ -122,27 +111,7 @@ public class Producto {
 			return false;
 		}
 	}
-	
-	
-    
-	public void agregarOpinion(Opinion opinion) {
-		this.opiniones.add(opinion);
-	}
-    
-	
-	public double getValoracionMedia() {
-		
-		if (opiniones.isEmpty()) { 
-			return 0.0;
-		} else {
-			int suma = 0;
-			for (Opinion op: opiniones) { 
-				suma += ((Opinion) opiniones).getPuntuacion();
-			}
-		return suma / opiniones.size();
-		}
-		
-	}
+
 
 	public Map<String, Integer> getInventarioPorTalla() {
         return inventarioPorTalla;

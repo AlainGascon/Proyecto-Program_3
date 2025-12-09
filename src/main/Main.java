@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.Random;
 
 import domain.ItemCarrito;
-import domain.Opinion;
 import domain.Producto;
 import gui.JFramePrincipal;
 import gui.VentanaCarga; 
@@ -79,8 +78,7 @@ public class Main {
                 descripcion,
                 precio,
                 tallaDefecto,
-                totalStock,
-                new ArrayList<Opinion>(), 
+                totalStock, 
                 inventarioPorTalla
             );
 
