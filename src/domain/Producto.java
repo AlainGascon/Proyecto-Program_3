@@ -18,14 +18,14 @@ public class Producto {
 	}
 
 
-	public Producto(int id, String nombre, String descripcion, double precio, String talla, int stock, Map<String, Integer> inventarioPorTalla) {
+	public Producto(int id, String nombre, String descripcion, double precio, String talla, int totalStock, Map<String, Integer> inventarioPorTalla) {
 		super();
 		this.id = id;
 		this.nombre = nombre;
 		this.descripcion = descripcion;
 		this.precio = precio;
 		this.talla = talla;
-		this.stock = stock;
+		this.stock = totalStock;
 		this.inventarioPorTalla = inventarioPorTalla;
 	}
 	

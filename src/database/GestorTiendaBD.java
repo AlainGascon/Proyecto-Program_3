@@ -283,6 +283,7 @@ public class GestorTiendaBD {
         return false;
      }
 
+     
     public List<Producto> loadProductos() {
         List<Producto> productos = new ArrayList<>();
         String sql = "SELECT ID, NOMBRE, PRECIO, DESCRIPCION FROM PRODUCTOS";
@@ -293,10 +294,7 @@ public class GestorTiendaBD {
             
             while (rs.next()) {
                 int id = rs.getInt("ID");
-                Producto p = new Producto( 
-                                        id, rs.getString("NOMBRE"), 
-                                        sql, rs.getDouble("PRECIO"), 
-                                        rs.getString("DESCRIPCION"), id, null);
+                Producto p = new Producto(id, rs.getString("NOMBRE"), sql, rs.getDouble("PRECIO"), rs.getString("DESCRIPCION"));
                 
                 p.setStock(obtenerStockPorProducto(id, con));
                 productos.add(p);
@@ -307,6 +305,7 @@ public class GestorTiendaBD {
         }
         return productos;
     }
+   
     
     // IAG
     

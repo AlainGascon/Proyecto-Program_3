@@ -4,6 +4,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.List;
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 
 import domain.ItemCarrito;
 import domain.Producto;
@@ -11,51 +12,101 @@ import domain.Producto;
 public class VentanaCarrito extends JFrame {
 
     private static final long serialVersionUID = 1L;
-    private JPanel pNorte, pSur, pDerecha, pDerechaAbajo, pIzqAbajo;
+    private JPanel pNorte, pSur, pNorteDerechaContenedor, pIzqAbajo; // pDerecha y pDerechaAbajo se integran
     private JTable tabla;
     private JScrollPane scrollTabla;
     private ModeloTablaCompras modeloTabla;
     private List<ItemCarrito> listaItems;
     private JLabel lblTotal, lblDescuento;
-    private JButton btnEliminar; 
+    private JButton btnEliminar;
     private JButton btnVaciar;
     private JButton btnPagar;
     private JButton btnSalir;
     public static boolean descuentoAplicado=false;
 
     public VentanaCarrito(List<ItemCarrito> lista) {
-        super();
+        super("🛒 Carrito de Compras");
         this.listaItems = lista;
 
+        // *** MODERNIZACIÓN 1: Forzar Look and Feel plano (Metal) ***
+        try {
+            UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        SwingUtilities.updateComponentTreeUI(this);
 
-        setBounds(300, 200, 800, 400);
-        setDefaultCloseOperation(DISPOSE_ON_CLOSE); 
+
+        getContentPane().setBackground(Color.WHITE); 
+
+        setBounds(300, 200, 900, 600); // Ventana más grande para mejor visualización de datos
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         
-        pNorte = new JPanel(new BorderLayout(10,10));
-        pSur = new JPanel(new BorderLayout(10,10));
-        pDerecha = new JPanel(new FlowLayout(FlowLayout.RIGHT,10,10));
-        pDerechaAbajo = new JPanel(new FlowLayout(FlowLayout.RIGHT,10,10));
-        pIzqAbajo= new JPanel(new FlowLayout(FlowLayout.LEFT,10,10));
+        // --- INICIALIZACIÓN DE PANELES ---
+        
+        // **pNorte:** Usaremos GridBagLayout para una barra de título moderna y alineada
+        pNorte = new JPanel(new GridBagLayout()); 
+        pNorte.setBackground(new Color(248, 248, 248)); // Fondo gris muy claro para el encabezado
+        pNorte.setBorder(new EmptyBorder(15, 20, 15, 20)); // Padding
+        
+        // **pSur:** Se mantiene con BorderLayout
+        pSur = new JPanel(new BorderLayout(20, 10));
+        pSur.setBackground(Color.WHITE);
+        pSur.setBorder(new EmptyBorder(10, 10, 10, 10)); // Padding
 
+        pIzqAbajo = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 0));
+        pIzqAbajo.setBackground(Color.WHITE);
+        
+        // Contenedor para total y pago
+        pNorteDerechaContenedor = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 0));
+        pNorteDerechaContenedor.setBackground(new Color(248, 248, 248));
+        
+        // --- CONFIGURACIÓN DE GridBagLayout para pNorte ---
+        
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.insets = new Insets(0, 5, 0, 5);
+        
         getContentPane().add(pNorte, BorderLayout.NORTH);
         getContentPane().add(pSur, BorderLayout.SOUTH);
 
-        JLabel lblTitulo = new JLabel("Carrito 🛒", SwingConstants.LEFT);
-        lblTitulo.setFont(new Font("Arial", Font.BOLD, 22));
-        pNorte.add(lblTitulo, BorderLayout.WEST);
+        // --- TÍTULO Y DESCUENTO ---
         
-        lblDescuento = new JLabel("Descuento obtenido: 20% aplicado");
-        lblDescuento.setFont(new Font("Arial",Font.BOLD, 14));
+        JLabel lblTitulo = new JLabel("Mi Carrito 🛒", SwingConstants.LEFT);
+        lblTitulo.setFont(new Font("Arial", Font.BOLD, 28)); 
+        lblTitulo.setForeground(new Color(51, 51, 51));
+        
+        gbc.gridx = 0;
+        gbc.weightx = 0.5; // Ocupa espacio
+        gbc.anchor = GridBagConstraints.WEST;
+        pNorte.add(lblTitulo, gbc);
+        
+        lblDescuento = new JLabel("🎉 ¡20% de descuento aplicado! 🎉");
+        lblDescuento.setFont(new Font("Arial", Font.BOLD, 15)); 
         lblDescuento.setForeground(new Color(39, 174, 96));
         lblDescuento.setVisible(false);
-        pNorte.add(lblDescuento,BorderLayout.CENTER);
+        
+        gbc.gridx = 1;
+        gbc.weightx = 0.5; // Ocupa espacio
+        gbc.anchor = GridBagConstraints.CENTER;
+        pNorte.add(lblDescuento, gbc);
+
+        // --- TABLA Y SCROLL ---
         
         modeloTabla = new ModeloTablaCompras(listaItems);
         tabla = new JTable(modeloTabla);
-        tabla.setRowHeight(30);
+        tabla.setRowHeight(40); // Filas más altas
+        tabla.getTableHeader().setFont(new Font("Arial", Font.BOLD, 14));
+        tabla.getTableHeader().setBackground(new Color(230, 230, 230)); // Header más plano
+        tabla.getTableHeader().setBorder(BorderFactory.createEmptyBorder());
+        tabla.setGridColor(new Color(230, 230, 230));
+        tabla.setIntercellSpacing(new Dimension(0, 1)); // Espacio entre celdas más pequeño
+        
         configurarRenderersYEditors(); 
         
         scrollTabla = new JScrollPane(tabla);
+        // **ESTILO:** Eliminar el borde del JScrollPane para un look más plano
+        scrollTabla.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10)); 
         getContentPane().add(scrollTabla, BorderLayout.CENTER);
         
         tabla.getModel().addTableModelListener(e -> {
@@ -63,29 +114,66 @@ public class VentanaCarrito extends JFrame {
             JFramePrincipal.actualizarContadorCarritoGlobal(); 
         });
         
-       btnEliminar = new JButton("Eliminar producto");
-        btnVaciar = new JButton("Vaciar carrito");
-        btnPagar = new JButton("Proceder al pago");
-        btnPagar.setFont(new Font("Arial",Font.BOLD,14));
+        // --- BOTONES Y TOTAL ---
+        
+        btnEliminar = new JButton("🗑️ Eliminar Producto");
+        btnVaciar = new JButton("❌ Vaciar Carrito");
+        btnPagar = new JButton("💳 Proceder al Pago");
+        btnSalir = new JButton("⬅️ Volver al Catálogo");
+        
+        // **ESTILO: Botón Pagar (Primario) **
+        btnPagar.setFont(new Font("Arial", Font.BOLD, 16));
         btnPagar.setForeground(Color.WHITE);
-        btnPagar.setBackground(new Color(46, 204, 113));
-        btnSalir = new JButton("Volver al catálogo");
-        btnSalir.setForeground(Color.BLACK);
-        btnSalir.setBackground(Color.LIGHT_GRAY);
+        btnPagar.setBackground(new Color(41, 128, 185)); // Azul corporativo
+        btnPagar.setFocusPainted(false);
+        btnPagar.setBorder(BorderFactory.createEmptyBorder(12, 25, 12, 25)); // Padding generoso
+        
+        // **ESTILO: Botón Salir (Secundario) **
+        btnSalir.setFont(new Font("Arial", Font.PLAIN, 14));
+        btnSalir.setForeground(new Color(51, 51, 51));
+        btnSalir.setBackground(new Color(240, 240, 240));
+        btnSalir.setFocusPainted(false);
+        btnSalir.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
 
+        // **ESTILO: Botones Inferiores**
+        btnEliminar.setForeground(new Color(192, 57, 43)); // Rojo más oscuro
+        btnEliminar.setBackground(Color.WHITE);
+        btnEliminar.setFocusPainted(false);
+        btnEliminar.setBorder(BorderFactory.createLineBorder(new Color(192, 57, 43), 1)); // Borde delgado
+        
+        btnVaciar.setForeground(new Color(192, 57, 43));
+        btnVaciar.setBackground(Color.WHITE); 
+        btnVaciar.setFocusPainted(false);
+        btnVaciar.setBorder(BorderFactory.createLineBorder(new Color(192, 57, 43), 1));
+        
+        // Total
+        lblTotal = new JLabel("Total: " + String.format("%.2f", calcularTotal())+"€");
+        lblTotal.setFont(new Font("Arial", Font.BOLD, 22)); 
+        lblTotal.setForeground(new Color(51, 51, 51));
+
+        // Organización en pNorteDerechaContenedor
+        pNorteDerechaContenedor.add(lblTotal);
+        pNorteDerechaContenedor.add(btnPagar);
+
+        gbc.gridx = 2;
+        gbc.weightx = 0.5; // Ocupa espacio
+        gbc.anchor = GridBagConstraints.EAST;
+        pNorte.add(pNorteDerechaContenedor, gbc);
+
+        // Paneles Inferiores (pSur)
         pIzqAbajo.add(btnEliminar);
         pIzqAbajo.add(btnVaciar);
-        pDerecha.add(btnPagar);
-        pDerechaAbajo.add(btnSalir);
-
-        lblTotal = new JLabel("Total: " + String.format("%.2f", calcularTotal())+"€");
-        lblTotal.setFont(new Font("Arial", Font.BOLD, 16));
-        pDerecha.add(lblTotal, BorderLayout.EAST);
-
-        pNorte.add(pDerecha, BorderLayout.EAST);
+        
         pSur.add(pIzqAbajo, BorderLayout.WEST);
-        pSur.add(pDerechaAbajo,BorderLayout.EAST);
-
+        
+        // El botón Salir se agrega directamente al pSur EAST
+        JPanel pSalirContenedor = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 0));
+        pSalirContenedor.setBackground(Color.WHITE);
+        pSalirContenedor.add(btnSalir);
+        pSur.add(pSalirContenedor, BorderLayout.EAST);
+        
+        // --- LISTENERS (SIN CAMBIOS DE LÓGICA) ---
+        
         btnEliminar.addActionListener(e -> {
             int fila = tabla.getSelectedRow();
             if (fila != -1) {
@@ -104,18 +192,16 @@ public class VentanaCarrito extends JFrame {
             if (listaItems.isEmpty()) {
                 JOptionPane.showMessageDialog(this, "El carrito está vacío.");
             } else {
-                new VentanaPago(calcularTotal(), this, listaItems);
+                new VentanaPago(calcularTotal(), this, listaItems); 
             }
         });
         
         btnSalir.addActionListener(e -> dispose());
 
-        btnEliminar.setForeground(Color.RED);
-        btnVaciar.setBackground(Color.LIGHT_GRAY);
-        btnVaciar.setForeground(Color.RED);
-        
         setVisible(true);
     }
+
+    // --- MÉTODOS DE FUNCIONALIDAD (SIN CAMBIOS) ---
 
     private void configurarRenderersYEditors() {
         BtnCantidadRenderer rendererEditor = new BtnCantidadRenderer(tabla, listaItems, lblTotal, modeloTabla);
@@ -129,8 +215,8 @@ public class VentanaCarrito extends JFrame {
             total += item.getCantidad() * item.getProducto().getPrecio();
         }
         if(descuentoAplicado) {
-        	total=total * 0.80;
-        	lblDescuento.setVisible(true);
+            total=total * 0.80;
+            lblDescuento.setVisible(true);
         }
         return total;
     }
@@ -157,9 +243,9 @@ public class VentanaCarrito extends JFrame {
     public void actualizarTotal() {
         lblTotal.setText("Total: "+String.format("%.2f", calcularTotal())+"€");
         if(descuentoAplicado) {
-        	lblDescuento.setVisible(true);
+            lblDescuento.setVisible(true);
         }else {
-        	lblDescuento.setVisible(false);
+            lblDescuento.setVisible(false);
         }
     }
 
@@ -179,11 +265,7 @@ public class VentanaCarrito extends JFrame {
     }
     
     public void setDescuento(boolean valor) {
-    	descuentoAplicado = valor;
-    	lblTotal.setText("Total: "+String.format("%.2f", calcularTotal())+"€");
+        descuentoAplicado = valor;
+        lblTotal.setText("Total: "+String.format("%.2f", calcularTotal())+"€");
     }
-    
-    
-    
-
 }
