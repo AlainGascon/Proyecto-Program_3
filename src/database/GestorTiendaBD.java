@@ -37,7 +37,8 @@ public class GestorTiendaBD {
             System.err.format("* Error al cargar el driver de la BBDD: %s\n", e.getMessage());
         }
     }
-    
+
+    // --- MÉTODOS DE CREACION ---
 
     public void createTables() {
         System.out.println("-> Creando tablas si no existen...");
@@ -162,7 +163,7 @@ public class GestorTiendaBD {
         }
     }
 
-    // --- MÉTODOS DE INSERCIÓN (CREATE) ---
+    // --- MÉTODOS DE INSERCIÓN ---
 
     public void insertUsuario(Usuario usuario) {
         String sql = "INSERT OR IGNORE INTO USUARIOS "
