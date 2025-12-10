@@ -28,7 +28,7 @@ public class VentanaCarrito extends JFrame {
         super("🛒 Carrito de Compras");
         this.listaItems = lista;
 
-        // *** MODERNIZACIÓN 1: Forzar Look and Feel plano (Metal) ***
+        
         try {
             UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
         } catch (Exception e) {
@@ -39,29 +39,25 @@ public class VentanaCarrito extends JFrame {
 
         getContentPane().setBackground(Color.WHITE); 
 
-        setBounds(300, 200, 900, 600); // Ventana más grande para mejor visualización de datos
+        setBounds(300, 200, 900, 600); 
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         
-        // --- INICIALIZACIÓN DE PANELES ---
         
-        // **pNorte:** Usaremos GridBagLayout para una barra de título moderna y alineada
-        pNorte = new JPanel(new GridBagLayout()); 
-        pNorte.setBackground(new Color(248, 248, 248)); // Fondo gris muy claro para el encabezado
-        pNorte.setBorder(new EmptyBorder(15, 20, 15, 20)); // Padding
+        pNorte.setBackground(new Color(248, 248, 248)); 
+        pNorte.setBorder(new EmptyBorder(15, 20, 15, 20)); 
         
-        // **pSur:** Se mantiene con BorderLayout
         pSur = new JPanel(new BorderLayout(20, 10));
         pSur.setBackground(Color.WHITE);
-        pSur.setBorder(new EmptyBorder(10, 10, 10, 10)); // Padding
+        pSur.setBorder(new EmptyBorder(10, 10, 10, 10));
 
         pIzqAbajo = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 0));
         pIzqAbajo.setBackground(Color.WHITE);
         
-        // Contenedor para total y pago
+        
         pNorteDerechaContenedor = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 0));
         pNorteDerechaContenedor.setBackground(new Color(248, 248, 248));
         
-        // --- CONFIGURACIÓN DE GridBagLayout para pNorte ---
+        
         
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -70,14 +66,14 @@ public class VentanaCarrito extends JFrame {
         getContentPane().add(pNorte, BorderLayout.NORTH);
         getContentPane().add(pSur, BorderLayout.SOUTH);
 
-        // --- TÍTULO Y DESCUENTO ---
+        
         
         JLabel lblTitulo = new JLabel("Mi Carrito 🛒", SwingConstants.LEFT);
         lblTitulo.setFont(new Font("Arial", Font.BOLD, 28)); 
         lblTitulo.setForeground(new Color(51, 51, 51));
         
         gbc.gridx = 0;
-        gbc.weightx = 0.5; // Ocupa espacio
+        gbc.weightx = 0.5; 
         gbc.anchor = GridBagConstraints.WEST;
         pNorte.add(lblTitulo, gbc);
         
@@ -87,25 +83,24 @@ public class VentanaCarrito extends JFrame {
         lblDescuento.setVisible(false);
         
         gbc.gridx = 1;
-        gbc.weightx = 0.5; // Ocupa espacio
+        gbc.weightx = 0.5; 
         gbc.anchor = GridBagConstraints.CENTER;
         pNorte.add(lblDescuento, gbc);
 
-        // --- TABLA Y SCROLL ---
         
         modeloTabla = new ModeloTablaCompras(listaItems);
         tabla = new JTable(modeloTabla);
-        tabla.setRowHeight(40); // Filas más altas
+        tabla.setRowHeight(40); 
         tabla.getTableHeader().setFont(new Font("Arial", Font.BOLD, 14));
-        tabla.getTableHeader().setBackground(new Color(230, 230, 230)); // Header más plano
+        tabla.getTableHeader().setBackground(new Color(230, 230, 230)); 
         tabla.getTableHeader().setBorder(BorderFactory.createEmptyBorder());
         tabla.setGridColor(new Color(230, 230, 230));
-        tabla.setIntercellSpacing(new Dimension(0, 1)); // Espacio entre celdas más pequeño
+        tabla.setIntercellSpacing(new Dimension(0, 1)); 
         
         configurarRenderersYEditors(); 
         
         scrollTabla = new JScrollPane(tabla);
-        // **ESTILO:** Eliminar el borde del JScrollPane para un look más plano
+        
         scrollTabla.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10)); 
         getContentPane().add(scrollTabla, BorderLayout.CENTER);
         
@@ -114,65 +109,65 @@ public class VentanaCarrito extends JFrame {
             JFramePrincipal.actualizarContadorCarritoGlobal(); 
         });
         
-        // --- BOTONES Y TOTAL ---
+        
         
         btnEliminar = new JButton("🗑️ Eliminar Producto");
         btnVaciar = new JButton("❌ Vaciar Carrito");
         btnPagar = new JButton("💳 Proceder al Pago");
         btnSalir = new JButton("⬅️ Volver al Catálogo");
         
-        // **ESTILO: Botón Pagar (Primario) **
+        
         btnPagar.setFont(new Font("Arial", Font.BOLD, 16));
         btnPagar.setForeground(Color.WHITE);
-        btnPagar.setBackground(new Color(41, 128, 185)); // Azul corporativo
+        btnPagar.setBackground(new Color(41, 128, 185)); 
         btnPagar.setFocusPainted(false);
-        btnPagar.setBorder(BorderFactory.createEmptyBorder(12, 25, 12, 25)); // Padding generoso
+        btnPagar.setBorder(BorderFactory.createEmptyBorder(12, 25, 12, 25));
         
-        // **ESTILO: Botón Salir (Secundario) **
+        
         btnSalir.setFont(new Font("Arial", Font.PLAIN, 14));
         btnSalir.setForeground(new Color(51, 51, 51));
         btnSalir.setBackground(new Color(240, 240, 240));
         btnSalir.setFocusPainted(false);
         btnSalir.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
 
-        // **ESTILO: Botones Inferiores**
-        btnEliminar.setForeground(new Color(192, 57, 43)); // Rojo más oscuro
+        
+        btnEliminar.setForeground(new Color(192, 57, 43));
         btnEliminar.setBackground(Color.WHITE);
         btnEliminar.setFocusPainted(false);
-        btnEliminar.setBorder(BorderFactory.createLineBorder(new Color(192, 57, 43), 1)); // Borde delgado
+        btnEliminar.setBorder(BorderFactory.createLineBorder(new Color(192, 57, 43), 1)); 
         
         btnVaciar.setForeground(new Color(192, 57, 43));
         btnVaciar.setBackground(Color.WHITE); 
         btnVaciar.setFocusPainted(false);
         btnVaciar.setBorder(BorderFactory.createLineBorder(new Color(192, 57, 43), 1));
         
-        // Total
+        
         lblTotal = new JLabel("Total: " + String.format("%.2f", calcularTotal())+"€");
         lblTotal.setFont(new Font("Arial", Font.BOLD, 22)); 
         lblTotal.setForeground(new Color(51, 51, 51));
 
-        // Organización en pNorteDerechaContenedor
+        
         pNorteDerechaContenedor.add(lblTotal);
         pNorteDerechaContenedor.add(btnPagar);
 
         gbc.gridx = 2;
-        gbc.weightx = 0.5; // Ocupa espacio
+        gbc.weightx = 0.5; 
         gbc.anchor = GridBagConstraints.EAST;
         pNorte.add(pNorteDerechaContenedor, gbc);
 
-        // Paneles Inferiores (pSur)
+       
         pIzqAbajo.add(btnEliminar);
         pIzqAbajo.add(btnVaciar);
         
         pSur.add(pIzqAbajo, BorderLayout.WEST);
         
-        // El botón Salir se agrega directamente al pSur EAST
+        
         JPanel pSalirContenedor = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 0));
         pSalirContenedor.setBackground(Color.WHITE);
         pSalirContenedor.add(btnSalir);
         pSur.add(pSalirContenedor, BorderLayout.EAST);
         
-        // --- LISTENERS (SIN CAMBIOS DE LÓGICA) ---
+        
         
         btnEliminar.addActionListener(e -> {
             int fila = tabla.getSelectedRow();
@@ -201,7 +196,7 @@ public class VentanaCarrito extends JFrame {
         setVisible(true);
     }
 
-    // --- MÉTODOS DE FUNCIONALIDAD (SIN CAMBIOS) ---
+    
 
     private void configurarRenderersYEditors() {
         BtnCantidadRenderer rendererEditor = new BtnCantidadRenderer(tabla, listaItems, lblTotal, modeloTabla);
