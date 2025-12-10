@@ -285,7 +285,8 @@ public class GestorTiendaBD {
      }
 
      
-    public List<Producto> loadProductos() {
+    @SuppressWarnings("null")
+	public List<Producto> loadProductos() {
         List<Producto> productos = new ArrayList<>();
         String sql = "SELECT ID, NOMBRE, PRECIO, DESCRIPCION FROM PRODUCTOS";
         
@@ -295,7 +296,7 @@ public class GestorTiendaBD {
             
             while (rs.next()) {
                 int id = rs.getInt("ID");
-                Producto p = new Producto(id, rs.getString("NOMBRE"), sql, rs.getDouble("PRECIO"), rs.getString("DESCRIPCION"));
+                Producto p = new Producto(id, rs.getString("NOMBRE"), rs.getString("DESCRIPCION"), rs.getDouble("PRECIO"), null, (Integer) null, null);
                 
                 p.setStock(obtenerStockPorProducto(id, con));
                 productos.add(p);
@@ -310,8 +311,8 @@ public class GestorTiendaBD {
     
     // IAG
     
-    private Map<String, Integer> obtenerStockPorProducto(int idProducto, Connection con) throws SQLException {
-		Map<String, Integer> stockMap = new HashMap<>();
+    private Integer obtenerStockPorProducto(int idProducto, Connection con) throws SQLException {
+		int stock = 0;
 		String sql = "SELECT TALLA, CANTIDAD FROM STOCK_TALLA WHERE ID_PRODUCTO = ?";
 		
 		try (PreparedStatement pstmt = con.prepareStatement(sql)) {
@@ -319,11 +320,11 @@ public class GestorTiendaBD {
 			
 			try (ResultSet rs = pstmt.executeQuery()) {
 				while (rs.next()) {
-					stockMap.put(rs.getString("TALLA"), rs.getInt("CANTIDAD"));
+					stock = (rs.getInt("CANTIDAD"));
 				}
 			}
 		}
-		return stockMap;
+		return stock;
 	}
 
     public List<Evento> loadEventos() {
