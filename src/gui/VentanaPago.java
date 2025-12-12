@@ -17,11 +17,16 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
-import gui.JFramePrincipal;
+
 import domain.ItemCarrito;
 import domain.Pago;
 
 public class VentanaPago extends JFrame{ 
+
+	private static final long serialVersionUID = 1L;
+	private static final Color COLOR_ACENTO = new Color(46, 204, 113);
+    private static final Color COLOR_PRECIO = new Color(231, 76, 60);
+    
 	private JLabel lblTitulo, lblTotal, lblDireccion, lblTitular,lblTarjeta, lblMetodo;
 	private JPanel pNorte, pCentro, pSur;
 	private JButton btnConfirmar, btnCancelar;
@@ -44,6 +49,10 @@ public class VentanaPago extends JFrame{
 		pNorte= new JPanel(new BorderLayout(15,15));
 		pCentro= new JPanel(new GridLayout(4,2,10,15));
 		pSur= new JPanel(new FlowLayout(FlowLayout.RIGHT,15,10));
+        
+        pNorte.setBackground(new Color(240, 240, 240)); 
+        pCentro.setBackground(Color.WHITE);
+        pSur.setBackground(new Color(240, 240, 240));
 
 		ImageIcon im= new ImageIcon("imagenes/pago.png");
 		lblTitulo= new JLabel("Pago del Pedido",im, SwingConstants.LEFT);
@@ -60,10 +69,10 @@ public class VentanaPago extends JFrame{
 		cbMetodoPago= new JComboBox<>(new String[] {"Tarjeta","PayPal","Bizum"});
 		
 		btnCancelar= new JButton("Cancelar");
-		btnCancelar.setForeground(Color.RED);
+		btnCancelar.setForeground(COLOR_PRECIO);
 		btnConfirmar= new JButton("Confirmar pago");
-		btnConfirmar.setForeground(Color.GREEN);
-		btnConfirmar.setBackground(Color.LIGHT_GRAY);
+		btnConfirmar.setForeground(Color.WHITE);
+		btnConfirmar.setBackground(COLOR_ACENTO);
 		
 		pNorte.add(lblTitulo, BorderLayout.WEST);
 		pNorte.add(lblTotal,BorderLayout.EAST);
@@ -115,13 +124,3 @@ public class VentanaPago extends JFrame{
 	}
 
 }
-
-
-
-
-
-
-
-
-
-

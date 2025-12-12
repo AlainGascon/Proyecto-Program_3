@@ -29,14 +29,20 @@ import javax.swing.border.LineBorder;
 public class JuegoDescuento extends JPanel {
     private static final long serialVersionUID = 1L;
 
-    private static final Color COLOR_FONDO_INICIO = new Color(44, 62, 80);
-    private static final Color COLOR_FONDO_FIN = new Color(75, 123, 236);
+    private static final Color COLOR_PRIMARIO = new Color(41, 128, 185);
+    private static final Color COLOR_SECUNDARIO = new Color(52, 152, 219);
+    private static final Color COLOR_ACENTO = new Color(46, 204, 113); 
+    private static final Color COLOR_PRECIO = new Color(231, 76, 60); 
+
+    private static final Color COLOR_FONDO_INICIO = COLOR_PRIMARIO;
+    private static final Color COLOR_FONDO_FIN = COLOR_SECUNDARIO;
     private static final Color COLOR_SLOT_BG = new Color(236, 240, 241);
     private static final Color COLOR_TEXTO_NORMAL = new Color(44, 62, 80);
-    private static final Color COLOR_BTN_PARAR = new Color(231, 76, 60);
-    private static final Color COLOR_BTN_JUGAR = new Color(46, 204, 113);
-    private static final Color COLOR_WIN = new Color(241, 196, 15);
-    private static final Color COLOR_LOSE = new Color(192, 57, 43);
+    
+    private static final Color COLOR_BTN_PARAR = COLOR_PRECIO;
+    private static final Color COLOR_BTN_JUGAR = COLOR_ACENTO;
+    private static final Color COLOR_WIN = new Color(255, 215, 0); 
+    private static final Color COLOR_LOSE = COLOR_PRECIO;
 
     private static final Font FUENTE_SLOT = new Font("Impact", Font.PLAIN, 60);
     private static final Font FUENTE_TITULO = new Font("Arial", Font.BOLD, 22);
@@ -186,7 +192,7 @@ public class JuegoDescuento extends JPanel {
     private void estilizarBoton(JButton btn, Color colorFondo) {
         btn.setFont(new Font("Segoe UI", Font.BOLD, 16));
         btn.setBackground(colorFondo);
-        btn.setForeground(new Color(20, 20, 20)); 
+        btn.setForeground(Color.WHITE); 
         
         btn.setOpaque(true);
         btn.setContentAreaFilled(true);

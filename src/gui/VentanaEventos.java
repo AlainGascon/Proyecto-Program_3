@@ -17,8 +17,10 @@ public class VentanaEventos extends JPanel {
     private JScrollPane scrollTabla;
     private JTextArea txtMensaje;
     private List<Evento> listaEventos;
-    private static final Color COLOR_FONDO_CLARO = new Color(245, 245, 245);
-    private static final Color COLOR_TITULO = new Color(44, 62, 80);
+    
+    private static final Color COLOR_PRIMARIO = new Color(41, 128, 185); 
+    private static final Color COLOR_FONDO_CLARO = new Color(236, 240, 241);
+    private static final Color COLOR_TITULO = COLOR_PRIMARIO; 
 
     public VentanaEventos(List<Evento> listaEventos) { 
         
@@ -109,7 +111,7 @@ public class VentanaEventos extends JPanel {
         tabla.setRowHeight(30);
         tabla.setFont(new Font("SansSerif", Font.PLAIN, 14));
         tabla.getTableHeader().setFont(new Font("SansSerif", Font.BOLD, 15));
-        tabla.getTableHeader().setBackground(COLOR_TITULO.brighter());
+        tabla.getTableHeader().setBackground(COLOR_TITULO);
         tabla.getTableHeader().setForeground(Color.WHITE);
         tabla.setSelectionBackground(new Color(174, 214, 241)); 
         tabla.setGridColor(Color.LIGHT_GRAY);

@@ -39,6 +39,8 @@ public class JFramePrincipal extends JFrame implements ActionListener {
 	private static List<ItemCarrito> carritoActual = new ArrayList<>();
 	private static JButton btnCarritoGlobalEstatico;
 
+    private static final Color COLOR_FONDO_NAV = new Color(52, 73, 94);
+
 	private final List<Producto> listaProductos;
     private final List<Evento> listaEventos; 
 
@@ -77,7 +79,7 @@ public class JFramePrincipal extends JFrame implements ActionListener {
 		JPanel panelNavegacion = new JPanel();
 		panelNavegacion.setLayout(new GridLayout(6, 1, 10, 10));
 		panelNavegacion.setPreferredSize(new Dimension(200, 0));
-		panelNavegacion.setBackground(new Color(44, 62, 80));
+		panelNavegacion.setBackground(COLOR_FONDO_NAV);
 		panelNavegacion.setBorder(BorderFactory.createEmptyBorder(20, 10, 20, 10));
 
 
@@ -186,7 +188,7 @@ public class JFramePrincipal extends JFrame implements ActionListener {
 		JButton btn = new JButton(texto);
 		btn.setFont(new Font("SansSerif", Font.BOLD, 14));
 		btn.setForeground(Color.WHITE);
-		btn.setBackground(new Color(52, 73, 94));
+		btn.setBackground(COLOR_FONDO_NAV.brighter());
 		btn.setHorizontalAlignment(SwingConstants.LEFT);
 		btn.setFocusPainted(false);
 		btn.setBorder(BorderFactory.createEmptyBorder(15, 10, 15, 10));
@@ -195,23 +197,6 @@ public class JFramePrincipal extends JFrame implements ActionListener {
 		return btn;
 	}
 
-
-	private JPanel crearPlaceholderPanel(String titulo) {
-		JPanel panel = new JPanel(new GridBagLayout());
-		GridBagConstraints gbc = new GridBagConstraints();
-		gbc.gridx = 0;
-		gbc.gridy = 0;
-		gbc.weightx = 1.0;
-		gbc.weighty = 1.0;
-		gbc.fill = GridBagConstraints.BOTH;
-		gbc.anchor = GridBagConstraints.CENTER;
-
-		JLabel lbl = new JLabel("<html><h1 style='color: #95A5A6;'>Sección: " + titulo + "</h1><p>Contenido en construcción...</p></html>", SwingConstants.CENTER);
-		lbl.setFont(new Font("SansSerif", Font.PLAIN, 24));
-
-		panel.add(lbl, gbc);
-		return panel;
-	}
 
 	public JButton crearBotonCarrito() {
 		int cantidadItems = calcularTotalArticulos();

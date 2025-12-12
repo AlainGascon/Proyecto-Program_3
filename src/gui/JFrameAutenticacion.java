@@ -35,7 +35,8 @@ public class JFrameAutenticacion extends JFrame {
 
     private JFramePrincipal framePrincipal;
 	
-	private static final Color COLOR_PRIMARIO = new Color(30, 144, 255);	
+	private static final Color COLOR_PRIMARIO = new Color(41, 128, 185);	
+	private static final Color COLOR_ACENTO = new Color(46, 204, 113);
 	private static final Color COLOR_FONDO = new Color(240, 248, 255);
 
 	
@@ -143,7 +144,7 @@ public class JFrameAutenticacion extends JFrame {
 		txtContrasenaNueva2 = new JPasswordField(15);
 		btnCrearCuenta = new JButton("Crear Cuenta");
 		btnCrearCuenta.setFont(new Font("SansSerif", Font.BOLD, 14));
-		btnCrearCuenta.setBackground(new Color(60, 179, 113));	
+		btnCrearCuenta.setBackground(COLOR_ACENTO);	
 		btnCrearCuenta.setForeground(Color.WHITE);
 
 		formPanel.add(crearEtiqueta("👤 Nuevo Usuario:"));

@@ -12,7 +12,14 @@ import domain.Producto;
 public class VentanaCarrito extends JFrame {
 
     private static final long serialVersionUID = 1L;
-    private JPanel pNorte, pSur, pNorteDerechaContenedor, pIzqAbajo; // pDerecha y pDerechaAbajo se integran
+    
+    private static final Color COLOR_PRIMARIO = new Color(41, 128, 185); 
+    private static final Color COLOR_ACENTO = new Color(46, 204, 113); 
+    private static final Color COLOR_PRECIO = new Color(231, 76, 60); 
+    private static final Color COLOR_FONDO_CLARO = new Color(236, 240, 241);
+
+    private JPanel pNorte = new JPanel(new GridBagLayout()); 
+    private JPanel pSur, pNorteDerechaContenedor, pIzqAbajo; 
     private JTable tabla;
     private JScrollPane scrollTabla;
     private ModeloTablaCompras modeloTabla;
@@ -37,13 +44,13 @@ public class VentanaCarrito extends JFrame {
         SwingUtilities.updateComponentTreeUI(this);
 
 
-        getContentPane().setBackground(Color.WHITE); 
+        getContentPane().setBackground(COLOR_FONDO_CLARO); 
 
         setBounds(300, 200, 900, 600); 
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         
         
-        pNorte.setBackground(new Color(248, 248, 248)); 
+        pNorte.setBackground(COLOR_FONDO_CLARO); 
         pNorte.setBorder(new EmptyBorder(15, 20, 15, 20)); 
         
         pSur = new JPanel(new BorderLayout(20, 10));
@@ -55,7 +62,7 @@ public class VentanaCarrito extends JFrame {
         
         
         pNorteDerechaContenedor = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 0));
-        pNorteDerechaContenedor.setBackground(new Color(248, 248, 248));
+        pNorteDerechaContenedor.setBackground(COLOR_FONDO_CLARO);
         
         
         
@@ -79,7 +86,7 @@ public class VentanaCarrito extends JFrame {
         
         lblDescuento = new JLabel("🎉 ¡20% de descuento aplicado! 🎉");
         lblDescuento.setFont(new Font("Arial", Font.BOLD, 15)); 
-        lblDescuento.setForeground(new Color(39, 174, 96));
+        lblDescuento.setForeground(COLOR_ACENTO);
         lblDescuento.setVisible(false);
         
         gbc.gridx = 1;
@@ -119,7 +126,7 @@ public class VentanaCarrito extends JFrame {
         
         btnPagar.setFont(new Font("Arial", Font.BOLD, 16));
         btnPagar.setForeground(Color.WHITE);
-        btnPagar.setBackground(new Color(41, 128, 185)); 
+        btnPagar.setBackground(COLOR_PRIMARIO); 
         btnPagar.setFocusPainted(false);
         btnPagar.setBorder(BorderFactory.createEmptyBorder(12, 25, 12, 25));
         
@@ -131,15 +138,15 @@ public class VentanaCarrito extends JFrame {
         btnSalir.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
 
         
-        btnEliminar.setForeground(new Color(192, 57, 43));
+        btnEliminar.setForeground(COLOR_PRECIO); 
         btnEliminar.setBackground(Color.WHITE);
         btnEliminar.setFocusPainted(false);
-        btnEliminar.setBorder(BorderFactory.createLineBorder(new Color(192, 57, 43), 1)); 
+        btnEliminar.setBorder(BorderFactory.createLineBorder(COLOR_PRECIO, 1)); 
         
-        btnVaciar.setForeground(new Color(192, 57, 43));
+        btnVaciar.setForeground(COLOR_PRECIO); 
         btnVaciar.setBackground(Color.WHITE); 
         btnVaciar.setFocusPainted(false);
-        btnVaciar.setBorder(BorderFactory.createLineBorder(new Color(192, 57, 43), 1));
+        btnVaciar.setBorder(BorderFactory.createLineBorder(COLOR_PRECIO, 1));
         
         
         lblTotal = new JLabel("Total: " + String.format("%.2f", calcularTotal())+"€");

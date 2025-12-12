@@ -48,7 +48,7 @@ public class JPanelCatalogo extends JPanel {
     private JLabel lblStockDetalle;
     private Producto productoDetalleSeleccionado = null;
     
-    // Paleta de colores moderna
+
     private static final Color COLOR_PRIMARIO = new Color(41, 128, 185);
     private static final Color COLOR_SECUNDARIO = new Color(52, 152, 219);
     private static final Color COLOR_ACENTO = new Color(46, 204, 113);
@@ -72,7 +72,7 @@ public class JPanelCatalogo extends JPanel {
         scrollCatalogo.getVerticalScrollBar().setUnitIncrement(16);
         scrollCatalogo.setBorder(null);
         
-        // Panel superior con gradiente
+
         JPanel pSuperior = crearPanelSuperior();
         
         this.add(pSuperior, BorderLayout.NORTH);
