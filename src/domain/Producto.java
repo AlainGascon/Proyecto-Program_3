@@ -117,6 +117,21 @@ public class Producto {
         return inventarioPorTalla;
     }
 	
+	
+	public void decrementarStock(String talla, int cantidad) {
+        if (inventarioPorTalla.containsKey(talla)) {
+            int currentStock = inventarioPorTalla.get(talla);
+            int newStock = currentStock - cantidad;
+            
+            if (newStock >= 0) {
+                inventarioPorTalla.put(talla, newStock);
+                this.stock -= cantidad; // Actualiza también el campo de stock total
+            } else {
+                // Manejar error si se intenta decrementar más de lo que hay
+                System.err.println("Error: Intento de restar stock negativo para la talla " + talla + " del producto " + nombre);
+            }
+        }
+    }
 
 }
 

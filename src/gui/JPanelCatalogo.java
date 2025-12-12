@@ -14,6 +14,7 @@ import java.awt.Graphics2D;
 import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.RenderingHints;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.List;
@@ -48,7 +49,7 @@ public class JPanelCatalogo extends JPanel {
     private JLabel lblStockDetalle;
     private Producto productoDetalleSeleccionado = null;
     
-
+    // Paleta de colores moderna
     private static final Color COLOR_PRIMARIO = new Color(41, 128, 185);
     private static final Color COLOR_SECUNDARIO = new Color(52, 152, 219);
     private static final Color COLOR_ACENTO = new Color(46, 204, 113);
@@ -72,7 +73,7 @@ public class JPanelCatalogo extends JPanel {
         scrollCatalogo.getVerticalScrollBar().setUnitIncrement(16);
         scrollCatalogo.setBorder(null);
         
-
+        // Panel superior con gradiente
         JPanel pSuperior = crearPanelSuperior();
         
         this.add(pSuperior, BorderLayout.NORTH);
@@ -200,16 +201,23 @@ public class JPanelCatalogo extends JPanel {
                         System.out.println("Error: Cantidad excede el stock disponible para la talla " + talla);
                         return;
                     }
+                    
+                    // Llama al método estático que también decrementa el stock en JFramePrincipal
                     JFramePrincipal.agregarItemAlCarrito(productoDetalleSeleccionado, cantidad, talla);
+                    
                     System.out.println("Añadido: " + productoDetalleSeleccionado.getNombre() + 
                                      " (Talla: " + talla + ", Cant: " + cantidad + ")");
+                                     
+                    
+                    
                 } catch (NumberFormatException ex) {
                 }
             }
         });
     }
     
-    private void filtrarPorTalla() {
+
+	private void filtrarPorTalla() {
         String tallaSeleccionada = (String) cbxFiltroTalla.getSelectedItem();
         List<Producto> productosFiltrados;
         if (tallaSeleccionada == null || tallaSeleccionada.equals("TODAS")) {
@@ -366,13 +374,32 @@ public class JPanelCatalogo extends JPanel {
             panelContenidoDetalle.removeAll();
             panelContenidoDetalle.setLayout(new BorderLayout(0, 10)); 
             
-           
+            
+            ActionListener tallaChangeListener = e -> {
+                String talla = (String) comboTallaDetalle.getSelectedItem();
+                int stock = (talla != null) ? producto.getStock(talla) : 0;
+                
+                if (stock > 0) {
+                     lblStockDetalle.setText("Stock: " + stock + " unid.");
+                     lblStockDetalle.setForeground(new Color(127, 140, 141));
+                } else {
+                     lblStockDetalle.setText("AGOTADO");
+                     lblStockDetalle.setForeground(COLOR_PRECIO);
+                }
+                
+                btnAnadirCarrito.setEnabled(stock > 0);
+                spinnerCantidad.setValue(1);
+                ((SpinnerNumberModel) spinnerCantidad.getModel()).setMaximum(stock);
+            };
+            
+            
+            String tallaPreseleccionada = (String) comboTallaDetalle.getSelectedItem();
+            
+            
             JPanel pInfo = new JPanel();
             pInfo.setLayout(new BoxLayout(pInfo, BoxLayout.Y_AXIS));
             pInfo.setBackground(COLOR_FONDO_OSCURO);
             pInfo.setBorder(new EmptyBorder(0, 0, 5, 0));
-            
-            // IAG
             
             JLabel lblNombreDetalle = new JLabel("<html><div style='width: 280px;'><b>" + 
                                                  producto.getNombre() + "</b></div></html>");
@@ -400,6 +427,7 @@ public class JPanelCatalogo extends JPanel {
             pInfo.add(lblDescripcionDetalle);
             
             
+            
             JPanel pControles = new JPanel();
             pControles.setLayout(new BoxLayout(pControles, BoxLayout.Y_AXIS));
             pControles.setBackground(COLOR_FONDO_CLARO);
@@ -416,33 +444,32 @@ public class JPanelCatalogo extends JPanel {
             lblTalla.setPreferredSize(new Dimension(70, 30)); 
             lblTalla.setFont(new Font("Arial", Font.BOLD, 13));
             
+           
             comboTallaDetalle.removeAllItems();
+            
+            boolean hayStockTotal = false;
             for (String talla : TALLAS_ORDENADAS) {
                 int stock = producto.getStock(talla);
                 if (stock > 0) {
                     comboTallaDetalle.addItem(talla);
+                    hayStockTotal = true;
                 }
             }
             
             comboTallaDetalle.setPreferredSize(new Dimension(140, 30));
             
             
-            comboTallaDetalle.addActionListener(e -> {
-                String talla = (String) comboTallaDetalle.getSelectedItem();
-                int stock = (talla != null) ? producto.getStock(talla) : 0;
-                
-                if (stock > 0) {
-                     lblStockDetalle.setText("Stock: " + stock + " unid.");
-                     lblStockDetalle.setForeground(new Color(127, 140, 141));
-                } else {
-                     lblStockDetalle.setText("AGOTADO");
-                     lblStockDetalle.setForeground(COLOR_PRECIO);
-                }
-                
-                btnAnadirCarrito.setEnabled(stock > 0);
-                spinnerCantidad.setValue(1);
-                ((SpinnerNumberModel) spinnerCantidad.getModel()).setMaximum(stock);
-            });
+            if (tallaPreseleccionada != null && producto.getStock(tallaPreseleccionada) > 0) {
+                comboTallaDetalle.setSelectedItem(tallaPreseleccionada);
+            } else if (comboTallaDetalle.getItemCount() > 0) {
+                comboTallaDetalle.setSelectedIndex(0);
+            }
+            
+            
+            for (ActionListener al : comboTallaDetalle.getActionListeners()) {
+                comboTallaDetalle.removeActionListener(al);
+            }
+            comboTallaDetalle.addActionListener(tallaChangeListener);
             
             pTalla.add(lblTalla);
             pTalla.add(comboTallaDetalle);
@@ -470,12 +497,14 @@ public class JPanelCatalogo extends JPanel {
             pControles.add(pCantidad);
             
             
-            if (comboTallaDetalle.getItemCount() > 0) {
-                comboTallaDetalle.setSelectedIndex(0);
+            if (hayStockTotal) {
+                
+                tallaChangeListener.actionPerformed(null);
             } else {
                 lblStockDetalle.setText("AGOTADO");
                 lblStockDetalle.setForeground(COLOR_PRECIO);
                 btnAnadirCarrito.setEnabled(false);
+                ((SpinnerNumberModel) spinnerCantidad.getModel()).setMaximum(0);
             }
             
             

@@ -14,6 +14,7 @@ import java.awt.event.ActionListener;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -40,6 +41,9 @@ public class JFramePrincipal extends JFrame implements ActionListener {
 	private static JButton btnCarritoGlobalEstatico;
 
     private static final Color COLOR_FONDO_NAV = new Color(52, 73, 94);
+    
+    // Lista de productos debe ser accesible estáticamente para decrementar stock
+    private static List<Producto> listaProductosEstatica; 
 
 	private final List<Producto> listaProductos;
     private final List<Evento> listaEventos; 
@@ -59,6 +63,7 @@ public class JFramePrincipal extends JFrame implements ActionListener {
 
 		this.listaProductos = listaProductos;
 		JFramePrincipal.carritoActual = carritoInicial;
+        JFramePrincipal.listaProductosEstatica = listaProductos; // Inicialización estática
         
         this.listaEventos = generarDatosEventos(); 
 
@@ -113,6 +118,22 @@ public class JFramePrincipal extends JFrame implements ActionListener {
 		this.setVisible(true);
 	}
     
+    // Método estático para decrementar el stock del producto principal
+    public static boolean decrementarStock(Producto producto, int cantidad, String talla) {
+        if (listaProductosEstatica != null) {
+            Optional<Producto> productoEnStock = listaProductosEstatica.stream()
+                .filter(p -> p.getNombre().equals(producto.getNombre()))
+                .findFirst();
+
+            if (productoEnStock.isPresent()) {
+                // Se asume que la clase Producto tiene este método
+                productoEnStock.get().decrementarStock(talla, cantidad); 
+                return true;
+            }
+        }
+        return false;
+    }
+
 
 	public List<Evento> generarDatosEventos() {
 	    List<Evento> eventos = new ArrayList<>();
@@ -225,6 +246,9 @@ public class JFramePrincipal extends JFrame implements ActionListener {
 	}
 
 	public static void agregarItemAlCarrito(Producto p, int cantidad, String talla) {
+        // Decrementamos el stock del producto en la lista principal
+        decrementarStock(p, cantidad, talla);
+        
 		carritoActual.add(new ItemCarrito(p, cantidad, talla));
 		actualizarContadorCarritoGlobal();
 	}
