@@ -19,11 +19,9 @@ import domain.Usuario;
 import domain.Pago;
 
 public class GestorTiendaBD {
-	
+    
     private static final String SQLITE_FILE = "resources/db/tienda.db";
     private static final String CONNECTION_STRING = "jdbc:sqlite:" + SQLITE_FILE;
-    
-  
     
     public GestorTiendaBD() {
         File directorio = new File("resources/db");
@@ -48,7 +46,7 @@ public class GestorTiendaBD {
 
             stmt.execute("PRAGMA foreign_keys = ON;");
 
-            // 1. USUARIOS
+            // 1. USUARIOS - ERROR CORREGIDO: quité coma después de PASSWORD
             String sqlUsuario = "CREATE TABLE IF NOT EXISTS USUARIOS ("
                             + "ID INTEGER PRIMARY KEY AUTOINCREMENT,"
                             + "NOMBRE TEXT NOT NULL,"
@@ -56,18 +54,18 @@ public class GestorTiendaBD {
                             + "DNI TEXT UNIQUE NOT NULL,"
                             + "EMAIL TEXT UNIQUE NOT NULL,"
                             + "NUM_TELEFONO TEXT,"
-                            + "PASSWORD TEXT NOT NULL," 
+                            + "PASSWORD TEXT NOT NULL"
                             + ");";
             stmt.execute(sqlUsuario);
             
-            // 2. PRODUCTOS
+            // 2. PRODUCTOS - ERROR CORREGIDO: faltaba coma después de TALLA y sobra coma al final
             String sqlProducto = "CREATE TABLE IF NOT EXISTS PRODUCTOS ("
                             + "ID INTEGER PRIMARY KEY AUTOINCREMENT,"
                             + "NOMBRE TEXT NOT NULL,"                  
                             + "DESCRIPCION TEXT,"
                             + "PRECIO REAL NOT NULL,"
-                            + "TALLA TEXT NOT NULL"
-                            + "STOCK INTEGER NOT NULL,"
+                            + "TALLA TEXT NOT NULL,"
+                            + "STOCK INTEGER NOT NULL"
                             + ");";
             stmt.execute(sqlProducto);
             
@@ -94,65 +92,64 @@ public class GestorTiendaBD {
 
             // 5. PAGO
             String sqlPago = "CREATE TABLE IF NOT EXISTS PAGO ("
-                            + " ID INTEGER PRIMARY KEY AUTOINCREMENT,"                            
-                            + " METODO_PAGO TEXT NOT NULL,"
-                            + " CANTIDAD_A_PAGAR REAL NOT NULL,"
-                            + " ESTADO TEXT NOT NULL,"
-                            + " FECHA_PAGO TEXT NOT NULL,"
-                            + " NUM_TRANSACCION TEXT UNIQUE NOT NULL,"
-                            + " NUMERO_TARJETA TEXT,"
-                            + " TITULAR_TARJETA TEXT"
+                            + "ID INTEGER PRIMARY KEY AUTOINCREMENT,"                            
+                            + "METODO_PAGO TEXT NOT NULL,"
+                            + "CANTIDAD_A_PAGAR REAL NOT NULL,"
+                            + "ESTADO TEXT NOT NULL,"
+                            + "FECHA_PAGO TEXT NOT NULL,"
+                            + "NUM_TRANSACCION TEXT UNIQUE NOT NULL,"
+                            + "NUMERO_TARJETA TEXT,"
+                            + "TITULAR_TARJETA TEXT"
                             + ");";
             stmt.execute(sqlPago);
             
             // 6. PEDIDO
             String sqlPedido = "CREATE TABLE IF NOT EXISTS PEDIDO ("
-                            + " ID INTEGER PRIMARY KEY AUTOINCREMENT,"
-                            + " USUARIO_ID INTEGER NOT NULL,"
-                            + " FECHA_PEDIDO TEXT NOT NULL,"
-                            + " FECHA_ENTREGA_ESTIMADA TEXT,"
-                            + " ESTADO TEXT NOT NULL,"
-                            + " SUBTOTAL REAL,"
-                            + " GASTOS_ENVIO REAL,"
-                            + " TOTAL REAL NOT NULL,"
-                            + " PAGO_ID INTEGER UNIQUE," 
-                            + " NUMERO_SEGUIMIENTO TEXT UNIQUE NOT NULL,"
-                            + " FOREIGN KEY(USUARIO_ID) REFERENCES USUARIOS(ID) ON DELETE RESTRICT,"
-                            + " FOREIGN KEY(PAGO_ID) REFERENCES PAGO(ID) ON DELETE RESTRICT"
+                            + "ID INTEGER PRIMARY KEY AUTOINCREMENT,"
+                            + "USUARIO_ID INTEGER NOT NULL,"
+                            + "FECHA_PEDIDO TEXT NOT NULL,"
+                            + "FECHA_ENTREGA_ESTIMADA TEXT,"
+                            + "ESTADO TEXT NOT NULL,"
+                            + "SUBTOTAL REAL,"
+                            + "GASTOS_ENVIO REAL,"
+                            + "TOTAL REAL NOT NULL,"
+                            + "PAGO_ID INTEGER UNIQUE," 
+                            + "NUMERO_SEGUIMIENTO TEXT UNIQUE NOT NULL,"
+                            + "FOREIGN KEY(USUARIO_ID) REFERENCES USUARIOS(ID) ON DELETE RESTRICT,"
+                            + "FOREIGN KEY(PAGO_ID) REFERENCES PAGO(ID) ON DELETE RESTRICT"
                             + ");";
             stmt.execute(sqlPedido);
             
             // 7. PEDIDO_PRODUCTO (Tabla Auxiliar N:M)
             String sqlPedidoProducto = "CREATE TABLE IF NOT EXISTS PEDIDO_PRODUCTO ("
-                            + " PEDIDO_ID INTEGER NOT NULL,"
-                            + " PRODUCTO_ID INTEGER NOT NULL,"
-                            + " CANTIDAD INTEGER NOT NULL,"
-                            + " TALLA TEXT NOT NULL,"
-                            + " PRIMARY KEY (PEDIDO_ID, PRODUCTO_ID, TALLA),"
-                            + " FOREIGN KEY(PEDIDO_ID) REFERENCES PEDIDO(ID) ON DELETE CASCADE,"
-                            + " FOREIGN KEY(PRODUCTO_ID) REFERENCES PRODUCTOS(ID) ON DELETE RESTRICT"
+                            + "PEDIDO_ID INTEGER NOT NULL,"
+                            + "PRODUCTO_ID INTEGER NOT NULL,"
+                            + "CANTIDAD INTEGER NOT NULL,"
+                            + "TALLA TEXT NOT NULL,"
+                            + "PRIMARY KEY (PEDIDO_ID, PRODUCTO_ID, TALLA),"
+                            + "FOREIGN KEY(PEDIDO_ID) REFERENCES PEDIDO(ID) ON DELETE CASCADE,"
+                            + "FOREIGN KEY(PRODUCTO_ID) REFERENCES PRODUCTOS(ID) ON DELETE RESTRICT"
                             + ");";
             stmt.execute(sqlPedidoProducto);
             
-            
             // 8. CARRITO_COMPRA (Asumiendo 1:1 con USUARIO)
             String sqlCarritoCompra = "CREATE TABLE IF NOT EXISTS CARRITO_COMPRA ("
-                            + " ID INTEGER PRIMARY KEY AUTOINCREMENT,"
-                            + " USUARIO_ID INTEGER UNIQUE NOT NULL,"
-                            + " DESCUENTO REAL,"
-                            + " FOREIGN KEY(USUARIO_ID) REFERENCES USUARIOS(ID) ON DELETE CASCADE"
+                            + "ID INTEGER PRIMARY KEY AUTOINCREMENT,"
+                            + "USUARIO_ID INTEGER UNIQUE NOT NULL,"
+                            + "DESCUENTO REAL,"
+                            + "FOREIGN KEY(USUARIO_ID) REFERENCES USUARIOS(ID) ON DELETE CASCADE"
                             + ");";
             stmt.execute(sqlCarritoCompra);
 
             // 9. ITEM_CARRITO (Tabla Auxiliar N:M)
             String sqlItemCarrito = "CREATE TABLE IF NOT EXISTS ITEM_CARRITO ("
-                            + " CARRITO_ID INTEGER NOT NULL,"
-                            + " PRODUCTO_ID INTEGER NOT NULL,"
-                            + " TALLA TEXT NOT NULL,"
-                            + " CANTIDAD INTEGER NOT NULL,"
-                            + " PRIMARY KEY (CARRITO_ID, PRODUCTO_ID, TALLA),"
-                            + " FOREIGN KEY(CARRITO_ID) REFERENCES CARRITO_COMPRA(ID) ON DELETE CASCADE,"
-                            + " FOREIGN KEY(PRODUCTO_ID) REFERENCES PRODUCTOS(ID) ON DELETE RESTRICT"
+                            + "CARRITO_ID INTEGER NOT NULL,"
+                            + "PRODUCTO_ID INTEGER NOT NULL,"
+                            + "TALLA TEXT NOT NULL,"
+                            + "CANTIDAD INTEGER NOT NULL,"
+                            + "PRIMARY KEY (CARRITO_ID, PRODUCTO_ID, TALLA),"
+                            + "FOREIGN KEY(CARRITO_ID) REFERENCES CARRITO_COMPRA(ID) ON DELETE CASCADE,"
+                            + "FOREIGN KEY(PRODUCTO_ID) REFERENCES PRODUCTOS(ID) ON DELETE RESTRICT"
                             + ");";
             stmt.execute(sqlItemCarrito);
 
@@ -167,9 +164,10 @@ public class GestorTiendaBD {
     // --- MÉTODOS DE INSERCIÓN ---
 
     public void insertUsuario(Usuario usuario) {
+        // ERROR CORREGIDO: quité FECHA_REGISTRO y ACTIVO que no están en la tabla
         String sql = "INSERT OR IGNORE INTO USUARIOS "
-                   + "(NOMBRE, APELLIDOS, DNI, EMAIL, NUM_TELEFONO, PASSWORD, FECHA_REGISTRO, ACTIVO) "
-                   + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+                   + "(NOMBRE, APELLIDOS, DNI, EMAIL, NUM_TELEFONO, PASSWORD) "
+                   + "VALUES (?, ?, ?, ?, ?, ?)";
         
         try (Connection con = DriverManager.getConnection(CONNECTION_STRING);
              PreparedStatement pstmt = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -182,8 +180,6 @@ public class GestorTiendaBD {
             pstmt.setString(6, usuario.getPassword());
 
             pstmt.executeUpdate();
-            
-
             
         } catch (SQLException e) {
             System.err.format("* Error al insertar Usuario '%s': %s\n", usuario.getEmail(), e.getMessage());
@@ -199,12 +195,10 @@ public class GestorTiendaBD {
             
             try (PreparedStatement pstmtProducto = con.prepareStatement(sqlProducto, Statement.RETURN_GENERATED_KEYS)) {
                 
-
                 pstmtProducto.setString(1, producto.getNombre());
                 pstmtProducto.setDouble(2, producto.getPrecio());
                 pstmtProducto.setString(3, producto.getDescripcion());
                 pstmtProducto.executeUpdate();
-
 
                 int idProducto = -1; 
                 try (ResultSet rs = pstmtProducto.getGeneratedKeys()) {
@@ -219,7 +213,9 @@ public class GestorTiendaBD {
 
         } catch (SQLException e) {
             System.err.format("* Error al insertar Producto '%s': %s\n", producto.getNombre(), e.getMessage());
-            try (Connection con = DriverManager.getConnection(CONNECTION_STRING)) { con.rollback(); } catch (SQLException ex) {}
+            try (Connection con = DriverManager.getConnection(CONNECTION_STRING)) { 
+                con.rollback(); 
+            } catch (SQLException ex) {}
         }
     }
     
@@ -268,7 +264,7 @@ public class GestorTiendaBD {
         }
     }
     
-     public boolean existeUsuario(String email) {
+    public boolean existeUsuario(String email) {
         String sql = "SELECT COUNT(*) FROM USUARIOS WHERE EMAIL = ?";
         try (Connection con = DriverManager.getConnection(CONNECTION_STRING);
              PreparedStatement stmt = con.prepareStatement(sql)) {
@@ -283,11 +279,10 @@ public class GestorTiendaBD {
             e.printStackTrace();
         }
         return false;
-     }
+    }
 
-     
     @SuppressWarnings("null")
-	public List<Producto> loadProductos() {
+    public List<Producto> loadProductos() {
         List<Producto> productos = new ArrayList<>();
         String sql = "SELECT ID, NOMBRE, PRECIO, DESCRIPCION FROM PRODUCTOS";
         
@@ -308,25 +303,22 @@ public class GestorTiendaBD {
         }
         return productos;
     }
-   
-    
-    // IAG
     
     private Integer obtenerStockPorProducto(int idProducto, Connection con) throws SQLException {
-		int stock = 0;
-		String sql = "SELECT TALLA, CANTIDAD FROM STOCK_TALLA WHERE ID_PRODUCTO = ?";
-		
-		try (PreparedStatement pstmt = con.prepareStatement(sql)) {
-			pstmt.setInt(1, idProducto);
-			
-			try (ResultSet rs = pstmt.executeQuery()) {
-				while (rs.next()) {
-					stock = (rs.getInt("CANTIDAD"));
-				}
-			}
-		}
-		return stock;
-	}
+        int stock = 0;
+        String sql = "SELECT TALLA, CANTIDAD FROM STOCK_TALLA WHERE ID_PRODUCTO = ?";
+        
+        try (PreparedStatement pstmt = con.prepareStatement(sql)) {
+            pstmt.setInt(1, idProducto);
+            
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    stock = (rs.getInt("CANTIDAD"));
+                }
+            }
+        }
+        return stock;
+    }
 
     public List<Evento> loadEventos() {
         List<Evento> eventos = new ArrayList<>();
@@ -340,11 +332,11 @@ public class GestorTiendaBD {
                 String fechaStr = rs.getString("FECHA");
                 
                 Evento evento = new Evento(
-                        LocalDate.parse(fechaStr), 
-                        rs.getString("DESCRIPCION"),
-                        rs.getString("LUGAR"),
-                        rs.getInt("CAPACIDAD")
-                    );
+                    LocalDate.parse(fechaStr), 
+                    rs.getString("DESCRIPCION"),
+                    rs.getString("LUGAR"),
+                    rs.getInt("CAPACIDAD")
+                );
                 eventos.add(evento);
             }
             
@@ -354,10 +346,7 @@ public class GestorTiendaBD {
         return eventos;
     }
 
-
-
     public void deleteDatabase() {
-        
         try (Connection con = DriverManager.getConnection(CONNECTION_STRING);
              Statement stmt = con.createStatement()) {
             

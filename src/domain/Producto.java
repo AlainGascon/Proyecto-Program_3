@@ -125,9 +125,9 @@ public class Producto {
             
             if (newStock >= 0) {
                 inventarioPorTalla.put(talla, newStock);
-                this.stock -= cantidad; // Actualiza también el campo de stock total
+                this.stock -= cantidad; 
             } else {
-                // Manejar error si se intenta decrementar más de lo que hay
+                
                 System.err.println("Error: Intento de restar stock negativo para la talla " + talla + " del producto " + nombre);
             }
         }

@@ -308,7 +308,7 @@ public class JPanelCatalogo extends JPanel {
             JLabel lblImagen = new JLabel();
             try {
                 
-                URL imageUrl = getClass().getResource("/resources/images/" + archivoImagen);
+                URL imageUrl = JFrameAutenticacion.class.getResource("/resources/images/" + archivoImagen);
                 
                 if (imageUrl != null) {
                     ImageIcon icon = new ImageIcon(imageUrl);
