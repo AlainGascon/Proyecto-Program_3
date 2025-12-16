@@ -67,9 +67,9 @@ public class JFrameAutenticacion extends JFrame {
 
 		
 		try {
-			backgroundImage = new ImageIcon(getClass().getResource("/images/escaparate.png")).getImage();
+			backgroundImage = new ImageIcon(getClass().getResource("/resources/images/escaparate.png")).getImage();
 		} catch (Exception e) {
-			System.err.println("Error al cargar la imagen de fondo: /images/escaparate.png");	
+			System.err.println("Error al cargar la imagen de fondo: /resources/images/escaparate.png");	
 			e.printStackTrace();
 			backgroundImage = null;
 		}

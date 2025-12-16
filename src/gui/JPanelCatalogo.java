@@ -17,6 +17,7 @@ import java.awt.RenderingHints;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.net.URL; 
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -49,7 +50,6 @@ public class JPanelCatalogo extends JPanel {
     private JLabel lblStockDetalle;
     private Producto productoDetalleSeleccionado = null;
     
-    // Paleta de colores moderna
     private static final Color COLOR_PRIMARIO = new Color(41, 128, 185);
     private static final Color COLOR_SECUNDARIO = new Color(52, 152, 219);
     private static final Color COLOR_ACENTO = new Color(46, 204, 113);
@@ -73,7 +73,6 @@ public class JPanelCatalogo extends JPanel {
         scrollCatalogo.getVerticalScrollBar().setUnitIncrement(16);
         scrollCatalogo.setBorder(null);
         
-        // Panel superior con gradiente
         JPanel pSuperior = crearPanelSuperior();
         
         this.add(pSuperior, BorderLayout.NORTH);
@@ -202,15 +201,28 @@ public class JPanelCatalogo extends JPanel {
                         return;
                     }
                     
-                    // Llama al método estático que también decrementa el stock en JFramePrincipal
                     JFramePrincipal.agregarItemAlCarrito(productoDetalleSeleccionado, cantidad, talla);
                     
                     System.out.println("Añadido: " + productoDetalleSeleccionado.getNombre() + 
                                      " (Talla: " + talla + ", Cant: " + cantidad + ")");
                                      
-                    
-                    
+                    String currentTalla = (String) comboTallaDetalle.getSelectedItem();
+                    int updatedStock = productoDetalleSeleccionado.getStock(currentTalla);
+                    if (updatedStock > 0) {
+                        lblStockDetalle.setText("Stock: " + updatedStock + " unid.");
+                        lblStockDetalle.setForeground(new Color(127, 140, 141));
+                        ((SpinnerNumberModel) spinnerCantidad.getModel()).setMaximum(updatedStock);
+                    } else {
+                        lblStockDetalle.setText("AGOTADO");
+                        lblStockDetalle.setForeground(COLOR_PRECIO);
+                        btnAnadirCarrito.setEnabled(false);
+                        ((SpinnerNumberModel) spinnerCantidad.getModel()).setMaximum(0);
+                    }
+
                 } catch (NumberFormatException ex) {
+                    System.err.println("Error de formato al añadir al carrito: " + ex.getMessage());
+                } catch (Exception ex) {
+                    System.err.println("Error inesperado al añadir al carrito: " + ex.getMessage());
                 }
             }
         });
@@ -295,15 +307,28 @@ public class JPanelCatalogo extends JPanel {
             
             JLabel lblImagen = new JLabel();
             try {
-                ImageIcon icon = new ImageIcon(getClass().getResource("/images/" + archivoImagen));
-                Image img = icon.getImage().getScaledInstance(180, 180, Image.SCALE_SMOOTH);
-                lblImagen.setIcon(new ImageIcon(img));
-                lblImagen.setHorizontalAlignment(SwingConstants.CENTER);
+                
+                URL imageUrl = getClass().getResource("/resources/images/" + archivoImagen);
+                
+                if (imageUrl != null) {
+                    ImageIcon icon = new ImageIcon(imageUrl);
+                    Image img = icon.getImage().getScaledInstance(180, 180, Image.SCALE_SMOOTH);
+                    lblImagen.setIcon(new ImageIcon(img));
+                    lblImagen.setHorizontalAlignment(SwingConstants.CENTER);
+                } else {
+                    System.err.println("❌ ERROR: No se encontró la imagen en el Classpath: /resources/images/" + archivoImagen);
+                    lblImagen.setText("📷");
+                    lblImagen.setFont(new Font("Arial", Font.PLAIN, 48));
+                    lblImagen.setHorizontalAlignment(SwingConstants.CENTER);
+                    lblImagen.setForeground(new Color(189, 195, 199));
+                }
             } catch (Exception e) {
-                lblImagen.setText("📷");
+                System.err.println("❌ ERROR al cargar o escalar la imagen '" + archivoImagen + "': " + e.getMessage());
+                e.printStackTrace(); 
+                lblImagen.setText("⚠️"); 
                 lblImagen.setFont(new Font("Arial", Font.PLAIN, 48));
                 lblImagen.setHorizontalAlignment(SwingConstants.CENTER);
-                lblImagen.setForeground(new Color(189, 195, 199));
+                lblImagen.setForeground(COLOR_PRECIO); 
             }
             
             panelImagen.add(lblImagen, BorderLayout.CENTER);
@@ -328,9 +353,17 @@ public class JPanelCatalogo extends JPanel {
             lblPrecio.setForeground(COLOR_PRECIO);
             lblPrecio.setAlignmentX(Component.LEFT_ALIGNMENT);
             
-            JLabel lblDisponible = new JLabel("✓ Disponible");
+            boolean hayStock = false;
+            for (String talla : TALLAS_ORDENADAS) {
+                if (p.getStock(talla) > 0) {
+                    hayStock = true;
+                    break;
+                }
+            }
+            
+            JLabel lblDisponible = new JLabel(hayStock ? "✓ Disponible" : "✗ Agotado");
             lblDisponible.setFont(new Font("Arial", Font.PLAIN, 11));
-            lblDisponible.setForeground(COLOR_ACENTO);
+            lblDisponible.setForeground(hayStock ? COLOR_ACENTO : COLOR_PRECIO);
             lblDisponible.setAlignmentX(Component.LEFT_ALIGNMENT);
             
             panelInfo.add(lblNombre);
@@ -377,7 +410,7 @@ public class JPanelCatalogo extends JPanel {
             
             ActionListener tallaChangeListener = e -> {
                 String talla = (String) comboTallaDetalle.getSelectedItem();
-                int stock = (talla != null) ? producto.getStock(talla) : 0;
+                int stock = (talla != null) ? productoDetalleSeleccionado.getStock(talla) : 0;
                 
                 if (stock > 0) {
                      lblStockDetalle.setText("Stock: " + stock + " unid.");
@@ -388,7 +421,7 @@ public class JPanelCatalogo extends JPanel {
                 }
                 
                 btnAnadirCarrito.setEnabled(stock > 0);
-                spinnerCantidad.setValue(1);
+                spinnerCantidad.setValue(1); 
                 ((SpinnerNumberModel) spinnerCantidad.getModel()).setMaximum(stock);
             };
             
@@ -402,19 +435,19 @@ public class JPanelCatalogo extends JPanel {
             pInfo.setBorder(new EmptyBorder(0, 0, 5, 0));
             
             JLabel lblNombreDetalle = new JLabel("<html><div style='width: 280px;'><b>" + 
-                                                 producto.getNombre() + "</b></div></html>");
+                                                 productoDetalleSeleccionado.getNombre() + "</b></div></html>");
             lblNombreDetalle.setFont(new Font("Arial", Font.BOLD, 16));
             lblNombreDetalle.setForeground(new Color(44, 62, 80));
             lblNombreDetalle.setAlignmentX(Component.LEFT_ALIGNMENT);
             
-            JLabel lblPrecioDetalle = new JLabel(String.format("%.2f €", producto.getPrecio()));
+            JLabel lblPrecioDetalle = new JLabel(String.format("%.2f €", productoDetalleSeleccionado.getPrecio()));
             lblPrecioDetalle.setFont(new Font("Arial", Font.BOLD, 24));
             lblPrecioDetalle.setForeground(COLOR_PRECIO);
             lblPrecioDetalle.setAlignmentX(Component.LEFT_ALIGNMENT);
             
             JLabel lblDescripcionDetalle = new JLabel(
                 "<html><div style='width: 280px; margin-top: 10px;'>" + 
-                producto.getDescripcion() + "</div></html>"
+                productoDetalleSeleccionado.getDescripcion() + "</div></html>"
             );
             lblDescripcionDetalle.setFont(new Font("Arial", Font.PLAIN, 12));
             lblDescripcionDetalle.setForeground(new Color(127, 140, 141));
@@ -449,7 +482,7 @@ public class JPanelCatalogo extends JPanel {
             
             boolean hayStockTotal = false;
             for (String talla : TALLAS_ORDENADAS) {
-                int stock = producto.getStock(talla);
+                int stock = productoDetalleSeleccionado.getStock(talla);
                 if (stock > 0) {
                     comboTallaDetalle.addItem(talla);
                     hayStockTotal = true;
@@ -459,7 +492,7 @@ public class JPanelCatalogo extends JPanel {
             comboTallaDetalle.setPreferredSize(new Dimension(140, 30));
             
             
-            if (tallaPreseleccionada != null && producto.getStock(tallaPreseleccionada) > 0) {
+            if (tallaPreseleccionada != null && productoDetalleSeleccionado.getStock(tallaPreseleccionada) > 0) {
                 comboTallaDetalle.setSelectedItem(tallaPreseleccionada);
             } else if (comboTallaDetalle.getItemCount() > 0) {
                 comboTallaDetalle.setSelectedIndex(0);
