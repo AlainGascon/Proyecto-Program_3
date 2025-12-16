@@ -21,7 +21,7 @@ public class TiendaInitializer {
 			return;
 		}
 		
-		Usuario u1= new Usuario("Admin", "Tienda", "12345678A", "admin.tienda", "admin@tineda.com", "606000001", "admin123");
+		Usuario u1= new Usuario("Admin", "Tienda", "12345678A", "admin.tienda", "admin@tienda.com", "606000001", "admin123");
 		gestor.insertUsuario(u1);
 		
 		Producto p1= new Producto(5,"CAMISETA KTM", "Estilo Fde competición. Tejido transpirable y ligero, perfecto para fans del motor.", 19.95, "M", 2, null);

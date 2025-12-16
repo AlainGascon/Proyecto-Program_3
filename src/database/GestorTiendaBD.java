@@ -63,9 +63,10 @@ public class GestorTiendaBD {
             // 2. PRODUCTOS
             String sqlProducto = "CREATE TABLE IF NOT EXISTS PRODUCTOS ("
                             + "ID INTEGER PRIMARY KEY AUTOINCREMENT,"
-                            + "NOMBRE TEXT NOT NULL,"
-                            + "PRECIO REAL NOT NULL,"
+                            + "NOMBRE TEXT NOT NULL,"                  
                             + "DESCRIPCION TEXT,"
+                            + "PRECIO REAL NOT NULL,"
+                            + "TALLA TEXT NOT NULL"
                             + "STOCK INTEGER NOT NULL,"
                             + ");";
             stmt.execute(sqlProducto);
@@ -93,9 +94,9 @@ public class GestorTiendaBD {
 
             // 5. PAGO
             String sqlPago = "CREATE TABLE IF NOT EXISTS PAGO ("
-                            + " ID INTEGER PRIMARY KEY AUTOINCREMENT,"
-                            + " CANTIDAD_A_PAGAR REAL NOT NULL,"
+                            + " ID INTEGER PRIMARY KEY AUTOINCREMENT,"                            
                             + " METODO_PAGO TEXT NOT NULL,"
+                            + " CANTIDAD_A_PAGAR REAL NOT NULL,"
                             + " ESTADO TEXT NOT NULL,"
                             + " FECHA_PAGO TEXT NOT NULL,"
                             + " NUM_TRANSACCION TEXT UNIQUE NOT NULL,"
