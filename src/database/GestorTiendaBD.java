@@ -204,7 +204,7 @@ public class GestorTiendaBD {
                 try (ResultSet rs = pstmtProducto.getGeneratedKeys()) {
                     if (rs.next()) { 
                         idProducto = rs.getInt(1); 
-                        producto.setId(idProducto);
+                        producto.setId(idProducto) ;
                     }
                 }
                 
