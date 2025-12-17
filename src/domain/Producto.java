@@ -29,6 +29,19 @@ public class Producto {
 		this.inventarioPorTalla = inventarioPorTalla;
 	}
 	
+	
+	
+
+	public Producto(int id, String nombre, String descripcion, double precio, String talla, int stock) {
+		super();
+		this.id = id;
+		this.nombre = nombre;
+		this.descripcion = descripcion;
+		this.precio = precio;
+		this.talla = talla;
+		this.stock = stock;
+	}
+
 
 	public int getId() {
 		return id;

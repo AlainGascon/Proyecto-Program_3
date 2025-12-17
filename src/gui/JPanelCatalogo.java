@@ -264,6 +264,8 @@ public class JPanelCatalogo extends JPanel {
         panelTarjetasProductos.repaint();
     }
     
+    
+    
     private String obtenerNombreImagen(String nombreProducto) {
         if (nombreProducto.contains("BASICA BLANCA")) return "camiseta_blanca.png";
         if (nombreProducto.contains("HONDA NSX-R")) return "camiseta_honda.png";
@@ -308,7 +310,7 @@ public class JPanelCatalogo extends JPanel {
             JLabel lblImagen = new JLabel();
             try {
                 
-                URL imageUrl = JFrameAutenticacion.class.getResource("/resources/images/" + archivoImagen);
+                URL imageUrl = JPanelCatalogo.class.getResource("/images/" + archivoImagen);
                 
                 if (imageUrl != null) {
                     ImageIcon icon = new ImageIcon(imageUrl);
@@ -316,7 +318,7 @@ public class JPanelCatalogo extends JPanel {
                     lblImagen.setIcon(new ImageIcon(img));
                     lblImagen.setHorizontalAlignment(SwingConstants.CENTER);
                 } else {
-                    System.err.println("❌ ERROR: No se encontró la imagen en el Classpath: /resources/images/" + archivoImagen);
+                    System.err.println("❌ ERROR: No se encontró la imagen en el Classpath: /images/" + archivoImagen);
                     lblImagen.setText("📷");
                     lblImagen.setFont(new Font("Arial", Font.PLAIN, 48));
                     lblImagen.setHorizontalAlignment(SwingConstants.CENTER);
