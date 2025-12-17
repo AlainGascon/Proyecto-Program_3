@@ -10,6 +10,7 @@ import domain.Usuario;
 public class TiendaInitializer {
 	public static void inicializarBD() {
 		GestorTiendaBD gestor= new GestorTiendaBD();
+		gestor.deleteDatabase();
 		gestor.createTables();
 		insertarDatosIniciales(gestor);
 		System.out.println("Base de datos inicializada correctamente.");

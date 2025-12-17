@@ -46,7 +46,7 @@ public class GestorTiendaBD {
 
             stmt.execute("PRAGMA foreign_keys = ON;");
 
-            // 1. USUARIOS - ERROR CORREGIDO: quité coma después de PASSWORD
+            // 1. USUARIOS 
             String sqlUsuario = "CREATE TABLE IF NOT EXISTS USUARIOS ("
                             + "ID INTEGER PRIMARY KEY AUTOINCREMENT,"
                             + "NOMBRE TEXT NOT NULL,"
@@ -58,7 +58,7 @@ public class GestorTiendaBD {
                             + ");";
             stmt.execute(sqlUsuario);
             
-            // 2. PRODUCTOS - ERROR CORREGIDO: faltaba coma después de TALLA y sobra coma al final
+            // 2. PRODUCTOS 
             String sqlProducto = "CREATE TABLE IF NOT EXISTS PRODUCTOS ("
                             + "ID INTEGER PRIMARY KEY AUTOINCREMENT,"
                             + "NOMBRE TEXT NOT NULL,"                  
@@ -162,8 +162,7 @@ public class GestorTiendaBD {
     // --- MÉTODOS DE INSERCIÓN ---
 
     public void insertUsuario(Usuario usuario) {
-        // ERROR CORREGIDO: quité FECHA_REGISTRO y ACTIVO que no están en la tabla
-        String sql = "INSERT OR IGNORE INTO USUARIOS "
+    	String sql = "INSERT OR IGNORE INTO USUARIOS "
                    + "(NOMBRE, APELLIDOS, DNI, EMAIL, NUM_TELEFONO, PASSWORD) "
                    + "VALUES (?, ?, ?, ?, ?, ?)";
         
