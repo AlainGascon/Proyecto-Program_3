@@ -63,9 +63,7 @@ public class GestorTiendaBD {
                             + "ID INTEGER PRIMARY KEY AUTOINCREMENT,"
                             + "NOMBRE TEXT NOT NULL,"                  
                             + "DESCRIPCION TEXT,"
-                            + "PRECIO REAL NOT NULL,"
-                            + "TALLA TEXT NOT NULL,"
-                            + "STOCK INTEGER NOT NULL"
+                            + "PRECIO REAL NOT NULL"
                             + ");";
             stmt.execute(sqlProducto);
             
@@ -292,8 +290,8 @@ public class GestorTiendaBD {
             
             while (rs.next()) {
                 int id = rs.getInt("ID");
-                Producto p = new Producto(id, rs.getString("NOMBRE"), rs.getString("DESCRIPCION"), rs.getDouble("PRECIO"), null, (Integer) null, null);
-                
+             // Cambia el (Integer) null por un valor real como 0
+                Producto p = new Producto(id, rs.getString("NOMBRE"), rs.getString("DESCRIPCION"), rs.getDouble("PRECIO"), null, 0, null);                
                 p.setStock(obtenerStockPorProducto(id, con));
                 productos.add(p);
             }
