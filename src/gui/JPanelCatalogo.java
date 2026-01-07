@@ -100,7 +100,7 @@ public class JPanelCatalogo extends JPanel {
         panel.setLayout(new BorderLayout());
         panel.setPreferredSize(new Dimension(0, 70));
         
-        JLabel lblTitulo = new JLabel("  📚 CATÁLOGO DE PRODUCTOS");
+        JLabel lblTitulo = new JLabel("    CATÁLOGO DE PRODUCTOS");
         lblTitulo.setFont(new Font("Arial", Font.BOLD, 24));
         lblTitulo.setForeground(Color.WHITE);
         
@@ -165,7 +165,7 @@ public class JPanelCatalogo extends JPanel {
         lblStockDetalle = new JLabel("Stock: --");
         lblStockDetalle.setFont(new Font("Arial", Font.BOLD, 12));
         
-        btnAnadirCarrito = new JButton("🛒 AÑADIR AL CARRITO");
+        btnAnadirCarrito = new JButton("AÑADIR AL CARRITO");
         btnAnadirCarrito.setFont(new Font("Arial", Font.BOLD, 14));
         btnAnadirCarrito.setBackground(COLOR_ACENTO);
         btnAnadirCarrito.setForeground(Color.WHITE);

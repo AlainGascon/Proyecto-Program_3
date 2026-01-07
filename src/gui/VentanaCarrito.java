@@ -32,7 +32,7 @@ public class VentanaCarrito extends JFrame {
     public static boolean descuentoAplicado=false;
 
     public VentanaCarrito(List<ItemCarrito> lista) {
-        super("🛒 Carrito de Compras");
+        super(" Carrito de Compras");
         this.listaItems = lista;
 
         
@@ -75,7 +75,7 @@ public class VentanaCarrito extends JFrame {
 
         
         
-        JLabel lblTitulo = new JLabel("Mi Carrito 🛒", SwingConstants.LEFT);
+        JLabel lblTitulo = new JLabel("Mi Carrito  ", SwingConstants.LEFT);
         lblTitulo.setFont(new Font("Arial", Font.BOLD, 28)); 
         lblTitulo.setForeground(new Color(51, 51, 51));
         
@@ -84,7 +84,7 @@ public class VentanaCarrito extends JFrame {
         gbc.anchor = GridBagConstraints.WEST;
         pNorte.add(lblTitulo, gbc);
         
-        lblDescuento = new JLabel("🎉 ¡20% de descuento aplicado! 🎉");
+        lblDescuento = new JLabel("  ¡20% de descuento aplicado! ");
         lblDescuento.setFont(new Font("Arial", Font.BOLD, 15)); 
         lblDescuento.setForeground(COLOR_ACENTO);
         lblDescuento.setVisible(false);
@@ -118,10 +118,10 @@ public class VentanaCarrito extends JFrame {
         
         
         
-        btnEliminar = new JButton("🗑️ Eliminar Producto");
-        btnVaciar = new JButton("❌ Vaciar Carrito");
-        btnPagar = new JButton("💳 Proceder al Pago");
-        btnSalir = new JButton("⬅️ Volver al Catálogo");
+        btnEliminar = new JButton("  Eliminar Producto");
+        btnVaciar = new JButton("  Vaciar Carrito");
+        btnPagar = new JButton("  Proceder al Pago");
+        btnSalir = new JButton("  Volver al Catálogo");
         
         
         btnPagar.setFont(new Font("Arial", Font.BOLD, 16));

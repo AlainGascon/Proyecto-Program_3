@@ -2,7 +2,6 @@ package gui;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -79,13 +78,13 @@ public class JFramePrincipal extends JFrame implements ActionListener {
         panelNavegacion.setBackground(COLOR_FONDO_NAV);
         panelNavegacion.setBorder(new EmptyBorder(30, 0, 30, 0));
 
-        panelNavegacion.add(crearBotonNavegacion("  🛍️  Catálogo", CARD_CATALOGO));
+        panelNavegacion.add(crearBotonNavegacion("     Catálogo", CARD_CATALOGO));
         panelNavegacion.add(Box.createRigidArea(new Dimension(0, 5)));
-        panelNavegacion.add(crearBotonNavegacion("  🗓️  Eventos", CARD_EVENTOS));
+        panelNavegacion.add(crearBotonNavegacion("     Eventos", CARD_EVENTOS));
         panelNavegacion.add(Box.createRigidArea(new Dimension(0, 5)));
-        panelNavegacion.add(crearBotonNavegacion("  🎰  Descuento", CARD_JUEGO_DESCUENTO));
+        panelNavegacion.add(crearBotonNavegacion("     Descuento", CARD_JUEGO_DESCUENTO));
         panelNavegacion.add(Box.createRigidArea(new Dimension(0, 5)));
-        panelNavegacion.add(crearBotonNavegacion("  💰  Posibles Compras", CARD_RECURSIVIDAD));
+        panelNavegacion.add(crearBotonNavegacion("     Posibles Compras", CARD_RECURSIVIDAD));
         
         panelNavegacion.add(Box.createVerticalGlue()); 
 
@@ -182,51 +181,50 @@ public class JFramePrincipal extends JFrame implements ActionListener {
     }
 
     private void ejecutarAlgoritmoRecursivo() {
-        String input = JOptionPane.showInputDialog(this, "Introduce tu presupuesto máximo (€):", "Calcular Compras", JOptionPane.QUESTION_MESSAGE);
-        if (input != null && !input.isEmpty()) {
+        
+        String[] tallasDisponibles = {"XS", "S", "M", "L", "XL"};
+        String tallaSeleccionada = (String) JOptionPane.showInputDialog(this, 
+                "Selecciona tu talla:", "Filtro de Stock", 
+                JOptionPane.QUESTION_MESSAGE, null, tallasDisponibles, "M");
+
+        if (tallaSeleccionada == null) return;
+
+        
+        String input = JOptionPane.showInputDialog(this, "Presupuesto máximo (€):", "Calcular Compras", JOptionPane.QUESTION_MESSAGE);
+        
+        if (input != null && !input.trim().isEmpty()) {
             try {
-                double importe = Double.parseDouble(input);
+                double importe = Double.parseDouble(input.replace(",", "."));
+                
+                List<Producto> productosConStock = listaProductos.stream()
+                        .filter(p -> p.getInventarioPorTalla().getOrDefault(tallaSeleccionada, 0) > 0)
+                        .toList();
+
                 List<List<Producto>> resultados = new ArrayList<>();
-                calcularComprasPosibles(resultados, listaProductos, importe, 100.0, new ArrayList<>());
-                
-                JTextArea textArea = new JTextArea(25, 50);
-                textArea.setEditable(false);
-                textArea.setFont(new Font("Monospaced", Font.PLAIN, 12));
-                StringBuilder sb = new StringBuilder();
-                sb.append("COMBINACIONES CON SOBRANTE < 100€\n");
-                sb.append("============================================================\n");
-                
-                for (int i = 0; i < resultados.size(); i++) {
-                    sb.append(String.format("\nOPCIÓN %d:\n", i + 1));
-                    for (Producto p : resultados.get(i)) {
-                        String rutaImg = "img/" + p.getNombre().toLowerCase().replace(" ", "_") + ".jpg";
-                        sb.append(String.format(" • %-30s | %8.2f€ | %s\n", p.getNombre(), p.getPrecio(), rutaImg));
-                    }
-                    sb.append("------------------------------------------------------------\n");
+                calcularComprasPosibles(resultados, productosConStock, importe, 0, new ArrayList<>());
+
+                if (resultados.isEmpty()) {
+                    JOptionPane.showMessageDialog(this, "No hay productos con stock en talla " + tallaSeleccionada + " para ese presupuesto.");
+                } else {
+                    new VentanaResultadosRecursividad(this, resultados, importe).setVisible(true);
                 }
-                
-                textArea.setText(sb.toString());
-                JScrollPane scrollPane = new JScrollPane(textArea);
-                JOptionPane.showMessageDialog(this, scrollPane, "Resultados de búsqueda", JOptionPane.INFORMATION_MESSAGE);
             } catch (NumberFormatException ex) {
                 JOptionPane.showMessageDialog(this, "Número no válido", "Error", JOptionPane.ERROR_MESSAGE);
             }
         }
     }
 
-    private void calcularComprasPosibles(List<List<Producto>> result, List<Producto> elementos, double disponible, double sobranteMax, List<Producto> temp) {
-        if (disponible < 0) {
-            return;
-        } else if (disponible < sobranteMax) {
-            List<Producto> sol = new ArrayList<>(temp);
-            sol.sort((p1, p2) -> p1.getNombre().compareTo(p2.getNombre()));
-            if (!result.contains(sol)) {
-                result.add(sol);
-            }
-        } else {
-            for (Producto p : elementos) {
+    private void calcularComprasPosibles(List<List<Producto>> result, List<Producto> elementos, double disponible, int indice, List<Producto> temp) {
+        if (!temp.isEmpty()) {
+            result.add(new ArrayList<>(temp));
+        }
+
+        for (int i = indice; i < elementos.size(); i++) {
+            Producto p = elementos.get(i);
+
+            if (p.getPrecio() <= disponible + 0.01) {
                 temp.add(p);
-                calcularComprasPosibles(result, elementos, disponible - p.getPrecio(), sobranteMax, temp);
+                calcularComprasPosibles(result, elementos, disponible - p.getPrecio(), i + 1, temp);
                 temp.remove(temp.size() - 1);
             }
         }

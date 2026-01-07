@@ -1,9 +1,7 @@
 package main;
 
 import javax.swing.SwingUtilities;
-
 import database.TiendaInitializer;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -14,6 +12,7 @@ import domain.ItemCarrito;
 import domain.Producto;
 import gui.JFramePrincipal;
 import gui.VentanaCarga; 
+
 
 public class Main {
 
@@ -36,15 +35,15 @@ public class Main {
         {"CHAQUETÓN REGULAR FIT BOLSILLOS", "chaqueta_regularfit.png", 53.95, "Cazadora acolchada regular fit confeccionada en tejido técnico que repele el agua al contacto."},
     };
 
-
     private static List<Producto> listaProductosGlobal = new ArrayList<>();
 
+    public static List<Producto> getListaProductos() {
+        return listaProductosGlobal;
+    }
 
     private static void inicializarProductos() {
-        
         Random rand = new Random();
         String[] tallasRopa = {"XS", "S", "M", "L", "XL"};
-
         int id = 1;
 
         for (Object[] item : RAW_DATA) {
@@ -52,66 +51,34 @@ public class Main {
             double precio = (double) item[2];
             String descripcion = (String) item[3];
 
-
             Map<String, Integer> inventarioPorTalla = new HashMap<>();
-
             String tallaDefecto = "M";
             int totalStock = 0;
 
-
             for (String talla : tallasRopa) {
-
-                int stock;
-                int numeroAleatorio = rand.nextInt(10);
-
-                if (numeroAleatorio == 0) {
-                    stock = 0;
-                } else {
-                    stock = rand.nextInt(10) + 1;
-                }
-
+                int stock = (rand.nextInt(10) == 0) ? 0 : rand.nextInt(10) + 1;
                 inventarioPorTalla.put(talla, stock);
-                totalStock = totalStock + stock;
+                totalStock += stock;
             }
 
-
-            Producto p = new Producto(
-                id++,
-                nombre,
-                descripcion,
-                precio,
-                tallaDefecto,
-                totalStock, 
-                inventarioPorTalla
-            );
-
+            Producto p = new Producto(id++, nombre, descripcion, precio, tallaDefecto, totalStock, inventarioPorTalla);
             listaProductosGlobal.add(p);
         }
     }
 
-
-    private static List<ItemCarrito> inicializarCarrito() {
-        return new ArrayList<>();
-    }
-
-
     public static void main(String[] args) {
-    	TiendaInitializer.inicializarBD();
-    	
+        TiendaInitializer.inicializarBD();
         inicializarProductos();
-        List<ItemCarrito> carritoInicial = inicializarCarrito();
+        
+        List<ItemCarrito> carritoInicial = new ArrayList<>();
 
         SwingUtilities.invokeLater(() -> {
-
-            
             JFramePrincipal principal = new JFramePrincipal(listaProductosGlobal, carritoInicial);
             principal.setVisible(false);
 
-            
             VentanaCarga ventanaCarga = new VentanaCarga(principal);
             ventanaCarga.setVisible(true);
 
-           
             ventanaCarga.iniciarCarga(() -> {
                 principal.setVisible(true);
             });

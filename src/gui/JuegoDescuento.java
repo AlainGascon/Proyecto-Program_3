@@ -64,7 +64,7 @@ public class JuegoDescuento extends JPanel {
         this.setLayout(new BorderLayout(0, 0));
 
         pNorte = createTransparentPanel();
-        lblTitulo = new JLabel("🎰 LUCKY DISCOUNT 🎰");
+        lblTitulo = new JLabel("LUCKY DISCOUNT");
         lblTitulo.setFont(FUENTE_TITULO);
         lblTitulo.setForeground(Color.WHITE);
         lblTitulo.setHorizontalAlignment(SwingConstants.CENTER);
@@ -133,7 +133,7 @@ public class JuegoDescuento extends JPanel {
                      
                      SwingUtilities.invokeLater(() -> {
                          verificarResultado();
-                         btnAccion.setText("▶ JUGAR DE NUEVO");
+                         btnAccion.setText("  JUGAR DE NUEVO");
                          estilizarBoton(btnAccion, COLOR_BTN_JUGAR);
                          btnAccion.setEnabled(true);
                      });
@@ -145,7 +145,7 @@ public class JuegoDescuento extends JPanel {
                 t = new Thread(hiloTirada); 
                 t.start();
                 
-                btnAccion.setText("🛑 DETENER");
+                btnAccion.setText("  DETENER");
                 estilizarBoton(btnAccion, COLOR_BTN_PARAR);
             }
         });
