@@ -183,7 +183,8 @@ public class GestorTiendaBD {
         }
     }
 
-    public void insertProducto(Producto producto) {
+
+	public void insertProducto(Producto producto) {
         String sqlProducto = "INSERT INTO PRODUCTOS (NOMBRE, PRECIO, DESCRIPCION) VALUES (?, ?, ?)";
         String sqlStock = "INSERT INTO STOCK_TALLA (ID_PRODUCTO, TALLA, CANTIDAD) VALUES (?, ?, ?)";
 
@@ -278,7 +279,7 @@ public class GestorTiendaBD {
         return false;
     }
 
-    @SuppressWarnings("null")
+
     public List<Producto> loadProductos() {
         List<Producto> productos = new ArrayList<>();
         String sql = "SELECT ID, NOMBRE, PRECIO, DESCRIPCION FROM PRODUCTOS";
@@ -289,7 +290,6 @@ public class GestorTiendaBD {
             
             while (rs.next()) {
                 int id = rs.getInt("ID");
-             // Cambia el (Integer) null por un valor real como 0
                 Producto p = new Producto(id, rs.getString("NOMBRE"), rs.getString("DESCRIPCION"), rs.getDouble("PRECIO"), null, 0, null);                
                 p.setStock(obtenerStockPorProducto(id, con));
                 productos.add(p);
@@ -343,6 +343,25 @@ public class GestorTiendaBD {
         return eventos;
     }
 
+    public int obtenerStockEspecifico(int idProducto, String talla) {
+        String sql = "SELECT CANTIDAD FROM STOCK_TALLA WHERE ID_PRODUCTO = ? AND TALLA = ?";
+        try (Connection con = DriverManager.getConnection(CONNECTION_STRING);
+             PreparedStatement pstmt = con.prepareStatement(sql)) {
+            
+            pstmt.setInt(1, idProducto);
+            pstmt.setString(2, talla);
+            
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("CANTIDAD");
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error al consultar stock específico: " + e.getMessage());
+        }
+        return 0; // Si no hay registro, asumimos stock 0
+    }
+    
     public void deleteDatabase() {
         try (Connection con = DriverManager.getConnection(CONNECTION_STRING);
              Statement stmt = con.createStatement()) {

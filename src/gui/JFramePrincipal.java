@@ -181,35 +181,24 @@ public class JFramePrincipal extends JFrame implements ActionListener {
     }
 
     private void ejecutarAlgoritmoRecursivo() {
-        
-        String[] tallasDisponibles = {"XS", "S", "M", "L", "XL"};
-        String tallaSeleccionada = (String) JOptionPane.showInputDialog(this, 
-                "Selecciona tu talla:", "Filtro de Stock", 
-                JOptionPane.QUESTION_MESSAGE, null, tallasDisponibles, "M");
+        DialogoFiltroRecursivo diag = new DialogoFiltroRecursivo(this);
+        diag.setVisible(true);
 
-        if (tallaSeleccionada == null) return;
+        String talla = diag.getTalla();
+        Double importe = diag.getPresupuesto();
 
-        
-        String input = JOptionPane.showInputDialog(this, "Presupuesto máximo (€):", "Calcular Compras", JOptionPane.QUESTION_MESSAGE);
-        
-        if (input != null && !input.trim().isEmpty()) {
-            try {
-                double importe = Double.parseDouble(input.replace(",", "."));
-                
-                List<Producto> productosConStock = listaProductos.stream()
-                        .filter(p -> p.getInventarioPorTalla().getOrDefault(tallaSeleccionada, 0) > 0)
-                        .toList();
+        if (talla != null && importe != null) {
+            List<Producto> productosConStock = listaProductos.stream()
+                    .filter(p -> p.getInventarioPorTalla().getOrDefault(talla, 0) > 0)
+                    .toList();
 
-                List<List<Producto>> resultados = new ArrayList<>();
-                calcularComprasPosibles(resultados, productosConStock, importe, 0, new ArrayList<>());
+            List<List<Producto>> resultados = new ArrayList<>();
+            calcularComprasPosibles(resultados, productosConStock, importe, 0, new ArrayList<>());
 
-                if (resultados.isEmpty()) {
-                    JOptionPane.showMessageDialog(this, "No hay productos con stock en talla " + tallaSeleccionada + " para ese presupuesto.");
-                } else {
-                    new VentanaResultadosRecursividad(this, resultados, importe).setVisible(true);
-                }
-            } catch (NumberFormatException ex) {
-                JOptionPane.showMessageDialog(this, "Número no válido", "Error", JOptionPane.ERROR_MESSAGE);
+            if (resultados.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "No hay combinaciones para talla " + talla + " con ese presupuesto.");
+            } else {
+                new VentanaResultadosRecursividad(this, resultados, importe).setVisible(true);
             }
         }
     }
