@@ -10,9 +10,10 @@ public class VentanaCarga extends JDialog {
 
     public VentanaCarga(JFrame parent) {
         super(parent, "Cargando...", false);
-        setSize(400, 120);
+        setSize(400, 50);
         setLocationRelativeTo(parent);
         setLayout(new BorderLayout());
+        setUndecorated(true);
         
         JLabel lbl = new JLabel("Cargando, por favor espere...", SwingConstants.CENTER);
         lbl.setFont(new Font("SansSerif", Font.BOLD, 14));

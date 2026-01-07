@@ -87,7 +87,7 @@ public class VentanaResultadosRecursividad extends JDialog {
         estilizarBoton(btnExportar, new Color(46, 204, 113));
         btnExportar.addActionListener(e -> exportarResultados());
 
-        JButton btnCerrar = new JButton("¡ENTENDIDO, VOLVER");
+        JButton btnCerrar = new JButton("VOLVER");
         estilizarBoton(btnCerrar, new Color(41, 128, 185));
         btnCerrar.addActionListener(e -> dispose());
 
