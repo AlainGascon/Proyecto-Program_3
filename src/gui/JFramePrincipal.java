@@ -231,7 +231,18 @@ public class JFramePrincipal extends JFrame implements ActionListener {
     
     public static void agregarItemAlCarrito(Producto p, int cantidad, String talla) {
         decrementarStock(p, cantidad, talla);
-        carritoActual.add(new ItemCarrito(p, cantidad, talla));
+        boolean encontrado= false;
+        for(ItemCarrito item: carritoActual) {
+        	if(item.getProducto().getNombre().equals(p.getNombre()) && item.getTalla().equals(talla)) {
+        		item.setCantidad(item.getCantidad() + cantidad);
+        		encontrado=true;
+        		break;
+        	}
+        }
+        if(!encontrado) {
+            carritoActual.add(new ItemCarrito(p, cantidad, talla));
+
+        }
         actualizarContadorCarritoGlobal();
     }
     

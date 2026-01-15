@@ -258,20 +258,22 @@ public class VentanaCarrito extends JFrame {
             lblDescuento.setVisible(false);
         }
     }
-
-    public void agregarProducto(Producto producto, int cantidad) {
+//if (item.getProducto().getNombre().equals(producto.getNombre()) && item.getTalla().equals(talla)) {
+// if (item.getProducto().getId() == producto.getId() && item.getTalla().equals(talla)) {
+    public void agregarProducto(Producto producto, int cantidad, String talla) {
         boolean encontrado = false;
         for (ItemCarrito item : listaItems) {
-            if (item.getProducto().getId() == producto.getId()) {
+            if (item.getProducto().getNombre().equals(producto.getNombre()) && item.getTalla().equals(talla)) {
                 item.setCantidad(item.getCantidad() + cantidad);
                 encontrado = true;
                 break;
             }
         }
         if (!encontrado) {
-            listaItems.add(new ItemCarrito(producto, cantidad, "M")); 
+            listaItems.add(new ItemCarrito(producto, cantidad, talla)); 
         }
         modeloTabla.fireTableDataChanged();
+        actualizarTotal();
     }
     
     public void setDescuento(boolean valor) {

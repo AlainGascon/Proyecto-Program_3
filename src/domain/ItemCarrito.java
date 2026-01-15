@@ -32,8 +32,8 @@ public class ItemCarrito {
 		this.cantidad = cantidad;
 	}
 
-	public void getTalla(String talla) {
-		this.talla = talla;
+	public String getTalla() {
+		return talla;
 	}
 	
 	public void setTalla(String talla) {
