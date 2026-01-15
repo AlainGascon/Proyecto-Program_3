@@ -17,6 +17,21 @@ import domain.Producto;
 public class VentanaResultadosRecursividad extends JDialog {
 
     private static final long serialVersionUID = 1L;
+    
+    // PALETA DE COLORES UNIFICADA
+    private static final Color COLOR_PRIMARIO = new Color(41, 128, 185); 
+    private static final Color COLOR_ACENTO = new Color(46, 204, 113); 
+    private static final Color COLOR_PRECIO = new Color(231, 76, 60); 
+    private static final Color COLOR_FONDO_CLARO = new Color(236, 240, 241);
+    private static final Color COLOR_TEXTO_PRINCIPAL = new Color(51, 51, 51);
+    private static final Color COLOR_FONDO_OSCURO = new Color(33, 37, 41);
+    
+    // FUENTES ESTANDARIZADAS
+    private static final Font FUENTE_TITULO = new Font("Arial", Font.BOLD, 28);
+    private static final Font FUENTE_SUBTITULO = new Font("Arial", Font.BOLD, 22);
+    private static final Font FUENTE_DESTACADO = new Font("Arial", Font.BOLD, 16);
+    private static final Font FUENTE_NORMAL = new Font("Arial", Font.PLAIN, 14);
+    
     private List<List<Producto>> resultadosOriginales;
     private DefaultTableModel modelo;
     private JTable tabla;
@@ -32,29 +47,38 @@ public class VentanaResultadosRecursividad extends JDialog {
         setLayout(new BorderLayout());
         getContentPane().setBackground(Color.WHITE);
 
+        // PANEL NORTE
         JPanel pnlNorte = new JPanel(new BorderLayout());
-        pnlNorte.setBackground(new Color(33, 37, 41));
+        pnlNorte.setBackground(COLOR_FONDO_CLARO);
         pnlNorte.setBorder(BorderFactory.createEmptyBorder(20, 25, 20, 25));
 
         JPanel pnlTextos = new JPanel(new GridLayout(2, 1));
-        pnlTextos.setOpaque(false);
+        pnlTextos.setBackground(COLOR_FONDO_CLARO);
+        
         JLabel lblT = new JLabel("COMBINACIONES DISPONIBLES");
-        lblT.setFont(new Font("Segoe UI", Font.BOLD, 22));
-        lblT.setForeground(Color.WHITE);
-        JLabel lblS = new JLabel("Opciones encontradas: " + resultados.size() + " | Presupuesto: " + presupuesto + "€");
-        lblS.setFont(new Font("Segoe UI", Font.PLAIN, 15));
-        lblS.setForeground(new Color(200, 200, 200));
-        pnlTextos.add(lblT); pnlTextos.add(lblS);
+        lblT.setFont(FUENTE_TITULO);
+        lblT.setForeground(COLOR_TEXTO_PRINCIPAL);
+        
+        // LABEL CON PRECIO EN ROJO
+        JLabel lblS = new JLabel("<html>Opciones encontradas: " + resultados.size() + 
+                                 " | Presupuesto: <span style='color: rgb(231,76,60); font-weight: bold;'>" + 
+                                 String.format("%.2f", presupuesto) + "€</span></html>");
+        lblS.setFont(FUENTE_NORMAL);
+        lblS.setForeground(COLOR_TEXTO_PRINCIPAL);
+        
+        pnlTextos.add(lblT); 
+        pnlTextos.add(lblS);
 
         JPanel pnlFiltro = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 5));
-        pnlFiltro.setOpaque(false);
+        pnlFiltro.setBackground(COLOR_FONDO_CLARO);
+        
         JLabel lblFiltro = new JLabel("ORDENAR/FILTRAR: ");
-        lblFiltro.setFont(new Font("Segoe UI", Font.BOLD, 14));
-        lblFiltro.setForeground(Color.WHITE);
+        lblFiltro.setFont(FUENTE_DESTACADO);
+        lblFiltro.setForeground(COLOR_TEXTO_PRINCIPAL);
         
         String[] opciones = {"Sin orden", "Precio: Menor a Mayor", "Precio: Mayor a Menor", "Aprovechamiento Máximo (>90%)"};
         JComboBox<String> comboOrden = new JComboBox<>(opciones);
-        comboOrden.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        comboOrden.setFont(FUENTE_NORMAL);
         comboOrden.setPreferredSize(new Dimension(260, 35));
         comboOrden.addActionListener(e -> procesarFiltro(comboOrden.getSelectedIndex()));
 
@@ -65,12 +89,16 @@ public class VentanaResultadosRecursividad extends JDialog {
         pnlNorte.add(pnlFiltro, BorderLayout.EAST);
         add(pnlNorte, BorderLayout.NORTH);
 
+        // TABLA
         modelo = new DefaultTableModel(new String[]{"ID", "Prendas Sugeridas", "Total", "Sobrante"}, 0) {
             private static final long serialVersionUID = 1L;
             @Override public boolean isCellEditable(int r, int c) { return false; }
         };
         
         tabla = new JTable(modelo);
+        tabla.setFont(FUENTE_NORMAL);
+        tabla.getTableHeader().setFont(FUENTE_DESTACADO);
+        tabla.setRowHeight(35);
         configurarTabla(tabla);
         actualizarTabla(this.resultadosOriginales);
 
@@ -79,21 +107,34 @@ public class VentanaResultadosRecursividad extends JDialog {
         scroll.getViewport().setBackground(Color.WHITE);
         add(scroll, BorderLayout.CENTER);
 
+        // PANEL SUR CON BOTONES ESTANDARIZADOS
         JPanel pnlSur = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 15));
         pnlSur.setBackground(Color.WHITE);
         pnlSur.setBorder(BorderFactory.createEmptyBorder(15, 0, 25, 0));
 
-        JButton btnExportar = new JButton("EXPORTAR A TXT");
-        estilizarBoton(btnExportar, new Color(46, 204, 113));
+        JButton btnExportar = crearBotonPrimario("EXPORTAR A TXT", COLOR_ACENTO);
         btnExportar.addActionListener(e -> exportarResultados());
 
-        JButton btnCerrar = new JButton("VOLVER");
-        estilizarBoton(btnCerrar, new Color(41, 128, 185));
+        JButton btnCerrar = crearBotonPrimario("VOLVER", COLOR_PRIMARIO);
         btnCerrar.addActionListener(e -> dispose());
 
         pnlSur.add(btnExportar);
         pnlSur.add(btnCerrar);
         add(pnlSur, BorderLayout.SOUTH);
+    }
+    
+    // MÉTODO PARA CREAR BOTONES PRIMARIOS ESTANDARIZADOS
+    private JButton crearBotonPrimario(String texto, Color color) {
+        JButton btn = new JButton(texto);
+        btn.setPreferredSize(new Dimension(250, 50));
+        btn.setBackground(color);
+        btn.setForeground(Color.WHITE);
+        btn.setFont(FUENTE_DESTACADO);
+        btn.setFocusPainted(false);
+        btn.setBorderPainted(false);
+        btn.setOpaque(true);
+        btn.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        return btn;
     }
 
     private void procesarFiltro(int index) {
@@ -130,10 +171,25 @@ public class VentanaResultadosRecursividad extends JDialog {
         for (int i = 0; i < lista.size(); i++) {
             List<Producto> combo = lista.get(i);
             double total = sumarPrecios(combo);
-            StringBuilder sb = new StringBuilder("<html><body style='padding:15px; font-family: Segoe UI; font-size: 11pt;'>");
-            for(Producto p : combo) sb.append("• ").append(p.getNombre()).append(" (<b>").append(p.getPrecio()).append("€</b>)<br>");
+            double sobrante = presupuesto - total;
+            
+            StringBuilder sb = new StringBuilder("<html><body style='padding:15px; font-family: Arial; font-size: 11pt;'>");
+            for(Producto p : combo) {
+                // PRECIOS EN ROJO EN LA TABLA
+                sb.append("• ").append(p.getNombre())
+                  .append(" (<span style='color: rgb(231,76,60); font-weight: bold;'>")
+                  .append(String.format("%.2f", p.getPrecio()))
+                  .append("€</span>)<br>");
+            }
             sb.append("</body></html>");
-            modelo.addRow(new Object[]{"#"+(i+1), sb.toString(), String.format("%.2f€", total), String.format("%.2f€", presupuesto - total)});
+            
+            // FORMATO CON PRECIOS EN ROJO
+            String totalStr = "<html><span style='color: rgb(231,76,60); font-weight: bold;'>" + 
+                             String.format("%.2f€", total) + "</span></html>";
+            String sobranteStr = "<html><span style='color: rgb(231,76,60); font-weight: bold;'>" + 
+                                String.format("%.2f€", sobrante) + "</span></html>";
+            
+            modelo.addRow(new Object[]{"#"+(i+1), sb.toString(), totalStr, sobranteStr});
         }
         ajustarAlturas();
     }
@@ -152,17 +208,6 @@ public class VentanaResultadosRecursividad extends JDialog {
             int height = c.getPreferredSize().height + 25; 
             if (tabla.getRowHeight(r) != height) tabla.setRowHeight(r, height);
         }
-    }
-
-    private void estilizarBoton(JButton btn, Color color) {
-        btn.setPreferredSize(new Dimension(250, 50));
-        btn.setBackground(color);
-        btn.setForeground(Color.WHITE);
-        btn.setFont(new Font("Segoe UI", Font.BOLD, 14));
-        btn.setFocusPainted(false);
-        btn.setBorderPainted(false);
-        btn.setOpaque(true);
-        btn.setCursor(new Cursor(Cursor.HAND_CURSOR));
     }
 
     private void exportarResultados() {
@@ -195,7 +240,10 @@ public class VentanaResultadosRecursividad extends JDialog {
 
     static class WordWrapCellRenderer extends JEditorPane implements TableCellRenderer {
         private static final long serialVersionUID = 1L;
-        public WordWrapCellRenderer() { setEditable(false); setContentType("text/html"); }
+        public WordWrapCellRenderer() { 
+            setEditable(false); 
+            setContentType("text/html"); 
+        }
         @Override
         public Component getTableCellRendererComponent(JTable t, Object v, boolean s, boolean f, int r, int c) {
             setText(v.toString());

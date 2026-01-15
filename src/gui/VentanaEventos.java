@@ -1,7 +1,6 @@
 package gui;
 
 import javax.swing.*;
-
 import domain.Evento;
 import domain.ModeloEventos;
 import java.awt.*;
@@ -12,15 +11,24 @@ import java.util.List;
 public class VentanaEventos extends JPanel { 
 	
 	private static final long serialVersionUID = 1L;
+    
+    // PALETA DE COLORES UNIFICADA
+    private static final Color COLOR_PRIMARIO = new Color(41, 128, 185); 
+    private static final Color COLOR_ACENTO = new Color(46, 204, 113); 
+    private static final Color COLOR_PRECIO = new Color(231, 76, 60); 
+    private static final Color COLOR_FONDO_CLARO = new Color(236, 240, 241);
+    private static final Color COLOR_TEXTO_PRINCIPAL = new Color(51, 51, 51);
+    
+    // FUENTES ESTANDARIZADAS
+    private static final Font FUENTE_TITULO = new Font("Arial", Font.BOLD, 28);
+    private static final Font FUENTE_NORMAL = new Font("Arial", Font.PLAIN, 14);
+    private static final Font FUENTE_TABLA_HEADER = new Font("Arial", Font.BOLD, 14);
+    
     private ModeloEventos modelo;
     private JTable tabla;
     private JScrollPane scrollTabla;
     private JTextArea txtMensaje;
     private List<Evento> listaEventos;
-    
-    private static final Color COLOR_PRIMARIO = new Color(41, 128, 185); 
-    private static final Color COLOR_FONDO_CLARO = new Color(236, 240, 241);
-    private static final Color COLOR_TITULO = COLOR_PRIMARIO; 
 
     public VentanaEventos(List<Evento> listaEventos) { 
         
@@ -77,47 +85,45 @@ public class VentanaEventos extends JPanel {
 	    listaEventos.add(new Evento(LocalDate.of(2026, 7, 2), "Rebajas de Mitad de Temporada", "Centro Comercial, Santa Cruz", 720));
 	    listaEventos.add(new Evento(LocalDate.of(2026, 7, 6), "Liquidación Ropa de Fiesta", "Tienda Principal, Las Palmas", 470));
         
-        
         this.setLayout(new BorderLayout()); 
         this.setBackground(COLOR_FONDO_CLARO);
 
-        
+        // MENSAJE DESCRIPTIVO
         txtMensaje = new JTextArea("Vive la moda en primera persona. Nuestros eventos exclusivos te esperan. Descubre las últimas tendencias antes que nadie. Tu estilo merece ser protagonista.");
         txtMensaje.setWrapStyleWord(true);
         txtMensaje.setLineWrap(true);
         txtMensaje.setEditable(false);
         txtMensaje.setBackground(COLOR_FONDO_CLARO);
         txtMensaje.setBorder(BorderFactory.createEmptyBorder(15, 20, 15, 20)); 
-        txtMensaje.setFont(new Font("SansSerif", Font.ITALIC, 14));
-        txtMensaje.setForeground(COLOR_TITULO.darker());
+        txtMensaje.setFont(FUENTE_NORMAL);
+        txtMensaje.setForeground(COLOR_TEXTO_PRINCIPAL);
         
-        
+        // TÍTULO
         JLabel lblTitulo = new JLabel("🗓️ Agenda de Eventos", SwingConstants.CENTER);
-        lblTitulo.setFont(new Font("SansSerif", Font.BOLD, 26));
-        lblTitulo.setForeground(COLOR_TITULO);
+        lblTitulo.setFont(FUENTE_TITULO);
+        lblTitulo.setForeground(COLOR_PRIMARIO);
         lblTitulo.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
         
         JPanel pNorte = new JPanel(new BorderLayout());
+        pNorte.setBackground(COLOR_FONDO_CLARO);
         pNorte.add(lblTitulo, BorderLayout.NORTH);
         pNorte.add(txtMensaje, BorderLayout.CENTER);
         
         this.add(pNorte, BorderLayout.NORTH);
 
-        
+        // TABLA
         modelo = new ModeloEventos(listaEventos);
         tabla = new JTable(modelo);
         
-       
         tabla.setRowHeight(30);
-        tabla.setFont(new Font("SansSerif", Font.PLAIN, 14));
-        tabla.getTableHeader().setFont(new Font("SansSerif", Font.BOLD, 15));
-        tabla.getTableHeader().setBackground(COLOR_TITULO);
+        tabla.setFont(FUENTE_NORMAL);
+        tabla.getTableHeader().setFont(FUENTE_TABLA_HEADER);
+        tabla.getTableHeader().setBackground(COLOR_PRIMARIO);
         tabla.getTableHeader().setForeground(Color.WHITE);
         tabla.setSelectionBackground(new Color(174, 214, 241)); 
         tabla.setGridColor(Color.LIGHT_GRAY);
         tabla.setShowGrid(true);
         tabla.setAutoCreateRowSorter(true); 
-        
         
         scrollTabla = new JScrollPane(tabla);
         scrollTabla.setBorder(BorderFactory.createCompoundBorder(
