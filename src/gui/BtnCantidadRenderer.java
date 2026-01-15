@@ -20,7 +20,7 @@ public class BtnCantidadRenderer extends AbstractCellEditor implements TableCell
 	private static final long serialVersionUID = 1L;
 	private JPanel panel;
 	private JButton btnMas, btnMenos;
-	private int row;
+
 	
 	
 	
@@ -33,7 +33,7 @@ public class BtnCantidadRenderer extends AbstractCellEditor implements TableCell
 		btnMenos.setMargin(new Insets(1, 5, 1, 5));
 		btnMas.setMargin(new Insets(1, 5, 1, 5));
 		
-	btnMenos.addActionListener((e)->{
+	/*btnMenos.addActionListener((e)->{
 		ItemCarrito item=lista.get(row);
 		if(item.getCantidad()>1) {
 			item.setCantidad(item.getCantidad()-1);
@@ -49,12 +49,46 @@ public class BtnCantidadRenderer extends AbstractCellEditor implements TableCell
 		item.setCantidad(item.getCantidad()+1);
 		modelo.fireTableDataChanged();
 		lblTotal.setText("Total: "+ calcularTotal(lista)+"€");
-	});
-	
+	});*/
+		btnMenos.addActionListener((e) -> {
+            int rowActual = tabla.getEditingRow(); 
+            if (rowActual != -1) {
+                ItemCarrito item = lista.get(rowActual);
+                if (item.getCantidad() > 1) {
+                    item.setCantidad(item.getCantidad() - 1);
+                } else {
+                    lista.remove(rowActual);
+                }
+                finalizarEdicion(modelo, lista, lblTotal);
+            }
+        }); 
+    
+        btnMas.addActionListener((e) -> {
+            int rowActual = tabla.getEditingRow();
+            if (rowActual != -1) {
+                ItemCarrito item = lista.get(rowActual);
+                item.setCantidad(item.getCantidad() + 1);
+                finalizarEdicion(modelo, lista, lblTotal);
+            }
+        });
+		
 	panel.add(btnMas);
 	panel.add(btnMenos);
 		
 	}
+	
+	private void finalizarEdicion(ModeloTablaCompras modelo, List<ItemCarrito> lista, JLabel lblTotal) {
+        fireEditingStopped(); // Notifica a la tabla que la edición terminó
+        modelo.fireTableDataChanged(); // Refresca los datos visuales
+        
+        // Actualizamos el total (considerando si hay descuento aplicado)
+        double total = calcularTotal(lista);
+        if (VentanaCarrito.descuentoAplicado) {
+            total = total * 0.80;
+        }
+        lblTotal.setText("<html>Total: <span style='color: rgb(231,76,60); font-weight: bold;'>" + 
+                        String.format("%.2f", total) + "€</span></html>");
+    }
 	
 	 private double calcularTotal(List<ItemCarrito> lista) {
 	        double total = 0;
@@ -72,13 +106,11 @@ public class BtnCantidadRenderer extends AbstractCellEditor implements TableCell
 	public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
 			int row, int column) {
 		// TODO Auto-generated method stub
-		this.row=row;
 		return panel;
 	}
 	@Override
 	public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
 		// TODO Auto-generated method stub
-		this.row=row;
 		return panel;
 	}
 	
