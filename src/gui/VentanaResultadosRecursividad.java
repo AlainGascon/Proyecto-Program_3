@@ -13,6 +13,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import domain.Producto;
+// IMPORTACIÓN DE LAS CLASES DE RECURSIVIDAD
+import recursividad.CombinacionesExactasRec;
+import recursividad.OrdenarPorPrecioRec;
 
 public class VentanaResultadosRecursividad extends JDialog {
 
@@ -37,6 +40,7 @@ public class VentanaResultadosRecursividad extends JDialog {
     private JTable tabla;
     private double presupuesto;
 
+    
     public VentanaResultadosRecursividad(JFrame padre, List<List<Producto>> resultados, double presupuesto) {
         super(padre, "Sugerencias de Compra - Deusto Fashion", true);
         this.resultadosOriginales = new ArrayList<>(resultados);
@@ -59,7 +63,6 @@ public class VentanaResultadosRecursividad extends JDialog {
         lblT.setFont(FUENTE_TITULO);
         lblT.setForeground(COLOR_TEXTO_PRINCIPAL);
         
-        // LABEL CON PRECIO EN ROJO
         JLabel lblS = new JLabel("<html>Opciones encontradas: " + resultados.size() + 
                                  " | Presupuesto: <span style='color: rgb(231,76,60); font-weight: bold;'>" + 
                                  String.format("%.2f", presupuesto) + "€</span></html>");
@@ -123,7 +126,6 @@ public class VentanaResultadosRecursividad extends JDialog {
         add(pnlSur, BorderLayout.SOUTH);
     }
     
-    // MÉTODO PARA CREAR BOTONES PRIMARIOS ESTANDARIZADOS
     private JButton crearBotonPrimario(String texto, Color color) {
         JButton btn = new JButton(texto);
         btn.setPreferredSize(new Dimension(250, 50));
@@ -169,13 +171,17 @@ public class VentanaResultadosRecursividad extends JDialog {
     private void actualizarTabla(List<List<Producto>> lista) {
         modelo.setRowCount(0);
         for (int i = 0; i < lista.size(); i++) {
-            List<Producto> combo = lista.get(i);
+            List<Producto> comboOriginal = lista.get(i);
+            
+            // INTEGRACIÓN: Se utiliza el algoritmo recursivo Merge Sort (OrdenarPorPrecioRec)
+            // para ordenar los productos dentro de cada combinación sugerida antes de mostrarlos.
+            List<Producto> combo = OrdenarPorPrecioRec.mergeSortPorPrecio(comboOriginal);
+            
             double total = sumarPrecios(combo);
             double sobrante = presupuesto - total;
             
             StringBuilder sb = new StringBuilder("<html><body style='padding:15px; font-family: Arial; font-size: 11pt;'>");
             for(Producto p : combo) {
-                // PRECIOS EN ROJO EN LA TABLA
                 sb.append("• ").append(p.getNombre())
                   .append(" (<span style='color: rgb(231,76,60); font-weight: bold;'>")
                   .append(String.format("%.2f", p.getPrecio()))
@@ -183,7 +189,6 @@ public class VentanaResultadosRecursividad extends JDialog {
             }
             sb.append("</body></html>");
             
-            // FORMATO CON PRECIOS EN ROJO
             String totalStr = "<html><span style='color: rgb(231,76,60); font-weight: bold;'>" + 
                              String.format("%.2f€", total) + "</span></html>";
             String sobranteStr = "<html><span style='color: rgb(231,76,60); font-weight: bold;'>" + 
@@ -222,7 +227,8 @@ public class VentanaResultadosRecursividad extends JDialog {
                 out.println("Presupuesto máximo: " + presupuesto + "€");
                 out.println("============================================");
                 for (int i = 0; i < resultadosOriginales.size(); i++) {
-                    List<Producto> combo = resultadosOriginales.get(i);
+                    // Aquí también podríamos usar OrdenarPorPrecioRec si queremos el TXT ordenado
+                    List<Producto> combo = OrdenarPorPrecioRec.mergeSortPorPrecio(resultadosOriginales.get(i));
                     double total = sumarPrecios(combo);
                     out.println("\nOPCION #" + (i + 1));
                     for (Producto p : combo) {
