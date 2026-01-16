@@ -190,6 +190,7 @@ public class JuegoDescuento extends JPanel {
     }
 
     private void estilizarBoton(JButton btn, Color colorFondo) {
+    	btn.setUI(new javax.swing.plaf.basic.BasicButtonUI());
         btn.setFont(new Font("Segoe UI", Font.BOLD, 16));
         btn.setBackground(colorFondo);
         btn.setForeground(Color.WHITE); 
